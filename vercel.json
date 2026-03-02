@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "env": {
+    "NODE_ENV": "production",
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key"
+  },
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "memory": 3008,
+        "includeFiles": "public/**,views/**,config/**,middleware/**,models/**,routes/**,src/**"
+      }
+    },
+    {
+      "src": "src/input.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/public/(.*)",
+      "dest": "/public/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=3600, immutable"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ],
+  "regions": [
+    "iad1"
+  ],
+  "functions": {
+    "server.js": {
+      "maxDuration": 30,
+      "memory": 3008
+    }
+  }
+}

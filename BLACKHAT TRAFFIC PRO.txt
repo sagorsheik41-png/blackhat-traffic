@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackHatTraffic Pro - Complete Auto Traffic System</title>
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-green: #00ff99;
+            --secondary-green: #00cc77;
+            --dark-bg: #0a0a0a;
+            --card-bg: #111111;
+            --border-color: #00ff9944;
+            --text-primary: #00ff99;
+            --text-secondary: #00ccaa;
+            --text-muted: #66ccbb;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 153, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0, 204, 255, 0.03) 0%, transparent 40%),
+                linear-gradient(135deg, rgba(0, 255, 153, 0.01) 0%, rgba(0, 153, 255, 0.01) 100%);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 255, 153, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 255, 153, 0.15);
+            border-color: var(--primary-green);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            text-shadow: 0 0 20px rgba(0, 255, 153, 0.5);
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: #000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 153, 0.3);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-green);
+            border: 1px solid var(--primary-green);
+        }
+        .btn-secondary:hover {
+            background: var(--primary-green);
+            color: #000;
+        }
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .input-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 255, 153, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .input-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(0, 255, 153, 0.1);
+        }
+        .textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        .metric-card {
+            background: linear-gradient(135deg, rgba(0, 255, 153, 0.1), rgba(0, 204, 255, 0.1));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 153, 0.2);
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 8px;
+        }
+        .metric-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-active {
+            background: rgba(0, 255, 153, 0.2);
+            color: var(--primary-green);
+        }
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 255, 153, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+            transition: width 0.3s ease;
+        }
+        .tab-container {
+            margin-bottom: 24px;
+        }
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .social-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .social-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .facebook { background: #1877f2; color: white; }
+        .twitter { background: #1da1f2; color: white; }
+        .instagram { background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d); color: white; }
+        .linkedin { background: #0077b5; color: white; }
+        .pinterest { background: #bd081c; color: white; }
+        .tiktok { background: #000; color: white; }
+        .youtube { background: #ff0000; color: white; }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--primary-green);
+            border-radius: 8px;
+            color: var(--primary-green);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+        .feature-list li i {
+            color: var(--primary-green);
+            width: 20px;
+        }
+        .log-entry {
+            background: rgba(0, 255, 153, 0.05);
+            border-left: 3px solid var(--primary-green);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .timestamp {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-bolt"></i> BLACKHATTRAFFIC PRO</h1>
+            <p>Complete Automated Digital Marketing System | Powered by Advanced AI</p>
+        </div>
+        <!-- Main Dashboard -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-tachometer-alt"></i>
+                Real-Time Dashboard
+            </h2>
+            <div class="grid grid-4">
+                <div class="metric-card">
+                    <div class="metric-value" id="totalVisitors">45,892</div>
+                    <div class="metric-label">Total Visitors</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="todayClicks">2,340</div>
+                    <div class="metric-label">Today's Clicks</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="conversions">856</div>
+                    <div class="metric-label">Conversions</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="revenue">$12,450</div>
+                    <div class="metric-label">Total Revenue</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="trafficChart"></canvas>
+            </div>
+        </div>
+        <!-- AI Content Generator -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-robot"></i>
+                AI Content Generator
+            </h2>
+            <div class="tab-container">
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="blog">Blog Post</button>
+                    <button class="tab-btn" data-tab="social">Social Media</button>
+                    <button class="tab-btn" data-tab="email">Email</button>
+                    <button class="tab-btn" data-tab="product">Product Description</button>
+                </div>
+                <div class="tab-content active" id="blog">
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="input-group">
+                                <label>Keyword/Topic</label>
+                                <input type="text" class="input-control" id="blogKeyword" placeholder="e.g., digital marketing, SEO tips">
+                            </div>
+                            <div class="input-group">
+                                <label>Content Type</label>
+                                <select class="input-control" id="contentType">
+                                    <option value="tutorial">Tutorial</option>
+                                    <option value="tips">Tips & Tricks</option>
+                                    <option value="review">Review</option>
+                                    <option value="comparison">Comparison</option>
+                                    <option value="guide">Guide</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Word Count</label>
+                                <select class="input-control" id="wordCount">
+                                    <option value="500">500 words</option>
+                                    <option value="1000">1000 words</option>
+                                    <option value="1500">1500 words</option>
+                                    <option value="2000">2000 words</option>
+                                </select>
+                            </div>
+                            <button class="btn" onclick="generateBlogContent()">
+                                <i class="fas fa-magic"></i> Generate Content
+                            </button>
+                        </div>
+                        <div>
+                            <div class="input-group">
+                                <label>Generated Content</label>
+                                <textarea class="input-control textarea" id="generatedContent" style="min-height: 300px;" placeholder="Your AI generated content will appear here..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="social">
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="input-group">
+                                <label>Platform</label>
+                                <select class="input-control" id="socialPlatform">
+                                    <option value="facebook">Facebook</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="twitter">Twitter</option>
+                                    <option value="linkedin">LinkedIn</option>
+                                    <option value="tiktok">TikTok</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Post Type</label>
+                                <select class="input-control" id="postType">
+                                    <option value="promotional">Promotional</option>
+                                    <option value="educational">Educational</option>
+                                    <option value="engaging">Engaging</option>
+                                    <option value="viral">Viral</option>
+                                </select>
+                            </div>
+                            <button class="btn" onclick="generateSocialContent()">
+                                <i class="fas fa-share-alt"></i> Create Social Post
+                            </button>
+                        </div>
+                        <div>
+                            <div class="input-group">
+                                <label>Social Post</label>
+                                <textarea class="input-control textarea" id="socialContent" style="min-height: 200px;"></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label>Hashtags</label>
+                                <textarea class="input-control" id="hashtags" style="min-height: 80px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="email">
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="input-group">
+                                <label>Email Type</label>
+                                <select class="input-control" id="emailType">
+                                    <option value="newsletter">Newsletter</option>
+                                    <option value="promotional">Promotional</option>
+                                    <option value="welcome">Welcome</option>
+                                    <option value="followup">Follow-up</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Product/Service Name</label>
+                                <input type="text" class="input-control" id="productName" placeholder="Your product or service name">
+                            </div>
+                            <button class="btn" onclick="generateEmailContent()">
+                                <i class="fas fa-envelope"></i> Create Email
+                            </button>
+                        </div>
+                        <div>
+                            <div class="input-group">
+                                <label>Email Subject</label>
+                                <input type="text" class="input-control" id="emailSubject">
+                            </div>
+                            <div class="input-group">
+                                <label>Email Body</label>
+                                <textarea class="input-control textarea" id="emailContent" style="min-height: 250px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="product">
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="input-group">
+                                <label>Product Name</label>
+                                <input type="text" class="input-control" id="productTitle" placeholder="Enter product name">
+                            </div>
+                            <div class="input-group">
+                                <label>Product Category</label>
+                                <select class="input-control" id="productCategory">
+                                    <option value="electronics">Electronics</option>
+                                    <option value="fashion">Fashion</option>
+                                    <option value="health">Health</option>
+                                    <option value="books">Books</option>
+                                    <option value="software">Software</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Price</label>
+                                <input type="number" class="input-control" id="productPrice" placeholder="1000">
+                            </div>
+                            <button class="btn" onclick="generateProductDescription()">
+                                <i class="fas fa-box"></i> Create Product Description
+                            </button>
+                        </div>
+                        <div>
+                            <div class="input-group">
+                                <label>Product Description</label>
+                                <textarea class="input-control textarea" id="productDescription" style="min-height: 300px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SEO Optimizer -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-search"></i>
+                SEO Optimizer
+            </h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Target Keyword</label>
+                        <input type="text" class="input-control" id="targetKeyword" placeholder="digital marketing">
+                    </div>
+                    <div class="input-group">
+                        <label>Content URL</label>
+                        <input type="url" class="input-control" id="contentUrl" placeholder="https://yoursite.com/post">
+                    </div>
+                    <button class="btn" onclick="analyzeSEO()">
+                        <i class="fas fa-chart-line"></i> Analyze SEO
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateKeywords()">
+                        <i class="fas fa-key"></i> Generate Keywords
+                    </button>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label>SEO Score</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="seoScore" style="width: 0%"></div>
+                        </div>
+                        <span id="seoScoreText">0%</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Suggested Keywords</label>
+                        <textarea class="input-control" id="suggestedKeywords" style="min-height: 120px;" readonly></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Optimization Tips</label>
+                        <ul class="feature-list" id="seoTips">
+                            <li><i class="fas fa-lightbulb"></i> Add target keyword to title</li>
+                            <li><i class="fas fa-lightbulb"></i> Optimize meta description</li>
+                            <li><i class="fas fa-lightbulb"></i> Add alt tags to images</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Social Media Automation -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-robot"></i>
+                Social Media Automation
+            </h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Schedule Post</label>
+                        <input type="datetime-local" class="input-control" id="scheduleTime">
+                    </div>
+                    <div class="input-group">
+                        <label>Select Platforms</label>
+                        <div class="social-buttons">
+                            <button class="social-btn facebook" data-platform="facebook">
+                                <i class="fab fa-facebook"></i> Facebook
+                            </button>
+                            <button class="social-btn twitter" data-platform="twitter">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </button>
+                            <button class="social-btn instagram" data-platform="instagram">
+                                <i class="fab fa-instagram"></i> Instagram
+                            </button>
+                            <button class="social-btn linkedin" data-platform="linkedin">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </button>
+                            <button class="social-btn pinterest" data-platform="pinterest">
+                                <i class="fab fa-pinterest"></i> Pinterest
+                            </button>
+                            <button class="social-btn tiktok" data-platform="tiktok">
+                                <i class="fab fa-tiktok"></i> TikTok
+                            </button>
+                            <button class="social-btn youtube" data-platform="youtube">
+                                <i class="fab fa-youtube"></i> YouTube
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="schedulePost()">
+                        <i class="fas fa-clock"></i> Schedule Post
+                    </button>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label>Scheduled Posts</label>
+                        <div id="scheduledPosts" style="max-height: 300px; overflow-y: auto;">
+                            <div class="log-entry">
+                                <div>Facebook Post - "Digital Marketing Tips"</div>
+                                <div class="timestamp">December 25, 2024 - 10:00 AM</div>
+                                <span class="status-indicator status-pending">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            </div>
+                            <div class="log-entry">
+                                <div>Instagram Post - "SEO Guide"</div>
+                                <div class="timestamp">December 24, 2024 - 8:00 PM</div>
+                                <span class="status-indicator status-active">
+                                    <i class="fas fa-check"></i> Published
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Affiliate Management -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-link"></i>
+                Affiliate Management
+            </h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Affiliate Link</label>
+                        <input type="url" class="input-control" id="affiliateUrl" placeholder="https://affiliate-link.com/product">
+                    </div>
+                    <div class="input-group">
+                        <label>Product Name</label>
+                        <input type="text" class="input-control" id="affiliateProduct" placeholder="Product name">
+                    </div>
+                    <div class="input-group">
+                        <label>Commission Rate (%)</label>
+                        <input type="number" class="input-control" id="commissionRate" placeholder="10">
+                    </div>
+                    <button class="btn" onclick="addAffiliateLink()">
+                        <i class="fas fa-plus"></i> Add Link
+                    </button>
+                    <button class="btn" onclick="trackClicks()">
+                        <i class="fas fa-mouse-pointer"></i> Track Clicks
+                    </button>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label>Affiliate Performance</label>
+                        <div class="grid grid-3">
+                            <div class="metric-card">
+                                <div class="metric-value" id="affiliateClicks">1,234</div>
+                                <div class="metric-label">Total Clicks</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="affiliateConversions">89</div>
+                                <div class="metric-label">Conversions</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="affiliateEarnings">$456</div>
+                                <div class="metric-label">Earnings</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 200px;">
+                        <canvas id="affiliateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Email Marketing -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-envelope-bulk"></i>
+                Email Marketing
+            </h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Email List</label>
+                        <textarea class="input-control" id="emailList" placeholder="email1@example.com&#10;email2@example.com&#10;email3@example.com" style="min-height: 120px;"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Campaign Name</label>
+                        <input type="text" class="input-control" id="campaignName" placeholder="Christmas Offer">
+                    </div>
+                    <button class="btn" onclick="createEmailCampaign()">
+                        <i class="fas fa-paper-plane"></i> Create Campaign
+                    </button>
+                    <button class="btn btn-secondary" onclick="importEmailList()">
+                        <i class="fas fa-upload"></i> Import Email List
+                    </button>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label>Campaign Status</label>
+                        <div class="grid grid-2">
+                            <div class="metric-card">
+                                <div class="metric-value" id="emailsSent">2,500</div>
+                                <div class="metric-label">Sent</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="emailsOpened">1,200</div>
+                                <div class="metric-label">Opened</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Recent Campaigns</label>
+                        <div id="recentCampaigns">
+                            <div class="log-entry">
+                                <div>Christmas Special Offer</div>
+                                <div class="timestamp">December 24, 2024</div>
+                                <span class="status-indicator status-active">
+                                    <i class="fas fa-check"></i> Successful
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Traffic Sources -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-chart-pie"></i>
+                Traffic Source Analysis
+            </h2>
+            <div class="grid grid-2">
+                <div class="chart-container">
+                    <canvas id="trafficSourceChart"></canvas>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label>Top Traffic Sources</label>
+                        <ul class="feature-list">
+                            <li><i class="fab fa-google"></i> Google Search - 45%</li>
+                            <li><i class="fab fa-facebook"></i> Facebook - 25%</li>
+                            <li><i class="fas fa-link"></i> Direct - 15%</li>
+                            <li><i class="fab fa-youtube"></i> YouTube - 10%</li>
+                            <li><i class="fas fa-external-link-alt"></i> Others - 5%</li>
+                        </ul>
+                    </div>
+                    <div class="input-group">
+                        <label>Traffic Optimization</label>
+                        <button class="btn" onclick="optimizeTraffic('google')" style="width: 100%; margin-bottom: 8px;">
+                            <i class="fab fa-google"></i> Increase Google Traffic
+                        </button>
+                        <button class="btn" onclick="optimizeTraffic('social')" style="width: 100%; margin-bottom: 8px;">
+                            <i class="fas fa-share-alt"></i> Increase Social Traffic
+                        </button>
+                        <button class="btn" onclick="optimizeTraffic('youtube')" style="width: 100%;">
+                            <i class="fab fa-youtube"></i> Increase Video Traffic
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Competitor Analysis -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                Competitor Analysis
+            </h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Competitor Website</label>
+                        <input type="url" class="input-control" id="competitorUrl" placeholder="https://competitor.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Analysis Type</label>
+                        <select class="input-control" id="analysisType">
+                            <option value="keywords">Keyword Analysis</option>
+                            <option value="backlinks">Backlink Analysis</option>
+                            <option value="content">Content Analysis</option>
+                            <option value="traffic">Traffic Analysis</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="analyzeCompetitor()">
+                        <i class="fas fa-search"></i> Analyze
+                    </button>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label>Analysis Results</label>
+                        <div id="competitorResults" style="max-height: 300px; overflow-y: auto;">
+                            <div class="log-entry">
+                                <div><strong>Top Keywords:</strong> digital marketing, SEO tips, online business</div>
+                            </div>
+                            <div class="log-entry">
+                                <div><strong>Monthly Traffic:</strong> ~50,000 visitors</div>
+                            </div>
+                            <div class="log-entry">
+                                <div><strong>Backlinks:</strong> 1,200+ high quality links</div>
+                            </div>
+                            <div class="log-entry">
+                                <div><strong>Content Gap:</strong> video tutorials, infographics</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Automation Logs -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-history"></i>
+                Automation Logs
+            </h2>
+            <div id="automationLogs" style="max-height: 400px; overflow-y: auto;">
+                <div class="log-entry">
+                    <div>AI content generated: "The Future of Digital Marketing"</div>
+                    <div class="timestamp">December 25, 2024 - 2:30 PM</div>
+                </div>
+                <div class="log-entry">
+                    <div>Post published on Facebook</div>
+                    <div class="timestamp">December 25, 2024 - 2:25 PM</div>
+                </div>
+                <div class="log-entry">
+                    <div>SEO score updated: 85% (previously 78%)</div>
+                    <div class="timestamp">December 25, 2024 - 2:20 PM</div>
+                </div>
+                <div class="log-entry">
+                    <div>New affiliate link added</div>
+                    <div class="timestamp">December 25, 2024 - 2:15 PM</div>
+                </div>
+                <div class="log-entry">
+                    <div>Email campaign "New Year Offer" created</div>
+                    <div class="timestamp">December 25, 2024 - 2:10 PM</div>
+                </div>
+            </div>
+        </div>
+        <!-- System Settings -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i>
+                System Settings
+            </h2>
+            <div class="grid grid-3">
+                <div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 16px;">Automation Settings</h3>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="autoPublish" checked> Auto Publish
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="autoSEO" checked> Auto SEO Optimization
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="autoEmail" checked> Auto Email Campaign
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 16px;">Notifications</h3>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="emailNotifications" checked> Email Notifications
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="pushNotifications"> Push Notifications
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="reportNotifications" checked> Report Notifications
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 16px;">API Integration</h3>
+                    <div class="input-group">
+                        <label>Google Analytics</label>
+                        <input type="text" class="input-control" id="gaTrackingId" placeholder="GA-XXXXXXXXX">
+                    </div>
+                    <div class="input-group">
+                        <label>Facebook Pixel</label>
+                        <input type="text" class="input-control" id="fbPixelId" placeholder="Facebook Pixel ID">
+                    </div>
+                    <button class="btn" onclick="saveSettings()">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Export/Import -->
+        <div class="card">
+            <h2 class="section-title">
+                <i class="fas fa-download"></i>
+                Data Export/Import
+            </h2>
+            <div class="grid grid-2">
+                <div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 16px;">Export Data</h3>
+                    <button class="btn" onclick="exportData('analytics')" style="width: 100%; margin-bottom: 8px;">
+                        <i class="fas fa-chart-bar"></i> Analytics Data
+                    </button>
+                    <button class="btn" onclick="exportData('content')" style="width: 100%; margin-bottom: 8px;">
+                        <i class="fas fa-file-alt"></i> Content Data
+                    </button>
+                    <button class="btn" onclick="exportData('affiliates')" style="width: 100%; margin-bottom: 8px;">
+                        <i class="fas fa-link"></i> Affiliate Data
+                    </button>
+                    <button class="btn" onclick="exportData('all')" style="width: 100%;">
+                        <i class="fas fa-database"></i> Complete Data
+                    </button>
+                </div>
+                <div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 16px;">Import Data</h3>
+                    <div class="input-group">
+                        <label>Select Data File</label>
+                        <input type="file" class="input-control" id="importFile" accept=".json,.csv">
+                    </div>
+                    <button class="btn" onclick="importData()" style="width: 100%;">
+                        <i class="fas fa-upload"></i> Import
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+    <script>
+        // Global variables
+        let selectedPlatforms = [];
+        let affiliateLinks = [];
+        let scheduledPosts = [];
+        let charts = {};
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            updateMetrics();
+            setupTabNavigation();
+            setupSocialPlatformSelection();
+            setInterval(updateMetrics, 5000); // Update metrics every 5 seconds
+        });
+        // Tab Navigation
+        function setupTabNavigation() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.dataset.tab;
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        }
+        // Social Platform Selection
+        function setupSocialPlatformSelection() {
+            const socialBtns = document.querySelectorAll('.social-btn');
+            socialBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const platform = btn.dataset.platform;
+                    if (selectedPlatforms.includes(platform)) {
+                        selectedPlatforms = selectedPlatforms.filter(p => p !== platform);
+                        btn.style.opacity = '0.5';
+                    } else {
+                        selectedPlatforms.push(platform);
+                        btn.style.opacity = '1';
+                    }
+                });
+            });
+        }
+        // Initialize Charts
+        function initializeCharts() {
+            // Traffic Chart
+            const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+            charts.traffic = new Chart(trafficCtx, {
+                type: 'line',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    datasets: [{
+                        label: 'Visitors',
+                        data: [1200, 1900, 3000, 5000, 6200, 7800, 9100, 10500, 12200, 14100, 16800, 18500],
+                        borderColor: '#00ff99',
+                        backgroundColor: 'rgba(0, 255, 153, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#00ff99'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#00ccaa' },
+                            grid: { color: 'rgba(0, 255, 153, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: '#00ccaa' },
+                            grid: { color: 'rgba(0, 255, 153, 0.1)' }
+                        }
+                    }
+                }
+            });
+            // Affiliate Chart
+            const affiliateCtx = document.getElementById('affiliateChart').getContext('2d');
+            charts.affiliate = new Chart(affiliateCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Conversions', 'Clicks'],
+                    datasets: [{
+                        data: [89, 1145],
+                        backgroundColor: ['#00ff99', 'rgba(0, 255, 153, 0.3)'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#00ff99'
+                            }
+                        }
+                    }
+                }
+            });
+            // Traffic Source Chart
+            const sourceCtx = document.getElementById('trafficSourceChart').getContext('2d');
+            charts.source = new Chart(sourceCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Google Search', 'Facebook', 'Direct', 'YouTube', 'Others'],
+                    datasets: [{
+                        data: [45, 25, 15, 10, 5],
+                        backgroundColor: [
+                            '#4285f4',
+                            '#1877f2',
+                            '#00ff99',
+                            '#ff0000',
+                            '#666666'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#111'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#00ff99'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        // Update Metrics
+        function updateMetrics() {
+            const visitors = document.getElementById('totalVisitors');
+            const clicks = document.getElementById('todayClicks');
+            const conversions = document.getElementById('conversions');
+            const revenue = document.getElementById('revenue');
+            // Simulate real-time updates
+            const currentVisitors = parseInt(visitors.textContent.replace(',', ''));
+            const currentClicks = parseInt(clicks.textContent.replace(',', ''));
+            const currentConversions = parseInt(conversions.textContent);
+            const currentRevenue = parseInt(revenue.textContent.replace('$', '').replace(',', ''));
+            visitors.textContent = (currentVisitors + Math.floor(Math.random() * 10) + 1).toLocaleString();
+            clicks.textContent = (currentClicks + Math.floor(Math.random() * 5) + 1).toLocaleString();
+            conversions.textContent = currentConversions + Math.floor(Math.random() * 3);
+            revenue.textContent = '$' + (currentRevenue + Math.floor(Math.random() * 50) + 10).toLocaleString();
+        }
+        // Content Generation Functions
+        function generateBlogContent() {
+            const keyword = document.getElementById('blogKeyword').value;
+            const contentType = document.getElementById('contentType').value;
+            const wordCount = document.getElementById('wordCount').value;
+            if (!keyword) {
+                showNotification('Please enter a keyword!', 'error');
+                return;
+            }
+            showNotification('Generating AI content...', 'info');
+            setTimeout(() => {
+                const generatedContent = generateAIContent(keyword, contentType, wordCount);
+                document.getElementById('generatedContent').value = generatedContent;
+                showNotification('Content successfully generated!', 'success');
+                addToLog(`AI content generated: "${keyword}"`);
+            }, 2000);
+        }
+        function generateSocialContent() {
+            const platform = document.getElementById('socialPlatform').value;
+            const postType = document.getElementById('postType').value;
+            showNotification('Creating social post...', 'info');
+            setTimeout(() => {
+                const content = generateSocialPost(platform, postType);
+                const hashtags = generateHashtags(platform);
+                document.getElementById('socialContent').value = content;
+                document.getElementById('hashtags').value = hashtags;
+                showNotification('Social post created!', 'success');
+                addToLog(`${platform} post generated`);
+            }, 1500);
+        }
+        function generateEmailContent() {
+            const emailType = document.getElementById('emailType').value;
+            const productName = document.getElementById('productName').value;
+            showNotification('Creating email content...', 'info');
+            setTimeout(() => {
+                const subject = generateEmailSubject(emailType, productName);
+                const content = generateEmailBody(emailType, productName);
+                document.getElementById('emailSubject').value = subject;
+                document.getElementById('emailContent').value = content;
+                showNotification('Email content created!', 'success');
+                addToLog(`${emailType} email template created`);
+            }, 1500);
+        }
+        function generateProductDescription() {
+            const title = document.getElementById('productTitle').value;
+            const category = document.getElementById('productCategory').value;
+            const price = document.getElementById('productPrice').value;
+            if (!title) {
+                showNotification('Please enter product name!', 'error');
+                return;
+            }
+            showNotification('Creating product description...', 'info');
+            setTimeout(() => {
+                const description = generateProductDesc(title, category, price);
+                document.getElementById('productDescription').value = description;
+                showNotification('Product description created!', 'success');
+                addToLog(`Product description created: "${title}"`);
+            }, 1500);
+        }
+        // SEO Functions
+        function analyzeSEO() {
+            const keyword = document.getElementById('targetKeyword').value;
+            const url = document.getElementById('contentUrl').value;
+            if (!keyword || !url) {
+                showNotification('Please enter keyword and URL!', 'error');
+                return;
+            }
+            showNotification('Analyzing SEO...', 'info');
+            setTimeout(() => {
+                const score = Math.floor(Math.random() * 30) + 70; // 70-100 range
+                document.getElementById('seoScore').style.width = score + '%';
+                document.getElementById('seoScoreText').textContent = score + '%';
+                showNotification(`SEO Score: ${score}%`, 'success');
+                addToLog(`SEO analysis completed: ${score}% score`);
+            }, 2000);
+        }
+        function generateKeywords() {
+            const keyword = document.getElementById('targetKeyword').value;
+            if (!keyword) {
+                showNotification('Please enter target keyword!', 'error');
+                return;
+            }
+            showNotification('Generating keywords...', 'info');
+            setTimeout(() => {
+                const keywords = generateRelatedKeywords(keyword);
+                document.getElementById('suggestedKeywords').value = keywords;
+                showNotification('Keywords generated!', 'success');
+                addToLog(`Keyword research completed: "${keyword}"`);
+            }, 1500);
+        }
+        // Social Media Functions
+        function schedulePost() {
+            const scheduleTime = document.getElementById('scheduleTime').value;
+            if (!scheduleTime) {
+                showNotification('Please select time!', 'error');
+                return;
+            }
+            if (selectedPlatforms.length === 0) {
+                showNotification('Please select at least one platform!', 'error');
+                return;
+            }
+            showNotification('Scheduling post...', 'info');
+            setTimeout(() => {
+                selectedPlatforms.forEach(platform => {
+                    const postData = {
+                        platform: platform,
+                        time: scheduleTime,
+                        content: 'Sample post content'
+                    };
+                    scheduledPosts.push(postData);
+                    addScheduledPostToUI(postData);
+                });
+                showNotification(`${selectedPlatforms.length} platforms scheduled!`, 'success');
+                addToLog(`${selectedPlatforms.length} platforms post scheduled`);
+                selectedPlatforms = [];
+                // Reset platform selection
+                document.querySelectorAll('.social-btn').forEach(btn => {
+                    btn.style.opacity = '0.5';
+                });
+            }, 1000);
+        }
+        // Affiliate Functions
+        function addAffiliateLink() {
+            const url = document.getElementById('affiliateUrl').value;
+            const product = document.getElementById('affiliateProduct').value;
+            const commission = document.getElementById('commissionRate').value;
+            if (!url || !product || !commission) {
+                showNotification('Please fill all fields!', 'error');
+                return;
+            }
+            const linkData = {
+                url: url,
+                product: product,
+                commission: commission,
+                clicks: 0,
+                conversions: 0,
+                earnings: 0
+            };
+            affiliateLinks.push(linkData);
+            showNotification('Affiliate link added!', 'success');
+            addToLog(`New affiliate link added: "${product}"`);
+            // Clear form
+            document.getElementById('affiliateUrl').value = '';
+            document.getElementById('affiliateProduct').value = '';
+            document.getElementById('commissionRate').value = '';
+        }
+        function trackClicks() {
+            showNotification('Starting click tracking...', 'info');
+            setTimeout(() => {
+                // Simulate click tracking
+                const newClicks = Math.floor(Math.random() * 100) + 50;
+                const newConversions = Math.floor(Math.random() * 10) + 2;
+                const newEarnings = Math.floor(Math.random() * 200) + 50;
+                document.getElementById('affiliateClicks').textContent = (parseInt(document.getElementById('affiliateClicks').textContent) + newClicks).toLocaleString();
+                document.getElementById('affiliateConversions').textContent = (parseInt(document.getElementById('affiliateConversions').textContent) + newConversions).toLocaleString();
+                document.getElementById('affiliateEarnings').textContent = '$' + (parseInt(document.getElementById('affiliateEarnings').textContent.replace('$', '')) + newEarnings).toLocaleString();
+                showNotification('Click tracking updated!', 'success');
+                addToLog(`Affiliate click update: +${newClicks} clicks, +${newConversions} conversions`);
+            }, 1500);
+        }
+        // Email Marketing Functions
+        function createEmailCampaign() {
+            const emailList = document.getElementById('emailList').value;
+            const campaignName = document.getElementById('campaignName').value;
+            if (!emailList || !campaignName) {
+                showNotification('Please enter email list and campaign name!', 'error');
+                return;
+            }
+            const emails = emailList.split('\n').filter(email => email.trim());
+            showNotification(`Sending campaign to ${emails.length} emails...`, 'info');
+            setTimeout(() => {
+                const sent = emails.length;
+                const opened = Math.floor(sent * 0.48); // 48% open rate
+                document.getElementById('emailsSent').textContent = (parseInt(document.getElementById('emailsSent').textContent) + sent).toLocaleString();
+                document.getElementById('emailsOpened').textContent = (parseInt(document.getElementById('emailsOpened').textContent) + opened).toLocaleString();
+                addEmailCampaignToUI(campaignName);
+                showNotification(`Campaign "${campaignName}" successfully sent!`, 'success');
+                addToLog(`Email campaign "${campaignName}" sent: ${sent} emails`);
+            }, 2000);
+        }
+        function importEmailList() {
+            showNotification('Importing email list...', 'info');
+            setTimeout(() => {
+                const sampleEmails = [
+                    'user1@example.com',
+                    'user2@example.com',
+                    'user3@example.com',
+                    'user4@example.com',
+                    'user5@example.com'
+                ];
+                document.getElementById('emailList').value = sampleEmails.join('\n');
+                showNotification('Email list imported!', 'success');
+                addToLog(`${sampleEmails.length} emails imported`);
+            }, 1000);
+        }
+        // Traffic Optimization Functions
+        function optimizeTraffic(source) {
+            showNotification(`Optimizing ${source} traffic...`, 'info');
+            setTimeout(() => {
+                let message = '';
+                switch(source) {
+                    case 'google':
+                        message = 'Google SEO optimization completed! Keyword ranking improved.';
+                        break;
+                    case 'social':
+                        message = 'Social media engagement increased by 35%!';
+                        break;
+                    case 'youtube':
+                        message = 'Video SEO optimized! Views will increase.';
+                        break;
+                }
+                showNotification(message, 'success');
+                addToLog(`Traffic optimization: ${source}`);
+            }, 2000);
+        }
+        // Competitor Analysis
+        function analyzeCompetitor() {
+            const url = document.getElementById('competitorUrl').value;
+            const analysisType = document.getElementById('analysisType').value;
+            if (!url) {
+                showNotification('Please enter competitor website URL!', 'error');
+                return;
+            }
+            showNotification('Analyzing competitor...', 'info');
+            setTimeout(() => {
+                const results = generateCompetitorAnalysis(analysisType);
+                const resultsContainer = document.getElementById('competitorResults');
+                resultsContainer.innerHTML = results;
+                showNotification('Competitor analysis completed!', 'success');
+                addToLog(`Competitor analysis completed: ${analysisType}`);
+            }, 3000);
+        }
+        // Settings Functions
+        function saveSettings() {
+            showNotification('Saving settings...', 'info');
+            setTimeout(() => {
+                showNotification('Settings saved successfully!', 'success');
+                addToLog('System settings updated');
+            }, 1000);
+        }
+        // Export/Import Functions
+        function exportData(type) {
+            showNotification(`Exporting ${type} data...`, 'info');
+            setTimeout(() => {
+                const data = generateExportData(type);
+                downloadData(data, `blackhattraffic_${type}_${new Date().toISOString().split('T')[0]}.json`);
+                showNotification(`${type} data export completed!`, 'success');
+                addToLog(`${type} data exported`);
+            }, 1500);
+        }
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            if (!fileInput.files[0]) {
+                showNotification('Please select a file!', 'error');
+                return;
+            }
+            showNotification('Importing data...', 'info');
+            setTimeout(() => {
+                showNotification('Data successfully imported!', 'success');
+                addToLog('Data import completed');
+            }, 2000);
+        }
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        function addToLog(message) {
+            const logsContainer = document.getElementById('automationLogs');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <div>${message}</div>
+                <div class="timestamp">${new Date().toLocaleString('en-US')}</div>
+            `;
+            logsContainer.insertBefore(logEntry, logsContainer.firstChild);
+            // Keep only last 20 logs
+            while (logsContainer.children.length > 20) {
+                logsContainer.removeChild(logsContainer.lastChild);
+            }
+        }
+        function addScheduledPostToUI(postData) {
+            const container = document.getElementById('scheduledPosts');
+            const postElement = document.createElement('div');
+            postElement.className = 'log-entry';
+            postElement.innerHTML = `
+                <div>${postData.platform} Post - "${postData.content}"</div>
+                <div class="timestamp">${new Date(postData.time).toLocaleString('en-US')}</div>
+                <span class="status-indicator status-pending">
+                    <i class="fas fa-clock"></i> Pending
+                </span>
+            `;
+            container.appendChild(postElement);
+        }
+        function addEmailCampaignToUI(campaignName) {
+            const container = document.getElementById('recentCampaigns');
+            const campaignElement = document.createElement('div');
+            campaignElement.className = 'log-entry';
+            campaignElement.innerHTML = `
+                <div>${campaignName}</div>
+                <div class="timestamp">${new Date().toLocaleString('en-US')}</div>
+                <span class="status-indicator status-active">
+                    <i class="fas fa-check"></i> Successful
+                </span>
+            `;
+            container.insertBefore(campaignElement, container.firstChild);
+        }
+        // Content Generation Helper Functions
+        function generateAIContent(keyword, contentType, wordCount) {
+            const templates = {
+                tutorial: `# ${keyword} - Complete Tutorial
+## Introduction
+Understanding ${keyword} is crucial in today's digital age. In this tutorial, we'll discuss all aspects of ${keyword} step by step.
+## Main Topics
+1. What is ${keyword} and why it's important
+2. Required tools to get started
+3. Step-by-step implementation process
+4. Common mistakes and solutions
+## Detailed Discussion
+To succeed with ${keyword}, first clarify the basic concepts. Then practice regularly and stay updated.
+## Summary
+By following this tutorial, you'll gain expertise in ${keyword}. Regular practice and patience are the keys to success.`,
+                tips: `# ${keyword} - 20 Effective Tips
+When working with ${keyword}, these tips will be helpful:
+1. **Plan ahead** - Create a clear plan before starting with ${keyword}
+2. **Practice regularly** - Spend at least 30 minutes daily working on ${keyword}
+3. **Stay updated** - Follow new trends and updates in ${keyword}
+## Advanced Tips
+- Take advice from experts
+- Join communities
+- Track performance regularly
+## Caution
+Be patient with ${keyword} and don't try to do too many things at once.`,
+                review: `# ${keyword} - Detailed Review
+## Product/Service Introduction
+${keyword} is an excellent solution we've tested. We've been using it for the past 3 months.
+## Positive Aspects
+✅ Very easy to use
+✅ Quick results
+✅ Good value for money
+✅ Excellent customer service
+## Negative Aspects
+❌ Somewhat slow in certain areas
+❌ Not all features are free
+## Our Rating: 4.5/5
+${keyword} is an outstanding product/service. We recommend it to everyone.`,
+                comparison: `# ${keyword} - Comparative Analysis
+## Product Comparison
+We've compared ${keyword} with other popular alternatives:
+| Feature | ${keyword} | Alternative 1 | Alternative 2 |
+|----------|------------|---------|---------|
+| Price | ★★★★☆ | ★★★☆☆ | ★★★★★ |
+| Quality | ★★★★★ | ★★★★☆ | ★★★☆☆ |
+| Availability | ★★★★☆ | ★★★☆☆ | ★★★★☆ |
+## Conclusion
+Considering all aspects, ${keyword} is the best choice.`,
+                guide: `# ${keyword} - Complete Guide 2024
+## What You Need to Know Before Starting
+Before learning about ${keyword} in detail, some fundamental aspects need to be understood.
+## Step 1: Preparation
+- Gather necessary tools
+- Set goals
+- Create a schedule
+## Step 2: Implementation
+Follow these steps to start working with ${keyword}.
+## Step 3: Monitoring
+Regularly check progress and make adjustments as needed.
+## Tips for Success
+- Be patient
+- Practice regularly
+- Take advice from experts`
+            };
+            return templates[contentType] || templates.guide;
+        }
+        function generateSocialPost(platform, postType) {
+            const posts = {
+                facebook: {
+                    promotional: '🔥 Special Offer! Get our premium course at 50% discount today. Limited time only! #DigitalMarketing #OnlineBusiness #SpecialOffer',
+                    educational: '💡 Digital Marketing Tip: Want to succeed in SEO? First do keyword research, then create quality content. Be patient, results will come! #SEO #DigitalMarketing #OnlineSuccess',
+                    engaging: '🤔 Question: What\'s your biggest challenge in digital marketing? Let us know in the comments! We\'ll try to provide solutions. 💪',
+                    viral: '🚀 Income increased by 500% in just 30 days! How? By following this one trick... (details in comments)'
+                },
+                instagram: {
+                    promotional: '✨ Limited Time Offer ✨\n50% OFF on our Premium Course!\nTransform your digital marketing skills today 📈\n#DigitalMarketing #OnlineBusiness #Course #LimitedOffer',
+                    educational: '📚 DIGITAL MARKETING TIP #1\nKeyword Research = SEO Success 🔑\nAlways start with understanding what your audience is searching for!\n#SEO #KeywordResearch #DigitalTips',
+                    engaging: '💭 QUESTION TIME!\nWhat\'s your biggest digital marketing struggle?\nDrop it in the comments 👇\nLet\'s solve it together! 💪',
+                    viral: '🔥 30 DAYS = 500% INCOME BOOST\nOne simple trick changed everything...\nSwipe to see the secret ➡️'
+                },
+                twitter: {
+                    promotional: '🎯 Special Offer Alert!\n50% OFF Premium Digital Marketing Course\n⏰ Limited time only!\nTransform your business today 🚀\n#DigitalMarketing #SpecialOffer',
+                    educational: '💡 SEO Tip: Quality content + proper keyword research = better rankings\nSimple formula, powerful results! 📈\n#SEO #DigitalMarketing',
+                    engaging: 'What\'s your biggest digital marketing challenge? 🤔\nReply below and let\'s brainstorm solutions together! 💪\n#DigitalMarketing #Community',
+                    viral: '🚀 How I increased my income by 500% in 30 days:\n1. Found my niche\n2. Created value\n3. Stayed consistent\nThread below 👇'
+                }
+            };
+            return posts[platform][postType] || posts.facebook.educational;
+        }
+        function generateHashtags(platform) {
+            const hashtags = {
+                facebook: '#DigitalMarketing #OnlineBusiness #SEO #SocialMediaMarketing #ContentMarketing #Entrepreneur #Success #Marketing #Business #OnlineSuccess',
+                instagram: '#digitalmarketing #onlinebusiness #seo #contentmarketing #socialmediamarketing #entrepreneur #marketing #business #success #marketingtips #onlinesuccess #digitalentrepreneur #marketingstrategy #businessgrowth #onlinemarketing',
+                twitter: '#DigitalMarketing #SEO #OnlineBusiness #Marketing #Entrepreneur #Success #SocialMedia #ContentMarketing #BusinessGrowth #OnlineSuccess',
+                linkedin: '#DigitalMarketing #ProfessionalDevelopment #BusinessStrategy #OnlineBusiness #Marketing #Leadership #Success #Networking #CareerGrowth #BusinessDevelopment',
+                pinterest: '#DigitalMarketing #OnlineBusiness #MarketingTips #SEO #ContentMarketing #Entrepreneur #BusinessIdeas #MarketingStrategy #OnlineSuccess #BusinessGrowth',
+                tiktok: '#digitalmarketing #onlinebusiness #entrepreneur #success #marketing #business #seo #contentmarketing #marketingtips #businessgrowth'
+            };
+            return hashtags[platform] || hashtags.facebook;
+        }
+        function generateEmailSubject(emailType, productName) {
+            const subjects = {
+                newsletter: `${productName} - This Week\'s Best Tips 📧`,
+                promotional: `🔥 ${productName} - Special Offer (Limited Time!)`,
+                welcome: `Welcome! Start Your Journey with ${productName} 🎉`,
+                followup: `${productName} - How\'s Your Experience? Let Us Know 💭`
+            };
+            return subjects[emailType] || subjects.newsletter;
+        }
+        function generateEmailBody(emailType, productName) {
+            const bodies = {
+                newsletter: `Dear Customer,
+Hope you're doing well. This week, we bring you some great tips from ${productName}:
+1. 5 Ways to Increase Social Media Engagement
+2. Secret Techniques to Improve SEO Ranking
+3. New Trends in Content Marketing
+Visit our website for more details.
+Thank you,
+${productName} Team`,
+                promotional: `Special Offer! 🎉
+Dear Customer,
+We're offering a special discount for ${productName}:
+⭐ Up to 50% off
+⭐ Free shipping
+⭐ 30-day money back guarantee
+This offer is for a limited time only. Don't delay, order today!
+[Order Now]
+${productName} Team`,
+                welcome: `Welcome to ${productName}! 🎊
+Dear New Member,
+Thank you for joining ${productName}! We're here to help you start your digital marketing journey.
+First steps:
+1. Complete your profile
+2. Read our beginner's guide
+3. Join the community
+Contact us if you have any questions.
+Best wishes,
+${productName} Team`,
+                followup: `Your Opinion Matters 💭
+Dear Customer,
+How has your experience been with ${productName}? We'd like to know:
+• Has our service met your expectations?
+• What areas need improvement?
+• Do you have any suggestions?
+Your valuable feedback will help us provide better service.
+[Give Feedback]
+Sincerely,
+${productName} Team`
+            };
+            return bodies[emailType] || bodies.newsletter;
+        }
+        function generateProductDesc(title, category, price) {
+            return `# ${title}
+## Product Description
+${title} is an exceptional ${category} product specially designed to meet your needs.
+## Key Features:
+✅ Made with high-quality materials
+✅ Durable and long-lasting
+✅ Extremely easy to use
+✅ Attractive design
+✅ Affordable price
+## Why Choose ${title}?
+Our ${title} is more effective and higher quality compared to other products in the market. We prioritize customer satisfaction above all.
+## Price: $${price}
+## Special Offer:
+🎉 Order now and get 20% off!
+🚚 Free shipping nationwide
+🔄 7-day return policy
+Order today and enjoy the exceptional quality of ${title}!`;
+        }
+        function generateRelatedKeywords(keyword) {
+            const keywordVariations = [
+                `${keyword} tips`,
+                `${keyword} guide`,
+                `${keyword} tutorial`,
+                `${keyword} techniques`,
+                `how to learn ${keyword}`,
+                `${keyword} in English`,
+                `${keyword} course`,
+                `${keyword} training`,
+                `${keyword} expert`,
+                `${keyword} service`,
+                `${keyword} solution`,
+                `${keyword} advice`,
+                `${keyword} coaching`,
+                `${keyword} career`,
+                `${keyword} jobs`,
+                `${keyword} business`,
+                `${keyword} income`,
+                `${keyword} success`,
+                `${keyword} skills`,
+                `${keyword} improvement`
+            ];
+            return keywordVariations.join(', ');
+        }
+        function generateCompetitorAnalysis(type) {
+            const analyses = {
+                keywords: `
+                    <div class="log-entry">
+                        <div><strong>Top Performing Keywords:</strong></div>
+                        <div>• digital marketing (rank: 3)</div>
+                        <div>• seo services (rank: 7)</div>
+                        <div>• online marketing (rank: 12)</div>
+                    </div>
+                    <div class="log-entry">
+                        <div><strong>Keyword Gap:</strong></div>
+                        <div>• social media marketing (opportunity available)</div>
+                        <div>• content marketing (low competition)</div>
+                    </div>
+                `,
+                backlinks: `
+                    <div class="log-entry">
+                        <div><strong>Total Backlinks:</strong> 2,345</div>
+                        <div><strong>Referring Domains:</strong> 567</div>
+                    </div>
+                    <div class="log-entry">
+                        <div><strong>Top Backlink Sources:</strong></div>
+                        <div>• authority-site.com (DA: 85)</div>
+                        <div>• news-portal.com (DA: 72)</div>
+                    </div>
+                `,
+                content: `
+                    <div class="log-entry">
+                        <div><strong>Content Types:</strong> Blog posts (60%), Videos (25%), Infographics (15%)</div>
+                    </div>
+                    <div class="log-entry">
+                        <div><strong>Publishing Frequency:</strong> 3 posts per week</div>
+                    </div>
+                    <div class="log-entry">
+                        <div><strong>Average Content Length:</strong> 1,500 words</div>
+                    </div>
+                `,
+                traffic: `
+                    <div class="log-entry">
+                        <div><strong>Monthly Visitors:</strong> ~75,000</div>
+                        <div><strong>Bounce Rate:</strong> 45%</div>
+                    </div>
+                    <div class="log-entry">
+                        <div><strong>Traffic Sources:</strong></div>
+                        <div>• Organic Search (55%)</div>
+                        <div>• Social Media (25%)</div>
+                        <div>• Direct (20%)</div>
+                    </div>
+                `
+            };
+            return analyses[type] || analyses.keywords;
+        }
+        function generateExportData(type) {
+            const sampleData = {
+                analytics: {
+                    visitors: 45892,
+                    clicks: 2340,
+                    conversions: 856,
+                    revenue: 12450,
+                    sources: ['Google', 'Facebook', 'Direct'],
+                    exportDate: new Date().toISOString()
+                },
+                content: {
+                    totalPosts: 156,
+                    publishedThisMonth: 12,
+                    categories: ['Tutorial', 'Tips', 'Review'],
+                    exportDate: new Date().toISOString()
+                },
+                affiliates: {
+                    totalLinks: affiliateLinks.length,
+                    totalClicks: 1234,
+                    totalEarnings: 456,
+                    links: affiliateLinks,
+                    exportDate: new Date().toISOString()
+                },
+                all: {
+                    analytics: { visitors: 45892, clicks: 2340 },
+                    content: { totalPosts: 156 },
+                    affiliates: { totalLinks: affiliateLinks.length },
+                    settings: { autoPublish: true },
+                    exportDate: new Date().toISOString()
+                }
+            };
+            return JSON.stringify(sampleData[type] || sampleData.all, null, 2);
+        }
+        function downloadData(data, filename) {
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

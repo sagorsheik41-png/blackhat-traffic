@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Hat Traffic X v5.0 Ultimate - Complete Adobe Stock Success Suite</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 25%, #2d1b4e 50%, #1e293b 75%, #0f172a 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Enhanced Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            padding: 80px 60px;
+            text-align: center;
+            border-radius: 30px;
+            margin-bottom: 60px;
+            box-shadow: 0 25px 80px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: heroShine 4s ease-in-out infinite;
+        }
+
+        @keyframes heroShine {
+            0%, 100% { left: -100%; }
+            50% { left: 100%; }
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ffffff, #f0f8ff, #e6f3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+            font-weight: 500;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* Problem Analysis Section */
+        .problem-section {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 25px;
+            padding: 50px;
+            margin-bottom: 50px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706);
+            background-size: 300% 100%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .problem-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .problem-item {
+            background: rgba(255,255,255,0.15);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+        }
+
+        .problem-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .problem-item h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .problem-item ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .problem-item li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Solution Section */
+        .solution-section {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 25px;
+            padding: 50px;
+            margin-bottom: 50px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #34d399, #10b981, #059669);
+            background-size: 300% 100%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        .solution-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .solution-item {
+            background: rgba(255,255,255,0.15);
+            padding: 35px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+        }
+
+        .solution-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .solution-item h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .solution-steps {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .solution-steps li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            font-size: 1.1rem;
+        }
+
+        .solution-steps li .step-number {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Enhanced Cards */
+        .enhanced-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 3px solid #334155;
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enhanced-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b);
+            background-size: 400% 100%;
+            animation: gradientMove 4s ease infinite;
+        }
+
+        .enhanced-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 35px 80px rgba(0,0,0,0.5);
+            border-color: #64748b;
+        }
+
+        .card-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Content Generator Styles */
+        .content-generator {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            border: 3px solid #334155;
+            margin-bottom: 50px;
+        }
+
+        .generator-header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            padding: 70px 60px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generator-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: headerShine 5s ease-in-out infinite;
+        }
+
+        @keyframes headerShine {
+            0%, 100% { left: -100%; }
+            50% { left: 100%; }
+        }
+
+        .generator-title {
+            font-size: 3.2rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+        }
+
+        .generator-subtitle {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .generator-description {
+            font-size: 1.3rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .content-type-selector {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px;
+            position: relative;
+        }
+
+        .selector-label {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .content-type-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .content-type-option {
+            background: rgba(255,255,255,0.1);
+            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-align: center;
+            font-weight: 700;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .content-type-option:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .content-type-option.selected {
+            background: rgba(251, 191, 36, 0.4);
+            border-color: #fbbf24;
+            color: #fbbf24;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.3);
+        }
+
+        .content-type-option i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .generator-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.6rem;
+            padding: 30px 60px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-weight: 800;
+            margin: 40px auto;
+            display: block;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .generator-button:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 60px rgba(102, 126, 234, 0.6);
+        }
+
+        .generator-results {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+            padding: 50px;
+        }
+
+        .generator-results.show {
+            display: grid;
+        }
+
+        .content-item {
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            border: 3px solid #64748b;
+            border-radius: 25px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            background-size: 300% 100%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        .content-item:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+        }
+
+        .content-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .keyword-tag:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Enhanced Buttons */
+        .btn {
+            cursor: pointer;
+            transition: all 0.4s ease;
+            padding: 20px 40px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-width: 180px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.6);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #1f2937;
+        }
+
+        .btn-warning:hover {
+            box-shadow: 0 20px 50px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 20px 50px rgba(100, 116, 139, 0.6);
+        }
+
+        /* Form Elements */
+        .form-input, .form-select, .form-textarea {
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            border: 3px solid #64748b;
+            color: #e2e8f0;
+            padding: 20px 25px;
+            border-radius: 15px;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.2);
+            outline: none;
+            transform: translateY(-3px);
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        /* Tables */
+        .enhanced-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            border: 3px solid #334155;
+        }
+
+        .enhanced-table th, .enhanced-table td {
+            padding: 25px;
+            text-align: left;
+            border-bottom: 2px solid #334155;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .enhanced-table th {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .enhanced-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .enhanced-table tbody tr:hover {
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            transform: scale(1.02);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 3px solid #334155;
+            border-radius: 25px;
+            padding: 40px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
+            background-size: 400% 100%;
+            animation: gradientMove 4s ease infinite;
+        }
+
+        /* Success Tips */
+        .success-tip {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            color: white;
+            border-left: 6px solid #34d399;
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+        }
+
+        .warning-tip {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            color: #1f2937;
+            border-left: 6px solid #fbbf24;
+            box-shadow: 0 15px 40px rgba(245, 158, 11, 0.3);
+        }
+
+        .pro-tip {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            color: white;
+            border-left: 6px solid #a78bfa;
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            border: 5px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification System */
+        .notification-container {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 500px;
+        }
+
+        .notification {
+            padding: 25px 35px;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.6s ease;
+            backdrop-filter: blur(20px);
+            border: 3px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .notification-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #1f2937;
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+
+        /* Links Section */
+        .links-section {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 3px solid #334155;
+            border-radius: 30px;
+            padding: 50px;
+            margin: 50px 0;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .links-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
+            background-size: 400% 100%;
+            animation: gradientMove 4s ease infinite;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .link-item {
+            padding: 30px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.4s ease;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .link-item:hover::before {
+            left: 100%;
+        }
+
+        .link-item:hover {
+            transform: translateY(-12px);
+        }
+
+        .link-item.recraft {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
+        }
+
+        .link-item.recraft:hover {
+            box-shadow: 0 25px 60px rgba(139, 92, 246, 0.6);
+        }
+
+        .link-item.adobe {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.4);
+        }
+
+        .link-item.adobe:hover {
+            box-shadow: 0 25px 60px rgba(239, 68, 68, 0.6);
+        }
+
+        .link-item.telegram {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
+        }
+
+        .link-item.telegram:hover {
+            box-shadow: 0 25px 60px rgba(6, 182, 212, 0.6);
+        }
+
+        .link-item.youtube {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.4);
+        }
+
+        .link-item.youtube:hover {
+            box-shadow: 0 25px 60px rgba(239, 68, 68, 0.6);
+        }
+
+        /* Footer */
+        .enhanced-footer {
+            margin-top: 80px;
+            padding: 60px;
+            text-align: center;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 30px;
+            border: 3px solid #334155;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enhanced-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
+            background-size: 400% 100%;
+            animation: gradientMove 4s ease infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container { padding: 20px 15px; }
+            .hero-section { padding: 50px 30px; }
+            .hero-title { font-size: 2.8rem; }
+            .hero-subtitle { font-size: 1.4rem; }
+            .hero-description { font-size: 1.1rem; }
+            .problem-grid, .solution-grid { grid-template-columns: 1fr; }
+            .content-type-options { grid-template-columns: 1fr; }
+            .generator-results { grid-template-columns: 1fr; padding: 30px 20px; }
+            .links-grid { grid-template-columns: 1fr; }
+            .chart-container { height: 400px; padding: 20px; }
+            .enhanced-card { padding: 25px; }
+            .btn { padding: 16px 30px; font-size: 1rem; min-width: 150px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2.2rem; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .card-title { font-size: 1.8rem; }
+            .problem-title, .solution-title { font-size: 2.2rem; }
+            .generator-title { font-size: 2.5rem; }
+            .enhanced-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Enhanced Hero Section -->
+        <header class="hero-section">
+            <h1 class="hero-title">
+                <i class="fas fa-rocket mr-6"></i>
+                Black Hat Traffic X 
+                <span style="color: #fbbf24;">v5.0 Ultimate</span>
+            </h1>
+            <p class="hero-subtitle">
+                Complete Adobe Stock Success Master Suite
+            </p>
+            <p class="hero-description">
+                The ultimate professional toolkit for maximizing Adobe Stock sales with advanced AI content generation, market analysis, keyword optimization, and proven success strategies
+            </p>
+            <div class="hero-badge">
+                <i class="fas fa-crown mr-3"></i>
+                Professional Grade • Complete Solution • Proven Results
+            </div>
+        </header>
+
+        <!-- Problem Analysis Section -->
+        <section class="problem-section">
+            <h2 class="problem-title">
+                <i class="fas fa-exclamation-triangle mr-4"></i>
+                Why Your Adobe Stock Sales Are Low
+            </h2>
+            <p style="font-size: 1.4rem; text-align: center; margin-bottom: 40px; font-weight: 500;">
+                Understanding these critical issues is the first step to success
+            </p>
+            
+            <div class="problem-grid">
+                <div class="problem-item">
+                    <h3>
+                        <i class="fas fa-search-minus"></i>
+                        Poor Keyword Strategy
+                    </h3>
+                    <ul>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Using generic, overused keywords</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Not researching trending terms</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Insufficient keyword count (less than 40)</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Missing long-tail keywords</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> No market-specific terminology</li>
+                    </ul>
+                </div>
+
+                <div class="problem-item">
+                    <h3>
+                        <i class="fas fa-image"></i>
+                        Quality & Technical Issues
+                    </h3>
+                    <ul>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Low resolution or poor composition</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Technical artifacts or noise</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Wrong file formats or specifications</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Inconsistent style or branding</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Not following current design trends</li>
+                    </ul>
+                </div>
+
+                <div class="problem-item">
+                    <h3>
+                        <i class="fas fa-chart-line"></i>
+                        Market Research Gaps
+                    </h3>
+                    <ul>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> No competitor analysis</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Ignoring seasonal demands</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Wrong category targeting</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Not understanding buyer personas</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Missing trending topics and themes</li>
+                    </ul>
+                </div>
+
+                <div class="problem-item">
+                    <h3>
+                        <i class="fas fa-upload"></i>
+                        Upload Strategy Problems
+                    </h3>
+                    <ul>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Irregular or infrequent uploads</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Poor timing and scheduling</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> No batch upload strategy</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> Weak titles and descriptions</li>
+                        <li><i class="fas fa-times-circle" style="color: #fca5a5;"></i> No portfolio organization</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Section -->
+        <section class="solution-section">
+            <h2 class="solution-title">
+                <i class="fas fa-trophy mr-4"></i>
+                The Complete Success Formula
+            </h2>
+            <p style="font-size: 1.4rem; text-align: center; margin-bottom: 40px; font-weight: 500;">
+                Proven strategies that have generated millions in Adobe Stock sales
+            </p>
+            
+            <div class="solution-grid">
+                <div class="solution-item">
+                    <h3>
+                        <i class="fas fa-search-plus"></i>
+                        Advanced Keyword Optimization
+                    </h3>
+                    <ol class="solution-steps">
+                        <li>
+                            <span class="step-number">1</span>
+                            <div>
+                                <strong>Research trending keywords weekly</strong><br>
+                                Use Google Trends, Adobe Stock search, and industry reports to identify high-demand terms
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">2</span>
+                            <div>
+                                <strong>Use 45-50 unique keywords per asset</strong><br>
+                                Mix broad terms, specific phrases, and long-tail keywords for maximum coverage
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">3</span>
+                            <div>
+                                <strong>Include market-specific terminology</strong><br>
+                                Add industry jargon, technical terms, and business-specific language
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">4</span>
+                            <div>
+                                <strong>Optimize for voice search</strong><br>
+                                Include natural language phrases and question-based keywords
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="solution-item">
+                    <h3>
+                        <i class="fas fa-star"></i>
+                        Quality Excellence Standards
+                    </h3>
+                    <ol class="solution-steps">
+                        <li>
+                            <span class="step-number">1</span>
+                            <div>
+                                <strong>Minimum 4000x4000px resolution</strong><br>
+                                Ensure crisp, professional quality for both digital and print use
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">2</span>
+                            <div>
+                                <strong>Perfect technical specifications</strong><br>
+                                RGB color mode, 300 DPI, noise-free, properly exposed
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">3</span>
+                            <div>
+                                <strong>Follow current design trends</strong><br>
+                                Study top-selling assets and incorporate modern design elements
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">4</span>
+                            <div>
+                                <strong>Ensure commercial viability</strong><br>
+                                Create content that businesses actually need and will purchase
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="solution-item">
+                    <h3>
+                        <i class="fas fa-calendar-alt"></i>
+                        Strategic Upload Planning
+                    </h3>
+                    <ol class="solution-steps">
+                        <li>
+                            <span class="step-number">1</span>
+                            <div>
+                                <strong>Upload 10-20 related assets in batches</strong><br>
+                                Create momentum and increase visibility through algorithmic boost
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">2</span>
+                            <div>
+                                <strong>Maintain consistent daily uploads</strong><br>
+                                Regular activity improves portfolio ranking and exposure
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">3</span>
+                            <div>
+                                <strong>Time uploads for peak hours</strong><br>
+                                Upload during business hours in major markets (US, EU)
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">4</span>
+                            <div>
+                                <strong>Plan seasonal content 2-3 months ahead</strong><br>
+                                Prepare holiday, event, and seasonal content in advance
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="solution-item">
+                    <h3>
+                        <i class="fas fa-chart-bar"></i>
+                        Market Intelligence Strategy
+                    </h3>
+                    <ol class="solution-steps">
+                        <li>
+                            <span class="step-number">1</span>
+                            <div>
+                                <strong>Analyze top-performing competitors weekly</strong><br>
+                                Study bestsellers in your category for inspiration and gaps
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">2</span>
+                            <div>
+                                <strong>Track industry trends and news</strong><br>
+                                Stay updated on business needs, technology, and design trends
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">3</span>
+                            <div>
+                                <strong>Monitor search data and analytics</strong><br>
+                                Use Adobe Contributor insights and external tools for data
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">4</span>
+                            <div>
+                                <strong>Create content for emerging niches</strong><br>
+                                Identify underserved markets and create targeted content
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Content Generator -->
+        <section class="content-generator">
+            <div class="generator-header">
+                <h2 class="generator-title">
+                    <i class="fas fa-magic mr-4"></i>
+                    AI Content Generator Ultimate
+                </h2>
+                <p class="generator-subtitle">
+                    Generate 50,000+ unique, market-optimized content ideas
+                </p>
+                <p class="generator-description">
+                    Each generation creates completely unique combinations that never repeat, optimized for maximum Adobe Stock success
+                </p>
+            </div>
+
+            <div class="content-type-selector">
+                <div class="selector-label">
+                    <i class="fas fa-palette"></i>
+                    Choose Content Focus for Maximum Sales Impact
+                </div>
+                <div class="content-type-options" id="content-type-options">
+                    <div class="content-type-option selected" data-type="mixed">
+                        <i class="fas fa-random"></i>
+                        <div style="font-size: 1.1rem; margin-bottom: 8px;">Mixed Content</div>
+                        <small style="opacity: 0.8;">Best variety & coverage</small>
+                    </div>
+                    <div class="content-type-option" data-type="business">
+                        <i class="fas fa-briefcase"></i>
+                        <div style="font-size: 1.1rem; margin-bottom: 8px;">Business Focus</div>
+                        <small style="opacity: 0.8;">High commercial demand</small>
+                    </div>
+                    <div class="content-type-option" data-type="technology">
+                        <i class="fas fa-microchip"></i>
+                        <div style="font-size: 1.1rem; margin-bottom: 8px;">Technology</div>
+                        <small style="opacity: 0.8;">Trending & high-value</small>
+                    </div>
+                    <div class="content-type-option" data-type="creative">
+                        <i class="fas fa-paint-brush"></i>
+                        <div style="font-size: 1.1rem; margin-bottom: 8px;">Creative Arts</div>
+                        <small style="opacity: 0.8;">Unique designs</small>
+                    </div>
+                    <div class="content-type-option" data-type="nature">
+                        <i class="fas fa-leaf"></i>
+                        <div style="font-size: 1.1rem; margin-bottom: 8px;">Nature & Sustainability</div>
+                        <small style="opacity: 0.8;">Growing market trend</small>
+                    </div>
+                    <div class="content-type-option" data-type="lifestyle">
+                        <i class="fas fa-heart"></i>
+                        <div style="font-size: 1.1rem; margin-bottom: 8px;">Lifestyle & Health</div>
+                        <small style="opacity: 0.8;">Popular evergreen niche</small>
+                    </div>
+                </div>
+            </div>
+
+            <button id="generate-content" class="generator-button">
+                <i class="fas fa-rocket mr-4"></i>
+                Generate Adobe Stock Optimized Content
+            </button>
+
+            <div class="generator-results" id="content-results">
+                <!-- Generated content will appear here -->
+            </div>
+        </section>
+
+        <!-- Market Analysis Dashboard -->
+        <section class="enhanced-card">
+            <h2 class="card-title">
+                <i class="fas fa-chart-line"></i>
+                Market Performance Analytics
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 20px; text-align: center; color: white;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;" id="total-earnings">$0</div>
+                    <div style="font-size: 1.1rem; font-weight: 600;">Total Earnings</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 30px; border-radius: 20px; text-align: center; color: white;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;" id="total-downloads">0</div>
+                    <div style="font-size: 1.1rem; font-weight: 600;">Total Downloads</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 30px; border-radius: 20px; text-align: center; color: white;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;" id="total-assets">0</div>
+                    <div style="font-size: 1.1rem; font-weight: 600;">Portfolio Assets</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 30px; border-radius: 20px; text-align: center; color: white;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;" id="acceptance-rate">0%</div>
+                    <div style="font-size: 1.1rem; font-weight: 600;">Acceptance Rate</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="performance-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Success Tips & Strategies -->
+        <section class="enhanced-card">
+            <h2 class="card-title">
+                <i class="fas fa-lightbulb"></i>
+                Advanced Success Strategies
+            </h2>
+
+            <div class="success-tip">
+                <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px;">
+                    <i class="fas fa-crown mr-3"></i>
+                    The Golden Rules for Adobe Stock Success
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">📈 Upload Strategy</h4>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li style="padding: 5px 0;">✓ Upload 15-25 assets per week minimum</li>
+                            <li style="padding: 5px 0;">✓ Batch similar content together</li>
+                            <li style="padding: 5px 0;">✓ Upload during peak business hours</li>
+                            <li style="padding: 5px 0;">✓ Maintain consistent quality standards</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">🎯 Content Focus</h4>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li style="padding: 5px 0;">✓ Business and technology themes</li>
+                            <li style="padding: 5px 0;">✓ Clean, minimalist designs</li>
+                            <li style="padding: 5px 0;">✓ Versatile, multi-use concepts</li>
+                            <li style="padding: 5px 0;">✓ Trending color palettes</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">🔍 Keyword Mastery</h4>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li style="padding: 5px 0;">✓ 45-50 keywords per asset</li>
+                            <li style="padding: 5px 0;">✓ Mix broad and specific terms</li>
+                            <li style="padding: 5px 0;">✓ Include seasonal keywords</li>
+                            <li style="padding: 5px 0;">✓ Research competitor keywords</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">💰 Revenue Optimization</h4>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li style="padding: 5px 0;">✓ Focus on high-demand categories</li>
+                            <li style="padding: 5px 0;">✓ Create series and collections</li>
+                            <li style="padding: 5px 0;">✓ Optimize for extended licenses</li>
+                            <li style="padding: 5px 0;">✓ Monitor and adapt to trends</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-tip">
+                <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px;">
+                    <i class="fas fa-exclamation-triangle mr-3"></i>
+                    Critical Mistakes That Kill Sales
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <strong>❌ Poor Image Quality</strong><br>
+                        <span style="opacity: 0.8;">Low resolution, noise, poor composition, technical issues</span>
+                    </div>
+                    <div>
+                        <strong>❌ Generic Keywords</strong><br>
+                        <span style="opacity: 0.8;">Overused terms, insufficient count, no research</span>
+                    </div>
+                    <div>
+                        <strong>❌ Wrong Categories</strong><br>
+                        <span style="opacity: 0.8;">Misplaced content, unclear categorization</span>
+                    </div>
+                    <div>
+                        <strong>❌ Irregular Uploads</strong><br>
+                        <span style="opacity: 0.8;">Inconsistent posting, long gaps, no strategy</span>
+                    </div>
+                    <div>
+                        <strong>❌ Trend Ignorance</strong><br>
+                        <span style="opacity: 0.8;">Outdated styles, missing market demands</span>
+                    </div>
+                    <div>
+                        <strong>❌ Poor Descriptions</strong><br>
+                        <span style="opacity: 0.8;">Weak titles, insufficient metadata</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pro-tip">
+                <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px;">
+                    <i class="fas fa-star mr-3"></i>
+                    Pro Insider Secrets (Worth $10,000+)
+                </h3>
+                <div style="margin-top: 20px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">🚀 The 10x Content Multiplier Strategy</h4>
+                        <p>Create one master concept, then develop 10-15 variations: different colors, layouts, text styles, and orientations. This creates a content series that dominates search results and increases overall visibility.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">📊 The Trend Prediction Method</h4>
+                        <p>Monitor Google Trends, industry reports, and seasonal patterns 3-6 months ahead. Create content for emerging trends before competition increases. Early adopters often see 500%+ higher sales.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px;">
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">💎 The Portfolio Authority Hack</h4>
+                        <p>Focus on becoming the #1 contributor in 2-3 specific niches rather than spreading thin. Upload 100+ related assets in your chosen niches to build authority and dominate search results.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- File Upload Tracker -->
+        <section class="enhanced-card">
+            <h2 class="card-title">
+                <i class="fas fa-upload"></i>
+                Upload Performance Tracker
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <input type="text" id="file-name" placeholder="Asset title" class="form-input">
+                <input type="date" id="upload-date" class="form-input">
+                <select id="file-status" class="form-select">
+                    <option value="Uploaded">Uploaded</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Live">Live & Selling</option>
+                </select>
+                <input type="number" id="download-count" placeholder="Downloads" class="form-input">
+                <button id="add-file" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Asset</span>
+                </button>
+            </div>
+
+            <div style="overflow-x: auto; border-radius: 20px;">
+                <table class="enhanced-table">
+                    <thead>
+                        <tr>
+                            <th>Asset Title</th>
+                            <th>Upload Date</th>
+                            <th>Status</th>
+                            <th>Downloads</th>
+                            <th>Revenue Est.</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="file-tracker-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 50px; font-size: 1.2rem;">
+                                <i class="fas fa-upload" style="font-size: 3rem; margin-bottom: 20px; display: block;"></i>
+                                Start tracking your Adobe Stock uploads for better performance insights
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Keyword Research Tool -->
+        <section class="enhanced-card">
+            <h2 class="card-title">
+                <i class="fas fa-search"></i>
+                Advanced Keyword Research Tool
+            </h2>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div>
+                    <label style="display: block; font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; color: #3b82f6;">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        Describe Your Content Concept
+                    </label>
+                    <textarea id="content-description" placeholder="Example: Modern minimalist business icons for corporate presentations, featuring clean lines and professional color scheme..." class="form-textarea" rows="4"></textarea>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; color: #10b981;">
+                        <i class="fas fa-bullseye mr-2"></i>
+                        Target Category
+                    </label>
+                    <select id="keyword-category" class="form-select" style="margin-bottom: 20px;">
+                        <option value="business">Business & Finance</option>
+                        <option value="technology">Technology & Innovation</option>
+                        <option value="lifestyle">Lifestyle & Health</option>
+                        <option value="nature">Nature & Environment</option>
+                        <option value="education">Education & Science</option>
+                        <option value="creative">Creative & Arts</option>
+                        <option value="travel">Travel & Tourism</option>
+                        <option value="food">Food & Cooking</option>
+                    </select>
+                    <button id="generate-keywords" class="btn btn-success" style="width: 100%;">
+                        <i class="fas fa-magic"></i>
+                        <span>Generate Keywords</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="keyword-results" style="display: none;">
+                <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; color: #8b5cf6;">
+                    <i class="fas fa-tags mr-2"></i>
+                    Generated Keywords (Ready for Adobe Stock)
+                </h3>
+                <div id="keyword-container" style="margin-bottom: 20px;">
+                    <!-- Keywords will be generated here -->
+                </div>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button id="copy-keywords" class="btn btn-primary">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy All Keywords</span>
+                    </button>
+                    <button id="export-keywords" class="btn btn-secondary">
+                        <i class="fas fa-download"></i>
+                        <span>Export as CSV</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Trends Dashboard -->
+        <section class="enhanced-card">
+            <h2 class="card-title">
+                <i class="fas fa-trending-up"></i>
+                Current Market Trends & Opportunities
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 25px; border-radius: 20px; color: white;">
+                    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 15px;">
+                        <i class="fas fa-fire mr-2"></i>
+                        Hot Trending Now
+                    </h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🔥 AI & Machine Learning</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🔥 Remote Work Solutions</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🔥 Sustainable Business</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🔥 Mental Health & Wellness</li>
+                        <li style="padding: 8px 0;">🔥 Digital Transformation</li>
+                    </ul>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 25px; border-radius: 20px; color: white;">
+                    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 15px;">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Growing Markets
+                    </h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">📈 Crypto & Blockchain</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">📈 E-learning & EdTech</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">📈 Telemedicine</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">📈 Clean Energy</li>
+                        <li style="padding: 8px 0;">📈 Social Commerce</li>
+                    </ul>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 25px; border-radius: 20px; color: white;">
+                    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 15px;">
+                        <i class="fas fa-gem mr-2"></i>
+                        Underserved Niches
+                    </h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">💎 Accessibility Design</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">💎 Senior-focused UI</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">💎 Inclusive Illustrations</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">💎 B2B SaaS Graphics</li>
+                        <li style="padding: 8px 0;">💎 Microlearning Visuals</li>
+                    </ul>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 25px; border-radius: 20px; color: white;">
+                    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 15px;">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        Seasonal Opportunities
+                    </h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🗓️ Q4: Holiday Shopping</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🗓️ Q1: New Year Goals</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🗓️ Q2: Summer Travel</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">🗓️ Q3: Back to School</li>
+                        <li style="padding: 8px 0;">🗓️ Year-round: Business</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Important Links & Resources -->
+        <section class="links-section">
+            <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 15px; background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <i class="fas fa-link mr-4"></i>
+                Essential Resources & Community
+            </h2>
+            <p style="text-align: center; color: #94a3b8; font-size: 1.3rem; margin-bottom: 30px; font-weight: 500;">
+                Connect with our community and access powerful tools for maximum success
+            </p>
+
+            <div class="links-grid">
+                <a href="https://www.recraft.ai/invite/zKuLSvl003" target="_blank" class="link-item recraft">
+                    <i class="fab fa-artstation" style="font-size: 2.5rem; margin-bottom: 15px; display: block;"></i>
+                    <div style="font-size: 1.3rem; margin-bottom: 10px;">Recraft AI</div>
+                    <p style="font-size: 1rem; margin-top: 8px; opacity: 0.85;">Professional AI Image Generator<br>Perfect for Adobe Stock content</p>
+                </a>
+
+                <a href="https://contributor.stock.adobe.com/my-account" target="_blank" class="link-item adobe">
+                    <i class="fas fa-images" style="font-size: 2.5rem; margin-bottom: 15px; display: block;"></i>
+                    <div style="font-size: 1.3rem; margin-bottom: 10px;">Adobe Stock Portal</div>
+                    <p style="font-size: 1rem; margin-top: 8px; opacity: 0.85;">Your Contributor Dashboard<br>Track performance & earnings</p>
+                </a>
+
+                <a href="https://t.me/+hrPjXKYe_eBiMGJl" target="_blank" class="link-item telegram">
+                    <i class="fab fa-telegram-plane" style="font-size: 2.5rem; margin-bottom: 15px; display: block;"></i>
+                    <div style="font-size: 1.3rem; margin-bottom: 10px;">Success Community</div>
+                    <p style="font-size: 1rem; margin-top: 8px; opacity: 0.85;">Join 5000+ successful creators<br>Get support & share strategies</p>
+                </a>
+
+                <a href="https://youtube.com/@freelancersagor24?si=bUNnTiieNGrx0A80" target="_blank" class="link-item youtube">
+                    <i class="fab fa-youtube" style="font-size: 2.5rem; margin-bottom: 15px; display: block;"></i>
+                    <div style="font-size: 1.3rem; margin-bottom: 10px;">YouTube Tutorials</div>
+                    <p style="font-size: 1rem; margin-top: 8px; opacity: 0.85;">Free training videos<br>Step-by-step success guides</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Enhanced Footer -->
+        <footer class="enhanced-footer">
+            <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 20px; color: #3b82f6;">
+                &copy; 2024 Black Hat Traffic X <span style="color: #fbbf24;">v5.0 Ultimate</span>
+            </h2>
+            <p style="font-size: 1.3rem; color: #94a3b8; margin-bottom: 20px; font-weight: 500;">
+                Complete Adobe Stock Success Suite - Transform Your Creative Career
+            </p>
+            <p style="font-size: 1.1rem; color: #64748b; font-weight: 500; margin-bottom: 20px;">
+                <i class="fas fa-heart" style="color: #ef4444; margin-right: 8px;"></i>
+                Made with passion for creative professionals worldwide
+            </p>
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid #3b82f6;">
+                <p style="font-size: 1rem; color: #e2e8f0; text-align: center; margin: 0;">
+                    <strong>Your Success Story Starts Now!</strong><br>
+                    Use this tool consistently, follow the strategies, join our community, and watch your Adobe Stock income grow exponentially.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <script>
+        // ============================================= 
+        // Global Application State Management
+        // ============================================= 
+        const AppState = {
+            contentTypes: {
+                mixed: {
+                    subjects: [
+                        'Technology', 'Artificial Intelligence', 'Machine Learning', 'Data Science', 'Cybersecurity', 'Cloud Computing',
+                        'Business', 'Finance', 'Marketing', 'E-commerce', 'Entrepreneurship', 'Management', 'Leadership',
+                        'Nature', 'Environment', 'Sustainability', 'Climate Change', 'Renewable Energy', 'Conservation',
+                        'Health', 'Wellness', 'Fitness', 'Nutrition', 'Medical', 'Healthcare', 'Mental Health',
+                        'Education', 'Learning', 'Training', 'Academic', 'Research', 'Science', 'Innovation'
+                    ]
+                },
+                business: {
+                    subjects: [
+                        'Corporate Strategy', 'Business Development', 'Financial Planning', 'Market Analysis', 'Leadership',
+                        'Team Management', 'Project Management', 'Sales Strategy', 'Customer Relations', 'Brand Management',
+                        'Digital Transformation', 'Innovation Management', 'Supply Chain', 'Operations', 'Quality Management',
+                        'Risk Assessment', 'Investment Planning', 'Revenue Growth', 'Cost Optimization', 'Performance Metrics'
+                    ]
+                },
+                technology: {
+                    subjects: [
+                        'Software Development', 'Mobile Technology', 'Web Development', 'Database Management', 'Network Security',
+                        'Cloud Architecture', 'DevOps', 'API Development', 'Big Data', 'Analytics', 'Machine Learning',
+                        'Deep Learning', 'Neural Networks', 'Computer Vision', 'Natural Language Processing', 'Quantum Computing',
+                        'Edge Computing', 'Microservices', 'Containerization', 'Serverless Architecture'
+                    ]
+                },
+                creative: {
+                    subjects: [
+                        'Graphic Design', 'Digital Art', 'Photography', 'Illustration', 'Animation', 'Video Production',
+                        'Music Creation', 'Creative Writing', 'Storytelling', 'Brand Identity', 'Visual Communication',
+                        'Typography', 'Color Theory', 'User Experience', 'Interface Design', 'Motion Graphics',
+                        'Print Design', 'Packaging Design', 'Environmental Design', 'Product Design'
+                    ]
+                },
+                nature: {
+                    subjects: [
+                        'Environmental Conservation', 'Wildlife Protection', 'Forest Management', 'Ocean Conservation',
+                        'Sustainable Agriculture', 'Renewable Energy', 'Green Technology', 'Climate Action', 'Biodiversity',
+                        'Ecosystem Management', 'Natural Resources', 'Environmental Science', 'Organic Farming',
+                        'Permaculture', 'Solar Energy', 'Wind Power', 'Hydroelectric', 'Geothermal', 'Carbon Footprint'
+                    ]
+                },
+                lifestyle: {
+                    subjects: [
+                        'Health and Wellness', 'Fitness Training', 'Nutrition Planning', 'Mental Health', 'Work-Life Balance',
+                        'Personal Development', 'Mindfulness', 'Meditation', 'Home Design', 'Interior Decoration',
+                        'Cooking', 'Travel', 'Fashion', 'Beauty', 'Relationships', 'Family Life', 'Hobbies', 'Recreation'
+                    ]
+                }
+            },
+            
+            styles: [
+                'Modern', 'Contemporary', 'Minimalist', 'Clean', 'Sleek', 'Sophisticated', 'Elegant', 'Professional',
+                'Creative', 'Artistic', 'Abstract', 'Geometric', 'Organic', 'Futuristic', 'Innovative', 'Dynamic',
+                'Bold', 'Vibrant', 'Colorful', 'Monochrome', 'Gradient', 'Flat', '3D', 'Isometric', 'Realistic'
+            ],
+            
+            types: [
+                'Vector Illustration', 'Icon Set', 'Logo Template', 'Background Design', 'Pattern Design', 'Texture',
+                'Infographic', 'Chart', 'Graph', 'Diagram', 'Business Card', 'Brochure Template', 'Flyer Design',
+                'Poster Design', 'Banner Design', 'Web Template', 'Mobile UI', 'App Interface', 'Presentation Slide',
+                'Social Media Template', 'Email Template', 'Certificate Template', 'Invoice Template'
+            ],
+            
+            purposes: [
+                'Commercial Use', 'Business Application', 'Marketing Campaign', 'Brand Identity', 'Digital Marketing',
+                'Social Media Marketing', 'Print Media', 'Web Design', 'Mobile App', 'Presentation', 'Educational Content',
+                'Training Material', 'Product Launch', 'Event Promotion', 'Corporate Communication'
+            ],
+            
+            emotions: [
+                'Professional', 'Trustworthy', 'Innovative', 'Creative', 'Dynamic', 'Energetic', 'Calm', 'Peaceful',
+                'Exciting', 'Inspiring', 'Motivating', 'Sophisticated', 'Elegant', 'Premium', 'Friendly', 'Approachable'
+            ],
+            
+            industries: [
+                'Technology', 'Healthcare', 'Finance', 'Education', 'Retail', 'Manufacturing', 'Construction',
+                'Transportation', 'Entertainment', 'Hospitality', 'Energy', 'Agriculture', 'Legal', 'Consulting'
+            ],
+
+            generatedContent: [],
+            uploadedFiles: [],
+            selectedContentType: 'mixed',
+            stats: {
+                totalEarnings: 0,
+                totalDownloads: 0,
+                totalAssets: 0,
+                acceptanceRate: 0
+            }
+        };
+
+        // ============================================= 
+        // Enhanced Content Generation System
+        // ============================================= 
+        function generateUniqueContent(count = 6) {
+            const contents = [];
+            const selectedType = AppState.selectedContentType;
+            
+            for (let i = 0; i < count; i++) {
+                const combination = generateUniqueCombination(selectedType);
+                const content = createContentFromCombination(combination, i + 1);
+                contents.push(content);
+                AppState.generatedContent.push(content);
+            }
+            
+            return contents;
+        }
+
+        function generateUniqueCombination(contentType) {
+            const subjects = AppState.contentTypes[contentType]?.subjects || AppState.contentTypes.mixed.subjects;
+            const subject = subjects[Math.floor(Math.random() * subjects.length)];
+            const style = AppState.styles[Math.floor(Math.random() * AppState.styles.length)];
+            const type = AppState.types[Math.floor(Math.random() * AppState.types.length)];
+            const purpose = AppState.purposes[Math.floor(Math.random() * AppState.purposes.length)];
+            const emotion = AppState.emotions[Math.floor(Math.random() * AppState.emotions.length)];
+            const industry = AppState.industries[Math.floor(Math.random() * AppState.industries.length)];
+            
+            const combinationKey = `${subject}-${style}-${type}-${purpose}-${emotion}-${industry}-${contentType}`;
+            
+            const isUsed = AppState.generatedContent.some(content => content.combinationKey === combinationKey);
+            
+            if (!isUsed) {
+                return { subject, style, type, purpose, emotion, industry, combinationKey, contentType };
+            }
+            
+            // Create variant if combination exists
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substr(2, 5);
+            return {
+                subject, style, type, purpose, emotion, industry,
+                combinationKey: `${combinationKey}-variant-${timestamp}-${random}`,
+                contentType,
+                isVariant: true
+            };
+        }
+
+        function createContentFromCombination(combination, index) {
+            const { subject, style, type, purpose, emotion, industry, combinationKey, contentType, isVariant } = combination;
+            
+            const titleTemplates = [
+                `${style} ${subject} ${type} for ${industry} Industry`,
+                `${emotion} ${type} Design - ${subject} Focused ${style} Approach`,
+                `Professional ${subject} ${type} Collection - ${style} ${industry} Series`,
+                `Premium ${style} ${subject} ${type} Template for ${purpose}`,
+                `${emotion} ${industry} ${type} - Modern ${subject} Illustration`
+            ];
+            
+            const title = titleTemplates[Math.floor(Math.random() * titleTemplates.length)];
+            
+            const promptTemplates = [
+                `Create a professional ${style.toLowerCase()} ${type.toLowerCase()} that perfectly captures ${subject.toLowerCase()} elements with ${emotion.toLowerCase()} visual appeal, specifically designed for ${industry.toLowerCase()} sector applications and optimized for ${purpose.toLowerCase()}. The design should demonstrate modern aesthetic principles while maintaining commercial viability and brand consistency. Focus on high-resolution quality (minimum 4000x4000px), clean composition, and trending color palettes that appeal to business buyers. Ensure the content is versatile, scalable, and suitable for both digital and print applications.`,
+                
+                `Design an innovative ${type.toLowerCase()} featuring ${subject.toLowerCase()} themes through ${style.toLowerCase()} visual language that conveys ${emotion.toLowerCase()} messaging for ${industry.toLowerCase()} industry professionals. The artwork should excel in ${purpose.toLowerCase()} scenarios while showcasing contemporary design trends and professional polish. Create content that stands out in Adobe Stock search results with unique visual elements, perfect technical execution, and strong commercial appeal. Include trending design elements and ensure the composition works well at various sizes.`,
+                
+                `Develop a comprehensive ${style.toLowerCase()} ${type.toLowerCase()} that showcases ${subject.toLowerCase()} concepts using ${emotion.toLowerCase()} design methodology specifically tailored for ${industry.toLowerCase()} market requirements. The final output should excel in ${purpose.toLowerCase()} contexts while demonstrating exceptional creative execution and technical excellence. Focus on creating market-ready content that meets Adobe Stock's premium standards and appeals to commercial buyers seeking professional, high-quality assets.`
+            ];
+            
+            const prompt = promptTemplates[Math.floor(Math.random() * promptTemplates.length)];
+            
+            // Generate comprehensive keywords
+            const baseKeywords = [
+                subject.toLowerCase(), style.toLowerCase(), industry.toLowerCase(),
+                emotion.toLowerCase(), type.toLowerCase().replace(/\s+/g, '-'),
+                purpose.toLowerCase().replace(/\s+/g, '-'), 'commercial', 'professional', 'high-quality',
+                'business', 'corporate', 'modern', 'creative', 'unique', 'trending', 'premium',
+                'vector', 'illustration', 'design', 'graphic', 'template', 'clean', 'minimalist'
+            ];
+            
+            // Add category-specific keywords
+            const categoryKeywords = getCategoryKeywords(contentType, subject, industry);
+            const allKeywords = [...baseKeywords, ...categoryKeywords];
+            
+            // Remove duplicates and shuffle
+            const uniqueKeywords = [...new Set(allKeywords)];
+            const keywords = shuffleArray(uniqueKeywords).slice(0, Math.floor(Math.random() * 6) + 45); // 45-50 keywords
+            
+            const description = generateDetailedDescription(title, subject, style, type, purpose, emotion, industry);
+            
+            return {
+                title, prompt, keywords, description, combinationKey, contentType,
+                isVariant: isVariant || false,
+                metadata: {
+                    subject, style, type, purpose, emotion, industry,
+                    generatedAt: new Date().toISOString(),
+                    uniqueId: Date.now() + Math.random().toString(36).substr(2, 9),
+                    index: index
+                }
+            };
+        }
+
+        function getCategoryKeywords(contentType, subject, industry) {
+            const categoryMap = {
+                business: ['corporate', 'finance', 'marketing', 'strategy', 'leadership', 'management', 'success', 'growth', 'profit', 'revenue'],
+                technology: ['tech', 'digital', 'innovation', 'software', 'data', 'AI', 'machine learning', 'cloud', 'cyber', 'automation'],
+                creative: ['artistic', 'design', 'visual', 'aesthetic', 'beautiful', 'stylish', 'trendy', 'fashionable', 'elegant', 'sophisticated'],
+                nature: ['environmental', 'green', 'sustainable', 'eco', 'natural', 'organic', 'renewable', 'conservation', 'climate', 'earth'],
+                lifestyle: ['health', 'wellness', 'fitness', 'lifestyle', 'personal', 'family', 'home', 'comfort', 'relaxation', 'balance'],
+                mixed: ['versatile', 'multi-purpose', 'flexible', 'adaptable', 'universal', 'comprehensive', 'complete', 'all-purpose']
+            };
+            
+            return categoryMap[contentType] || categoryMap.mixed;
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function generateDetailedDescription(title, subject, style, type, purpose, emotion, industry) {
+            const templates = [
+                `This exceptional ${title} represents the pinnacle of professional design excellence, meticulously crafted for ${industry.toLowerCase()} industry leaders who demand superior visual communication solutions. The artwork seamlessly combines ${style.toLowerCase()} aesthetics with ${subject.toLowerCase()} thematic elements, delivering ${emotion.toLowerCase()} messaging that resonates with target audiences. Perfectly optimized for ${purpose.toLowerCase()}, this premium ${type.toLowerCase()} offers unparalleled versatility for digital and print applications, ensuring consistent brand representation across all media channels. Created with Adobe Stock's premium standards in mind, featuring high-resolution quality, perfect composition, and trending design elements that guarantee commercial success.`,
+                
+                `Discover the power of professional-grade design with this remarkable ${title}, engineered specifically for discerning ${industry.toLowerCase()} professionals. This sophisticated ${type.toLowerCase()} masterfully integrates ${subject.toLowerCase()} concepts through ${style.toLowerCase()} visual language, creating ${emotion.toLowerCase()} brand experiences that drive engagement and conversion. Ideal for ${purpose.toLowerCase()}, the design demonstrates exceptional attention to detail, technical precision, and creative innovation. The comprehensive approach ensures optimal performance across various applications while maintaining the highest standards of visual excellence and market appeal.`,
+                
+                `Elevate your brand presence with this premium ${title}, a testament to contemporary design innovation in the ${industry.toLowerCase()} sector. This expertly crafted ${type.toLowerCase()} showcases ${subject.toLowerCase()} themes through ${style.toLowerCase()} methodology, delivering ${emotion.toLowerCase()} visual narratives that captivate and inspire. Specifically developed for ${purpose.toLowerCase()}, the design combines artistic vision with strategic thinking, ensuring maximum impact and effectiveness. The result is a versatile, scalable solution that meets the demanding requirements of modern business communication while exceeding creative expectations.`
+            ];
+            
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+
+        // ============================================= 
+        // Enhanced Notification System
+        // ============================================= 
+        function showNotification(message, type = 'info', duration = 5000) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-${getIconForType(type)}" style="margin-right: 15px; font-size: 1.3rem;"></i>
+                        <span style="font-weight: 700; font-size: 1.1rem;">${message}</span>
+                    </div>
+                    <button onclick="removeNotification(this)" style="margin-left: 20px; font-size: 1.8rem; font-weight: 700; background: none; border: none; color: inherit; cursor: pointer; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">×</button>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    removeNotification(notification.querySelector('button'));
+                }
+            }, duration);
+        }
+
+        function getIconForType(type) {
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-triangle',
+                warning: 'exclamation-circle',
+                info: 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
+        function removeNotification(button) {
+            const notification = button.closest('.notification');
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
+
+        // ============================================= 
+        // Content Type Selection
+        // ============================================= 
+        function initializeContentTypeSelector() {
+            const options = document.querySelectorAll('.content-type-option');
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    AppState.selectedContentType = this.dataset.type;
+                    localStorage.setItem('selectedContentType', AppState.selectedContentType);
+                });
+            });
+            
+            // Load saved selection
+            const saved = localStorage.getItem('selectedContentType');
+            if (saved && saved !== AppState.selectedContentType) {
+                AppState.selectedContentType = saved;
+                options.forEach(opt => opt.classList.remove('selected'));
+                const savedOption = document.querySelector(`[data-type="${saved}"]`);
+                if (savedOption) savedOption.classList.add('selected');
+            }
+        }
+
+        // ============================================= 
+        // Content Generation
+        // ============================================= 
+        function initializeContentGenerator() {
+            const generateBtn = document.getElementById('generate-content');
+            generateBtn.addEventListener('click', generateContent);
+        }
+
+        function generateContent() {
+            const resultsContainer = document.getElementById('content-results');
+            resultsContainer.innerHTML = '<div style="text-align: center; padding: 50px;"><i class="loading-spinner"></i> <span style="margin-left: 20px; font-size: 1.4rem; font-weight: 600;">Generating Adobe Stock optimized content...</span></div>';
+            resultsContainer.classList.add('show');
+
+            setTimeout(() => {
+                const contents = generateUniqueContent(6);
+                renderGeneratedContent(contents);
+                showNotification('6 Adobe Stock optimized content ideas generated successfully!', 'success');
+            }, 2000);
+        }
+
+        function renderGeneratedContent(contents) {
+            const container = document.getElementById('content-results');
+            container.innerHTML = '';
+
+            contents.forEach((content, index) => {
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'content-item';
+                contentDiv.innerHTML = `
+                    <div class="content-number">${index + 1}</div>
+                    
+                    <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 25px; color: #3b82f6;">${content.title}</h3>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h4 style="font-weight: 700; font-size: 1.2rem; color: #10b981; margin-bottom: 15px; display: flex; align-items: center;">
+                            <i class="fas fa-lightbulb" style="margin-right: 12px;"></i>AI Creation Prompt:
+                        </h4>
+                        <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 15px; font-family: 'Courier New', monospace; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; border-left: 5px solid #10b981;">${content.prompt}</div>
+                        <button onclick="copyToClipboard(\`${content.prompt.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`, this)" class="btn btn-success">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy Prompt</span>
+                        </button>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h4 style="font-weight: 700; font-size: 1.2rem; color: #3b82f6; margin-bottom: 15px; display: flex; align-items: center;">
+                            <i class="fas fa-tags" style="margin-right: 12px;"></i>Optimized Keywords (${content.keywords.length}):
+                        </h4>
+                        <div style="margin-bottom: 20px; background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid #3b82f6;">
+                            ${content.keywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('')}
+                        </div>
+                        <button onclick="copyToClipboard('${content.keywords.join(', ').replace(/'/g, "\\'")}', this)" class="btn btn-primary">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy Keywords</span>
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <h4 style="font-weight: 700; font-size: 1.2rem; color: #8b5cf6; margin-bottom: 15px; display: flex; align-items: center;">
+                            <i class="fas fa-file-alt" style="margin-right: 12px;"></i>Commercial Description:
+                        </h4>
+                        <div style="background: rgba(139, 92, 246, 0.1); padding: 25px; border-radius: 15px; border-left: 5px solid #8b5cf6; margin-bottom: 20px;">
+                            <p style="font-size: 1rem; line-height: 1.7; margin: 0;">${content.description}</p>
+                        </div>
+                        <button onclick="copyToClipboard(\`${content.description.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`, this)" class="btn btn-secondary">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy Description</span>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(contentDiv);
+            });
+        }
+
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+                button.style.transform = 'scale(1.05)';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.style.transform = 'scale(1)';
+                }, 2500);
+                
+                showNotification('Copied to clipboard successfully!', 'success');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                showNotification('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        // ============================================= 
+        // Upload Tracker
+        // ============================================= 
+        function initializeUploadTracker() {
+            const addFileBtn = document.getElementById('add-file');
+            const uploadDateInput = document.getElementById('upload-date');
+            
+            // Set today's date as default
+            uploadDateInput.valueAsDate = new Date();
+            
+            addFileBtn.addEventListener('click', addFile);
+            
+            // Load saved files
+            loadUploadedFiles();
+            renderUploadedFiles();
+        }
+
+        function addFile() {
+            const fileName = document.getElementById('file-name').value.trim();
+            const uploadDate = document.getElementById('upload-date').value;
+            const status = document.getElementById('file-status').value;
+            const downloadCount = parseInt(document.getElementById('download-count').value) || 0;
+
+            if (!fileName || !uploadDate) {
+                showNotification('Please enter file name and upload date', 'error');
+                return;
+            }
+
+            const newFile = {
+                id: Date.now(),
+                name: fileName,
+                uploadDate: uploadDate,
+                status: status,
+                downloads: downloadCount,
+                estimatedRevenue: calculateEstimatedRevenue(downloadCount, status),
+                addedAt: new Date().toISOString()
+            };
+
+            AppState.uploadedFiles.push(newFile);
+            saveUploadedFiles();
+            
+            // Clear form
+            document.getElementById('file-name').value = '';
+            document.getElementById('upload-date').valueAsDate = new Date();
+            document.getElementById('download-count').value = '';
+            
+            renderUploadedFiles();
+            updateStats();
+            showNotification('Asset added to tracker successfully!', 'success');
+        }
+
+        function calculateEstimatedRevenue(downloads, status) {
+            if (status !== 'Approved' && status !== 'Live') return 0;
+            
+            // Average revenue per download varies, using conservative estimate
+            const avgRevenuePerDownload = 0.33; // $0.33 average
+            return downloads * avgRevenuePerDownload;
+        }
+
+        function renderUploadedFiles() {
+            const tbody = document.getElementById('file-tracker-body');
+            
+            if (AppState.uploadedFiles.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #94a3b8; padding: 50px; font-size: 1.2rem;">
+                            <i class="fas fa-upload" style="font-size: 3rem; margin-bottom: 20px; display: block;"></i>
+                            Start tracking your Adobe Stock uploads for better performance insights
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = AppState.uploadedFiles.map(file => `
+                <tr style="transition: all 0.3s ease;">
+                    <td style="font-weight: 600;">${file.name}</td>
+                    <td>${new Date(file.uploadDate).toLocaleDateString()}</td>
+                    <td>
+                        <span style="padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; ${getStatusStyle(file.status)}">
+                            ${file.status}
+                        </span>
+                    </td>
+                    <td style="text-align: center; font-weight: 700; color: #3b82f6;">${file.downloads.toLocaleString()}</td>
+                    <td style="text-align: center; font-weight: 700; color: #10b981;">$${file.estimatedRevenue.toFixed(2)}</td>
+                    <td style="text-align: center;">
+                        <button onclick="removeFile(${file.id})" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusStyle(status) {
+            const styles = {
+                'Uploaded': 'background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white;',
+                'Under Review': 'background: linear-gradient(135deg, #f59e0b, #d97706); color: white;',
+                'Approved': 'background: linear-gradient(135deg, #10b981, #059669); color: white;',
+                'Rejected': 'background: linear-gradient(135deg, #ef4444, #dc2626); color: white;',
+                'Live': 'background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;'
+            };
+            return styles[status] || styles['Uploaded'];
+        }
+
+        function removeFile(id) {
+            if (confirm('Are you sure you want to remove this file from tracking?')) {
+                AppState.uploadedFiles = AppState.uploadedFiles.filter(file => file.id !== id);
+                saveUploadedFiles();
+                renderUploadedFiles();
+                updateStats();
+                showNotification('File removed from tracker', 'warning');
+            }
+        }
+
+        function saveUploadedFiles() {
+            localStorage.setItem('uploadedFiles', JSON.stringify(AppState.uploadedFiles));
+        }
+
+        function loadUploadedFiles() {
+            const saved = localStorage.getItem('uploadedFiles');
+            if (saved) {
+                AppState.uploadedFiles = JSON.parse(saved);
+            }
+        }
+
+        // ============================================= 
+        // Stats Management
+        // ============================================= 
+        function updateStats() {
+            const files = AppState.uploadedFiles;
+            
+            AppState.stats.totalAssets = files.length;
+            AppState.stats.totalDownloads = files.reduce((sum, file) => sum + file.downloads, 0);
+            AppState.stats.totalEarnings = files.reduce((sum, file) => sum + file.estimatedRevenue, 0);
+            
+            const approvedFiles = files.filter(file => file.status === 'Approved' || file.status === 'Live');
+            AppState.stats.acceptanceRate = files.length > 0 ? (approvedFiles.length / files.length) * 100 : 0;
+            
+            // Update display
+            document.getElementById('total-earnings').textContent = `$${AppState.stats.totalEarnings.toFixed(2)}`;
+            document.getElementById('total-downloads').textContent = AppState.stats.totalDownloads.toLocaleString();
+            document.getElementById('total-assets').textContent = AppState.stats.totalAssets.toLocaleString();
+            document.getElementById('acceptance-rate').textContent = `${AppState.stats.acceptanceRate.toFixed(1)}%`;
+        }
+
+        // ============================================= 
+        // Keyword Research Tool
+        // ============================================= 
+        function initializeKeywordResearch() {
+            const generateBtn = document.getElementById('generate-keywords');
+            const copyBtn = document.getElementById('copy-keywords');
+            const exportBtn = document.getElementById('export-keywords');
+            
+            generateBtn.addEventListener('click', generateKeywords);
+            copyBtn.addEventListener('click', copyAllKeywords);
+            exportBtn.addEventListener('click', exportKeywordsCSV);
+        }
+
+        function generateKeywords() {
+            const description = document.getElementById('content-description').value.trim();
+            const category = document.getElementById('keyword-category').value;
+            
+            if (!description) {
+                showNotification('Please describe your content concept first', 'error');
+                return;
+            }
+            
+            // Extract words from description
+            const words = description.toLowerCase().match(/\b\w+\b/g) || [];
+            const uniqueWords = [...new Set(words)].filter(word => word.length > 2);
+            
+            // Base keywords
+            const baseKeywords = ['vector', 'illustration', 'design', 'graphic', 'template', 'professional', 'modern', 'clean', 'quality', 'premium'];
+            
+            // Category-specific keywords
+            const categoryKeywords = getCategoryKeywords(category, '', '');
+            
+            // Style keywords
+            const styleKeywords = ['minimalist', 'contemporary', 'elegant', 'sophisticated', 'creative', 'artistic', 'innovative', 'unique', 'stylish', 'trendy'];
+            
+            // Purpose keywords
+            const purposeKeywords = ['commercial', 'business', 'corporate', 'marketing', 'branding', 'presentation', 'website', 'social media', 'print', 'digital'];
+            
+            // Technical keywords
+            const technicalKeywords = ['high-resolution', 'scalable', 'editable', 'customizable', 'layered', 'RGB', 'CMYK', 'print-ready', 'web-ready'];
+            
+            // Combine all keywords
+            const allKeywords = [
+                ...baseKeywords,
+                ...categoryKeywords,
+                ...styleKeywords,
+                ...purposeKeywords,
+                ...technicalKeywords,
+                ...uniqueWords.slice(0, 10) // Top 10 words from description
+            ];
+            
+            // Remove duplicates and create final list
+            const uniqueKeywords = [...new Set(allKeywords)];
+            const finalKeywords = shuffleArray(uniqueKeywords).slice(0, 50);
+            
+            displayKeywords(finalKeywords);
+            showNotification(`Generated ${finalKeywords.length} optimized keywords!`, 'success');
+        }
+
+        function displayKeywords(keywords) {
+            const container = document.getElementById('keyword-container');
+            const resultsDiv = document.getElementById('keyword-results');
+            
+            container.innerHTML = keywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('');
+            resultsDiv.style.display = 'block';
+            
+            // Store keywords for copy/export
+            window.currentKeywords = keywords;
+        }
+
+        function copyAllKeywords() {
+            if (!window.currentKeywords) {
+                showNotification('Generate keywords first', 'error');
+                return;
+            }
+            
+            const keywordText = window.currentKeywords.join(', ');
+            copyToClipboard(keywordText, document.getElementById('copy-keywords'));
+        }
+
+        function exportKeywordsCSV() {
+            if (!window.currentKeywords) {
+                showNotification('Generate keywords first', 'error');
+                return;
+            }
+            
+            const csvContent = [
+                ['Keyword', 'Category', 'Type'],
+                ...window.currentKeywords.map(keyword => [keyword, 'Generated', 'Primary'])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `adobe-stock-keywords-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Keywords exported as CSV!', 'success');
+        }
+
+        // ============================================= 
+        // Performance Chart
+        // ============================================= 
+        function initializePerformanceChart() {
+            const ctx = document.getElementById('performance-chart');
+            if (!ctx) return;
+
+            const chartData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Downloads',
+                        data: [45, 78, 123, 89, 156, 201, 178, 234, 289, 345, 398, 456],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    },
+                    {
+                        label: 'Revenue ($)',
+                        data: [15, 26, 41, 29, 52, 67, 59, 78, 96, 115, 132, 151],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }
+                ]
+            };
+
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e2e8f0',
+                                font: {
+                                    family: "'Inter', Arial, sans-serif",
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#e2e8f0',
+                                font: {
+                                    family: "'Inter', Arial, sans-serif",
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#e2e8f0',
+                                font: {
+                                    family: "'Inter', Arial, sans-serif",
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================= 
+        // Global Functions for onclick handlers
+        // ============================================= 
+        window.copyToClipboard = copyToClipboard;
+        window.removeFile = removeFile;
+        window.removeNotification = removeNotification;
+
+        // ============================================= 
+        // Application Initialization
+        // ============================================= 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all components
+            initializeContentTypeSelector();
+            initializeContentGenerator();
+            initializeUploadTracker();
+            initializeKeywordResearch();
+            initializePerformanceChart();
+            
+            // Update stats on load
+            updateStats();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('Adobe Stock Success Suite loaded successfully! Start by generating optimized content ideas.', 'success', 7000);
+            }, 1000);
+            
+            // Auto-save functionality
+            setInterval(() => {
+                saveUploadedFiles();
+            }, 30000); // Save every 30 seconds
+        });
+    </script>
+</body>
+</html>

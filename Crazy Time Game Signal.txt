@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crazy Time Real-Time Display</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="theme-color" content="#4DBA87">
+    <link rel="icon" type="image/png" sizes="48x48" href="https://www.krikya11.net/img/icons/favicon-48x48.png">
+    <link rel="preload" href="https://www.krikya11.net/static/font/ReadexPro-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <style>
+        @font-face {
+            font-family: 'ReadexPro-Medium';
+            font-display: swap;
+            src: url('https://www.krikya11.net/static/font/ReadexPro-Medium.woff2') format('woff2');
+        }
+        body {
+            font-family: 'ReadexPro-Medium', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .signal-box {
+            border: 2px solid #e5e7eb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+            color: #4b5563;
+            background-color: #f9fafb;
+            transition: all 0.3s ease;
+        }
+        .signal-box.active {
+            border-color: #10b981;
+            background-color: #d1fae5;
+            color: #065f46;
+            transform: scale(1.05);
+        }
+        #debugLog {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAchyP2WrTVrhzSM" data-callback="javascriptCallback" style="display:none;"></div>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-219988895-1');
+    </script>
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-219988895-1"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold text-center mb-4 text-green-700">Crazy Time Game</h1>
+
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-xl font-semibold mb-2">WebSocket Connection Settings</h2>
+            <label for="wsUrl" class="block text-sm font-medium text-gray-700">Enter WebSocket URL:</label>
+            <input type="text" id="wsUrl" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" value="wss://babylonbetst.evo-games.com/public/crazytime/player/game/CrazyTime0000001/socket?messageFormat=json&EVOSESSIONID=sbmo3mooatmqlgcbtajhxvumh33ktvlsccc1004c7b2d8dc9bf7237088cb205e855b24257117b702e&client_version=6.20250715.113023.53342-eb0293b3dc&instance=co33dx-sbmo3mooatmqlgcb-CrazyTime0000001" placeholder="Enter WebSocket URL">
+            <button id="connectButton" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Connect</button>
+            <p id="connectionStatus" class="mt-2 text-center text-gray-500"></p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded shadow">
+                <h2 class="text-xl font-semibold mb-2">Current Game</h2>
+                <p id="gameStatus" class="text-lg">Waiting for game data...</p>
+                <p id="gameId" class="text-sm text-gray-600"></p>
+                <p id="gameNumber" class="text-sm text-gray-600"></p>
+                <p id="result" class="text-lg font-bold"></p>
+                <p id="multiplier" class="text-lg"></p>
+                <p id="bonusResult" class="text-lg"></p>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h2 class="text-xl font-semibold mb-2">Top Winners</h2>
+                <ul id="winnersList" class="list-disc pl-5"></ul>
+                <p id="totalWinners" class="text-sm text-gray-600"></p>
+                <p id="totalAmount" class="text-sm text-gray-600"></p>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded shadow mt-4">
+            <h2 class="text-xl font-semibold mb-2">Spin History</h2>
+            <div id="spinHistory" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div class="bg-white p-4 rounded shadow mt-4">
+            <h2 class="text-xl font-semibold mb-2">Next Round Betting Signal</h2>
+            <div id="signalBoxes" class="grid grid-cols-4 gap-2 mt-2">
+                <div id="signal-1" class="signal-box">1</div>
+                <div id="signal-2" class="signal-box">2</div>
+                <div id="signal-5" class="signal-box">5</div>
+                <div id="signal-10" class="signal-box">10</div>
+                <div id="signal-b1" class="signal-box">Coin Flip</div>
+                <div id="signal-b2" class="signal-box">Cash Hunt</div>
+                <div id="signal-b3" class="signal-box">Pachinko</div>
+                <div id="signal-b4" class="signal-box">Crazy Time</div>
+            </div>
+            <p id="nextRoundPrediction" class="text-lg mt-2">Analyzing live data...</p>
+            <p id="earlyBettingSignal" class="text-lg text-green-600 font-bold"></p>
+        </div>
+        <div id="debugLog" class="mt-4 bg-gray-200 p-4 rounded text-sm"></div>
+    </div>
+
+    <script>
+        let gameState = {
+            gameId: '',
+            gameNumber: '',
+            result: '',
+            multiplier: '',
+            status: '',
+            bonusResult: '',
+            winners: [],
+            totalWinners: 0,
+            totalAmount: 0,
+            spinHistory: [],
+            lastUpdate: 0,
+            betsOpenTime: 0,
+            resultTime: 0
+        };
+        let ws;
+        let isConnected = false;
+        let isSimulating = false;
+        let predictionInterval;
+        let roundDuration = 35000; // Initial estimate
+        let predictedSignal = '';
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const maxDebugMessages = 50; // Limit debug log entries
+
+        // Simulated data for testing
+        const simulatedData = [
+            { type: 'crazytime.newGame', args: { gameId: '185133045e5f05d1c25d630d', gameNumber: '16:15:00', version: 65176705602 } },
+            { type: 'crazytime.betsOpen', args: { gameId: '185133045e5f05d1c25d630d', status: 'open' } },
+            { type: 'crazytime.betsClosed', args: { gameId: '185133045e5f05d1c25d630d', status: 'closed' } },
+            { type: 'crazytime.result', args: { gameId: '185133045e5f05d1c25d630d', gameNumber: '16:15:00', result: '2', totalMultiplier: 0, version: 65176711032 } },
+            { type: 'crazytime.gameWinners', args: { gameId: '185133045e5f05d1c25d630d', totalWinners: 5297, totalAmount: 951052.56, winners: [
+                { screenName: 'Indibet_saksham_diwan22', winnings: 21313.07 },
+                { screenName: 'Lakshmi', winnings: 17050.45 },
+                { screenName: 'XSFPX2834252', winnings: 16534.69 }
+            ]} },
+            { type: 'crazytime.spinHistory', args: { results: [
+                { result: '2' }, { result: '1' }, { result: '2' }, { result: 'b3', details: { result: 'Tails' } }
+            ], newResult: false, version: 65176711032 } },
+            { type: 'crazytime.slot.result', args: { gameId: '185133045e5f05d1c25d630d', result: 'Slot Win', multiplier: 5 } },
+            { type: 'crazytime.crazybonus.result', args: { gameId: '185133045e5f05d1c25d630d', flappers: { Top: '100x', Left: '50x', Right: '25x' } } },
+            { type: 'connection.kickout', args: { reason: 'Inactivity' } }
+        ];
+
+        function logDebug(message) {
+            const debugLog = document.getElementById('debugLog');
+            const messages = debugLog.getElementsByTagName('p');
+            if (messages.length >= maxDebugMessages) {
+                messages[0].remove(); // Remove oldest message
+            }
+            const p = document.createElement('p');
+            p.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            debugLog.appendChild(p);
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+
+        function handleGameMessage(data) {
+            if (isSimulating && isConnected) {
+                isSimulating = false;
+                logDebug('Real WebSocket connected, stopping simulation');
+            }
+            logDebug(`Received: ${JSON.stringify(data)}`);
+            const now = Date.now();
+            gameState.lastUpdate = now;
+
+            switch (data.type) {
+                case 'crazytime.newGame':
+                    gameState.gameId = data.args.gameId || '';
+                    gameState.gameNumber = data.args.gameNumber || '';
+                    gameState.status = 'New Game';
+                    gameState.betsOpenTime = 0;
+                    gameState.resultTime = 0;
+                    clearSignalBoxes();
+                    setTimeout(() => {
+                        if (gameState.spinHistory.length > 0) {
+                            showEarlyPrediction();
+                        }
+                    }, 1000);
+                    updateGameDisplay();
+                    break;
+                case 'crazytime.betsOpen':
+                    gameState.status = 'Bets Open';
+                    gameState.betsOpenTime = now;
+                    startPredictionLoop();
+                    updateGameDisplay();
+                    break;
+                case 'crazytime.betsClosed':
+                    gameState.status = 'Bets Closed';
+                    updateGameDisplay();
+                    break;
+                case 'crazytime.result':
+                    gameState.result = data.args.result || '';
+                    gameState.multiplier = data.args.totalMultiplier || 0;
+                    gameState.status = 'Result';
+                    gameState.resultTime = now;
+                    if (gameState.betsOpenTime > 0) {
+                        roundDuration = Math.max(20000, Math.min(60000, now - gameState.betsOpenTime));
+                        logDebug(`Updated round duration to ${roundDuration}ms`);
+                    }
+                    updateGameDisplay();
+                    break;
+                case 'crazytime.gameWinners':
+                    gameState.winners = data.args.winners || [];
+                    gameState.totalWinners = data.args.totalWinners || 0;
+                    gameState.totalAmount = data.args.totalAmount || 0;
+                    updateWinnersDisplay();
+                    break;
+                case 'crazytime.spinHistory':
+                    gameState.spinHistory = data.args.results || [];
+                    updateSpinHistory();
+                    break;
+                case 'crazytime.slot.result':
+                    gameState.result = data.args.result || '';
+                    gameState.multiplier = data.args.multiplier || 0;
+                    gameState.status = 'Slot Win';
+                    updateGameDisplay();
+                    break;
+                case 'crazytime.crazybonus.result':
+                    gameState.bonusResult = data.args.flappers ? 
+                        `Crazy Bonus: Top=${data.args.flappers.Top || 'N/A'}, Left=${data.args.flappers.Left || 'N/A'}, Right=${data.args.flappers.Right || 'N/A'}` : '';
+                    gameState.status = 'Bonus Result';
+                    updateGameDisplay();
+                    break;
+                case 'connection.kickout':
+                    logDebug(`Kicked out: ${data.args.reason}. Reconnecting...`);
+                    if (ws) ws.close();
+                    reconnectWebSocket();
+                    break;
+                default:
+                    logDebug(`Unknown type: ${data.type}`);
+            }
+        }
+
+        function updateGameDisplay() {
+            document.getElementById('gameStatus').textContent = gameState.status || 'Waiting for game data...';
+            document.getElementById('gameId').textContent = `Game ID: ${gameState.gameId || 'N/A'}`;
+            document.getElementById('gameNumber').textContent = `Game Number: ${gameState.gameNumber || 'N/A'}`;
+            document.getElementById('result').textContent = `Result: ${gameState.result || 'N/A'}`;
+            document.getElementById('multiplier').textContent = `Multiplier: ${gameState.multiplier || 'N/A'}`;
+            document.getElementById('bonusResult').textContent = gameState.bonusResult || '';
+        }
+
+        function updateWinnersDisplay() {
+            const winnersList = document.getElementById('winnersList');
+            winnersList.innerHTML = gameState.winners.slice(0, 3).map(winner => 
+                `<li>${winner.screenName || 'Unknown'}: ${(winner.winnings || 0).toFixed(2)} BDT</li>`
+            ).join('');
+            document.getElementById('totalWinners').textContent = `Total Winners: ${gameState.totalWinners || 0}`;
+            document.getElementById('totalAmount').textContent = `Total Amount: ${(gameState.totalAmount || 0).toFixed(2)} BDT`;
+        }
+
+        function updateSpinHistory() {
+            const historyDiv = document.getElementById('spinHistory');
+            historyDiv.innerHTML = gameState.spinHistory.slice(0, 10).map(result => {
+                const resultText = result.details ? `${result.result} (${result.details.result || 'N/A'})` : result.result;
+                return `<span class="inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded">${resultText || 'N/A'}</span>`;
+            }).join('');
+        }
+
+        function clearSignalBoxes() {
+            const signalBoxes = document.querySelectorAll('.signal-box');
+            signalBoxes.forEach(box => box.classList.remove('active'));
+        }
+
+        function activateSignalBox(signal) {
+            clearSignalBoxes();
+            const targetId = `signal-${signal}`;
+            const signalBox = document.getElementById(targetId);
+            if (signalBox) {
+                signalBox.classList.add('active');
+            }
+        }
+
+        function predictNextSignal() {
+            if (gameState.spinHistory.length > 0 && gameState.betsOpenTime > 0) {
+                logDebug(`Predicting with ${gameState.spinHistory.length} history entries`);
+                const resultCount = {};
+                const recentHistory = gameState.spinHistory.slice(-10);
+                const probabilities = { '1': 0.28, '2': 0.26, '5': 0.13, '10': 0.07, 'b1': 0.13, 'b2': 0.07, 'b3': 0.04, 'b4': 0.02 }; // Based on Crazy Time wheel segments
+
+                // Weight recent results with base probabilities
+                recentHistory.forEach((result, index) => {
+                    const weight = Math.max(1, 10 - index);
+                    resultCount[result.result] = (resultCount[result.result] || 0) + weight * (probabilities[result.result] || 0.1);
+                });
+
+                const patterns = analyzePatterns(recentHistory);
+                if (patterns.mostLikely) {
+                    resultCount[patterns.mostLikely] = (resultCount[patterns.mostLikely] || 0) + 15;
+                }
+
+                let mostFrequent = '';
+                let maxCount = 0;
+                for (const result in resultCount) {
+                    if (resultCount[result] > maxCount) {
+                        maxCount = resultCount[result];
+                        mostFrequent = result;
+                    }
+                }
+
+                const confidence = Math.min(95, (maxCount / recentHistory.length * 100)).toFixed(1);
+                const timeIntoRound = Date.now() - gameState.betsOpenTime;
+                const remainingTime = roundDuration - timeIntoRound;
+                const signalDisplayLeadTime = 15000;
+
+                if (remainingTime > signalDisplayLeadTime && mostFrequent) {
+                    predictedSignal = mostFrequent;
+                    activateSignalBox(predictedSignal);
+                    const timeToResult = Math.floor(remainingTime / 1000);
+                    document.getElementById('nextRoundPrediction').textContent = `Betting Signal: ${predictedSignal} likely (Confidence: ${confidence}%)`;
+                    document.getElementById('earlyBettingSignal').textContent = `🎯 NEXT ROUND: ${predictedSignal} - Place bet now! (${timeToResult}s remaining)`;
+                    logDebug(`Predicted ${predictedSignal} with confidence ${confidence}% - ${timeToResult}s remaining`);
+                } else if (predictedSignal) {
+                    activateSignalBox(predictedSignal);
+                    document.getElementById('nextRoundPrediction').textContent = `Betting Signal: ${predictedSignal} likely (Confidence: ${confidence}%)`;
+                    document.getElementById('earlyBettingSignal').textContent = `🎯 NEXT ROUND: ${predictedSignal} - Get ready!`;
+                } else {
+                    document.getElementById('nextRoundPrediction').textContent = 'Betting Signal: Analyzing patterns...';
+                    document.getElementById('earlyBettingSignal').textContent = '';
+                    clearSignalBoxes();
+                    logDebug('No prediction: Insufficient data or signal window passed');
+                }
+            } else {
+                document.getElementById('nextRoundPrediction').textContent = 'Betting Signal: Waiting for game data...';
+                document.getElementById('earlyBettingSignal').textContent = '';
+                clearSignalBoxes();
+                logDebug('No prediction: Insufficient data or no betsOpen time');
+            }
+        }
+
+        function showEarlyPrediction() {
+            if (gameState.spinHistory.length > 0) {
+                logDebug('Showing early prediction for next round');
+                const resultCount = {};
+                const recentHistory = gameState.spinHistory.slice(-10);
+                const probabilities = { '1': 0.28, '2': 0.26, '5': 0.13, '10': 0.07, 'b1': 0.13, 'b2': 0.07, 'b3': 0.04, 'b4': 0.02 };
+
+                recentHistory.forEach((result, index) => {
+                    const weight = Math.max(1, 10 - index);
+                    resultCount[result.result] = (resultCount[result.result] || 0) + weight * (probabilities[result.result] || 0.1);
+                });
+
+                const patterns = analyzePatterns(recentHistory);
+                if (patterns.mostLikely) {
+                    resultCount[patterns.mostLikely] = (resultCount[patterns.mostLikely] || 0) + 15;
+                }
+
+                let mostFrequent = '';
+                let maxCount = 0;
+                for (const result in resultCount) {
+                    if (resultCount[result] > maxCount) {
+                        maxCount = resultCount[result];
+                        mostFrequent = result;
+                    }
+                }
+
+                if (mostFrequent) {
+                    predictedSignal = mostFrequent;
+                    activateSignalBox(predictedSignal);
+                    const confidence = Math.min(95, (maxCount / recentHistory.length * 100)).toFixed(1);
+                    document.getElementById('nextRoundPrediction').textContent = `Early Signal: ${predictedSignal} predicted (Confidence: ${confidence}%)`;
+                    document.getElementById('earlyBettingSignal').textContent = `🔮 EARLY PREDICTION: Next round likely ${predictedSignal} - Get ready!`;
+                    logDebug(`Early prediction: ${predictedSignal} with confidence ${confidence}%`);
+                }
+            }
+        }
+
+        function analyzePatterns(history) {
+            if (history.length < 3) return { mostLikely: null };
+            const last3 = history.slice(-3).map(r => r.result);
+            const numbers = ['1', '2', '5', '10'];
+            const bonuses = ['b1', 'b2', 'b3', 'b4'];
+            const recentNumbers = last3.filter(r => numbers.includes(r)).length;
+            const recentBonuses = last3.filter(r => bonuses.includes(r)).length;
+
+            if (recentNumbers >= 2 && recentBonuses === 0) {
+                return { mostLikely: 'b1' };
+            }
+            if (recentBonuses >= 2 && recentNumbers === 0) {
+                return { mostLikely: '2' };
+            }
+            const last2 = history.slice(-2).map(r => r.result);
+            if (last2[0] === last2[1]) {
+                const different = numbers.concat(bonuses).filter(r => r !== last2[0]);
+                return { mostLikely: different[Math.floor(Math.random() * different.length)] };
+            }
+            return { mostLikely: null };
+        }
+
+        function startPredictionLoop() {
+            if (predictionInterval) clearInterval(predictionInterval);
+            predictionInterval = setInterval(() => {
+                predictNextSignal();
+            }, 5000); // Reduced frequency to 5 seconds
+            logDebug('Prediction loop started');
+        }
+
+        function validateWebSocketUrl(url) {
+            try {
+                new URL(url);
+                return url.startsWith('wss://');
+            } catch {
+                return false;
+            }
+        }
+
+        function connectWebSocket() {
+            const wsUrlInput = document.getElementById('wsUrl').value;
+            if (!validateWebSocketUrl(wsUrlInput)) {
+                document.getElementById('connectionStatus').textContent = 'Invalid WebSocket URL';
+                document.getElementById('connectionStatus').classList.add('text-red-500');
+                logDebug('Invalid WebSocket URL provided');
+                return;
+            }
+
+            if (ws && isConnected) {
+                ws.close();
+            }
+            ws = new WebSocket(wsUrlInput);
+            isConnected = false;
+            reconnectAttempts = 0;
+            document.getElementById('connectionStatus').textContent = 'Connecting...';
+            document.getElementById('connectionStatus').classList.remove('text-green-500', 'text-red-500');
+            logDebug(`Attempting connection to ${wsUrlInput}`);
+
+            ws.onopen = () => {
+                logDebug('Connected to WebSocket server');
+                isConnected = true;
+                isSimulating = false;
+                reconnectAttempts = 0;
+                document.getElementById('connectionStatus').textContent = 'Connected (Live)';
+                document.getElementById('connectionStatus').classList.add('text-green-500');
+                ws.send(JSON.stringify({ subscribe: { channel: 'CrazyTime0000001' } }));
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleGameMessage(data);
+                } catch (error) {
+                    logDebug(`Error parsing message: ${error.message}`);
+                }
+            };
+
+            ws.onerror = (error) => {
+                logDebug(`WebSocket error: ${JSON.stringify(error)}`);
+                document.getElementById('connectionStatus').textContent = 'Connection error';
+                document.getElementById('connectionStatus').classList.add('text-red-500');
+                reconnectWebSocket();
+            };
+
+            ws.onclose = () => {
+                logDebug('Disconnected. Attempting to reconnect...');
+                isConnected = false;
+                document.getElementById('connectionStatus').textContent = 'Disconnected';
+                document.getElementById('connectionStatus').classList.add('text-red-500');
+                reconnectWebSocket();
+            };
+        }
+
+        function reconnectWebSocket() {
+            if (reconnectAttempts < maxReconnectAttempts) {
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Exponential backoff
+                reconnectAttempts++;
+                setTimeout(connectWebSocket, delay);
+                logDebug(`Reconnect attempt ${reconnectAttempts}/${maxReconnectAttempts} in ${delay}ms`);
+            } else {
+                logDebug('Max reconnect attempts reached. Starting simulation...');
+                startSimulation();
+            }
+        }
+
+        function startSimulation() {
+            if (!isConnected && !isSimulating) {
+                isSimulating = true;
+                document.getElementById('connectionStatus').textContent = 'Disconnected (Simulation Mode)';
+                document.getElementById('connectionStatus').classList.add('text-yellow-500');
+                logDebug('Starting simulation with sample data');
+                simulatedData.forEach((data, index) => {
+                    setTimeout(() => {
+                        if (!isConnected) handleGameMessage(data);
+                    }, index * 7000);
+                });
+            }
+        }
+
+        // Cloudflare Turnstile callback
+        window.onloadTurnstileCallback = function () {
+            turnstile.render('.cf-turnstile', {
+                sitekey: '0x4AAAAAAAchyP2WrTVrhzSM',
+                callback: function (token) {
+                    logDebug('Turnstile token received');
+                    connectWebSocket(); // Connect after CAPTCHA verification
+                }
+            });
+        };
+
+        // Event listener for connect button
+        document.getElementById('connectButton').addEventListener('click', () => {
+            connectWebSocket();
+            setTimeout(startSimulation, 10000);
+        });
+
+        // Initial connection
+        if (typeof turnstile !== 'undefined') {
+            turnstile.ready(() => {
+                window.onloadTurnstileCallback();
+            });
+        } else {
+            connectWebSocket();
+        }
+    </script>
+</body>
+</html>

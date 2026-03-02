@@ -1,0 +1,1057 @@
+<div class="px-4 py-8 max-w-7xl mx-auto min-h-screen">
+    <!-- Header & Search -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1
+                class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2">
+                Movie & TV Streaming</h1>
+            <p class="text-gray-400">Search and stream thousands of titles for free.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <div class="glass-header rounded-xl p-1 flex">
+                <button id="typeMovieBtn"
+                    class="px-6 py-2 rounded-lg text-sm font-medium transition-all active-tab bg-primary/20 text-white border border-primary/50 shadow-[0_0_15px_rgba(56,189,248,0.3)]">Movies</button>
+                <button id="typeTvBtn"
+                    class="px-6 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white">TV
+                    Shows</button>
+            </div>
+
+            <div class="relative w-full sm:w-64">
+                <input type="text" id="searchInput" placeholder="Search..."
+                    class="glass-input w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/10 text-white placeholder-gray-500 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+                <i class="fas fa-search absolute left-3.5 top-3.5 text-gray-500"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden flex-col items-center justify-center py-20">
+        <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+        <p class="text-gray-400 mt-4">Loading content...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden text-center py-20 text-red-400">
+        <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
+        <p id="errorMessage">Failed to load content.</p>
+    </div>
+
+    <!-- Media Grid -->
+    <div id="mediaGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <!-- Media cards will be injected here -->
+    </div>
+
+    <!-- Player Modal -->
+    <div id="playerModal" class="hidden fixed inset-0 z-50 bg-gray-900/95 backdrop-blur-md overflow-y-auto">
+        <div class="min-h-screen px-4 text-center">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true" id="closeModalBg"></div>
+
+            <!-- Modal panel -->
+            <div
+                class="inline-block w-full max-w-5xl my-8 text-left align-middle transition-all transform glass-card border border-white/10 rounded-2xl shadow-2xl relative">
+                <button id="closePlayerBtn"
+                    class="absolute -top-4 -right-4 w-10 h-10 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110 z-10">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <div class="p-1">
+                    <!-- Video Container -->
+                    <div class="relative w-full aspect-video bg-black rounded-t-xl overflow-hidden group/video">
+                        <div
+                            class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-white/10 group">
+                            <!-- Placeholder -->
+                            <div id="videoPlaceholder"
+                                class="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 z-10 bg-cover bg-center transition-all duration-500">
+                                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm z-10"></div>
+                                <i class="fas fa-spinner text-6xl text-primary mb-4 animate-spin relative z-20"></i>
+                                <p class="text-sm text-gray-300 font-semibold uppercase tracking-widest relative z-20">
+                                    Loading Stream...</p>
+                            </div>
+
+                            <!-- Error State -->
+                            <div id="videoError"
+                                class="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 z-10 hidden">
+                                <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+                                <p class="text-sm text-red-400 font-semibold uppercase tracking-widest mb-2">Stream
+                                    Unavailable</p>
+                                <p class="text-xs text-gray-400 mb-6 text-center px-4">Content not available on this
+                                    server</p>
+                                <div class="flex gap-3">
+                                    <button onclick="window.retryStream()"
+                                        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-semibold transition-colors">
+                                        <i class="fas fa-redo mr-1"></i> Retry
+                                    </button>
+                                    <button onclick="document.querySelectorAll('.source-btn')[1].click()"
+                                        class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded text-xs font-semibold transition-colors">
+                                        <i class="fas fa-random mr-1"></i> Next Server
+                                    </button>
+                                </div>
+                            </div>
+
+                            <iframe id="videoPlayer"
+                                class="absolute inset-0 w-full h-full opacity-0 transition-opacity duration-500 z-20"
+                                allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy">
+                            </iframe>
+
+                            <!-- Fullscreen Toggle Button -->
+                            <button id="fullscreenBtn"
+                                class="absolute bottom-4 right-4 p-2.5 bg-black/50 backdrop-blur-md rounded-lg text-white hover:bg-black/70 transition-all border border-white/10 z-20 group opacity-0 group-hover/video:opacity-100 duration-300"
+                                title="Full Screen">
+                                <i class="fas fa-expand transition-transform group-hover:scale-110"></i>
+                            </button>
+                        </div>
+
+                        <div class="p-6">
+                            <!-- Title & Meta -->
+                            <div class="mb-6">
+                                <h2 id="modalTitle" class="text-2xl font-bold text-white mb-2"></h2>
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                                    <span id="modalYear"><i class="fas fa-calendar mr-1"></i> <span></span></span>
+                                    <span id="modalRating" class="text-yellow-500"><i class="fas fa-star mr-1"></i>
+                                        <span></span></span>
+                                    <span id="modalType"
+                                        class="px-2 py-0.5 rounded bg-white/10 border border-white/20 text-xs uppercase"></span>
+                                </div>
+                            </div>
+
+                            <p id="modalOverview" class="text-gray-300 text-sm leading-relaxed mb-6"></p>
+
+                            <hr class="border-white/10 mb-6">
+
+                            <!-- Controls Region -->
+                            <div class="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
+
+                                <!-- Source Selection - Servers matching vidsrc.me style -->
+                                <div class="w-full md:w-auto">
+                                    <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-3">
+                                        Server Selection</p>
+                                    <div class="flex flex-wrap gap-2" id="sourceSelector">
+                                        <button data-source="vidsrc_me"
+                                            class="source-btn px-4 py-2 rounded-lg text-sm font-medium bg-primary text-white shadow-lg shadow-primary/20 transition-all border border-primary/50">Server
+                                            1 (VidSrc)</button>
+                                        <button data-source="vidsrc_icu"
+                                            class="source-btn px-4 py-2 rounded-lg text-sm font-medium bg-white/5 text-gray-300 transition-all border border-white/10 hover:border-primary/30">Server
+                                            2 (VidSrc ICU)</button>
+                                        <button data-source="multiembed"
+                                            class="source-btn px-4 py-2 rounded-lg text-sm font-medium bg-white/5 text-gray-300 transition-all border border-white/10 hover:border-primary/30">Server
+                                            3 (MultiEmbed)</button>
+                                        <button data-source="2embed"
+                                            class="source-btn px-4 py-2 rounded-lg text-sm font-medium bg-white/5 text-gray-300 transition-all border border-white/10 hover:border-primary/30">Server
+                                            4 (2Embed)</button>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-2">✨ Auto-switches if stream fails</p>
+                                </div>
+
+                                <!-- TV Show Episode Controls (Hidden for Movies) -->
+                                <div id="tvControls"
+                                    class="hidden w-full md:w-auto bg-white/5 border border-white/10 rounded-xl p-3">
+                                    <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-2">
+                                        Episode
+                                        Selection</p>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-sm text-gray-400">S</label>
+                                            <input type="number" id="seasonInput" value="1" min="1"
+                                                class="w-16 glass-input px-2 py-1 rounded text-center text-white text-sm">
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-sm text-gray-400">E</label>
+                                            <input type="number" id="episodeInput" value="1" min="1"
+                                                class="w-16 glass-input px-2 py-1 rounded text-center text-white text-sm">
+                                        </div>
+                                        <button id="playEpisodeBtn"
+                                            class="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded text-sm transition-colors shadow-lg shadow-purple-500/20">
+                                            <i class="fas fa-play mr-1"></i> Play
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Helpers
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            async function apiFetch(url, options = {}) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 401) {
+                        window.location.href = '/auth/login';
+                        return null;
+                    }
+                    return response;
+                } catch (err) {
+                    console.error('API Fetch Error:', err);
+                    throw err;
+                }
+            }
+
+            // State
+            let currentType = 'movie'; // 'movie' or 'tv'
+            let currentQuery = '';
+            let currentMedia = null;
+            window.currentStreamSource = 'vidsrc_me';
+            // Pagination state for infinite scroll
+            let currentPage = 1;
+            let totalPages = 1;
+            let isLoadingMore = false;
+
+            // DOM Elements
+            const elements = {
+                moviesBtn: document.getElementById('typeMovieBtn'),
+                tvBtn: document.getElementById('typeTvBtn'),
+                searchInput: document.getElementById('searchInput'),
+                grid: document.getElementById('mediaGrid'),
+                loading: document.getElementById('loadingState'),
+                error: document.getElementById('errorState'),
+                errMsg: document.getElementById('errorMessage'),
+
+                // Modal
+                modal: document.getElementById('playerModal'),
+                closeBg: document.getElementById('closeModalBg'),
+                closeBtn: document.getElementById('closePlayerBtn'),
+                player: document.getElementById('videoPlayer'),
+                placeholder: document.getElementById('videoPlaceholder'),
+                title: document.getElementById('modalTitle'),
+                year: document.getElementById('modalYear').querySelector('span'),
+                rating: document.getElementById('modalRating').querySelector('span'),
+                typeBadge: document.getElementById('modalType'),
+                overview: document.getElementById('modalOverview'),
+
+                // Controls
+                sourceBtns: document.querySelectorAll('.source-btn'),
+                tvControls: document.getElementById('tvControls'),
+                seasonIn: document.getElementById('seasonInput'),
+                episodeIn: document.getElementById('episodeInput'),
+                playEpBtn: document.getElementById('playEpisodeBtn'),
+
+                // Phase 3 Features
+                fullscreenBtn: document.getElementById('fullscreenBtn'),
+                videoContainer: document.querySelector('.aspect-video')
+            };
+
+            // Fullscreen Toggle Logic
+            if (elements.fullscreenBtn && elements.videoContainer) {
+                elements.fullscreenBtn.addEventListener('click', () => {
+                    if (!document.fullscreenElement) {
+                        if (elements.videoContainer.requestFullscreen) {
+                            elements.videoContainer.requestFullscreen();
+                        } else if (elements.videoContainer.webkitRequestFullscreen) {
+                            elements.videoContainer.webkitRequestFullscreen();
+                        } else if (elements.videoContainer.msRequestFullscreen) {
+                            elements.videoContainer.msRequestFullscreen();
+                        }
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+                    }
+                });
+
+                document.addEventListener('fullscreenchange', () => {
+                    const isFull = !!document.fullscreenElement;
+                    elements.fullscreenBtn.innerHTML = isFull ?
+                        '<i class="fas fa-compress transition-transform group-hover:scale-110"></i>' :
+                        '<i class="fas fa-expand transition-transform group-hover:scale-110"></i>';
+
+                    // Add/remove classes if needed during fullscreen
+                    if (isFull) {
+                        elements.videoContainer.classList.add('fullscreen-mode');
+                    } else {
+                        elements.videoContainer.classList.remove('fullscreen-mode');
+                    }
+                });
+            }
+
+            // Event Listeners
+            elements.moviesBtn.addEventListener('click', () => switchType('movie'));
+            elements.tvBtn.addEventListener('click', () => switchType('tv'));
+
+            // Debounced search
+            elements.searchInput.addEventListener('input', debounce((e) => {
+                currentQuery = e.target.value.trim();
+                fetchContent();
+            }, 500));
+
+            elements.closeBg.addEventListener('click', closeModal);
+            elements.closeBtn.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !elements.modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+
+            elements.sourceBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    elements.sourceBtns.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20', 'border-primary/50');
+                        b.classList.add('bg-white/5', 'text-gray-300', 'border-white/10');
+                    });
+
+                    const target = e.currentTarget;
+                    target.classList.remove('bg-white/5', 'text-gray-300', 'border-white/10');
+                    target.classList.add('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20', 'border-primary/50');
+
+                    // Track the active source globally so updatePlayerSource reads it
+                    window.currentStreamSource = target.dataset.source;
+                    console.log('[MovieStream] Switching to source:', target.dataset.source);
+
+                    // Hide error state when switching sources
+                    const errorDiv = document.getElementById('videoError');
+                    if (errorDiv) {
+                        errorDiv.classList.add('hidden');
+                    }
+
+                    window.updatePlayerSource();
+                });
+            });
+
+            elements.playEpBtn.addEventListener('click', updatePlayerSource);
+
+            // Infinite Scroll Listener
+            window.addEventListener('scroll', debounce(() => {
+                const distanceFromBottom = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+
+                // Load more when user is within 500px of bottom
+                if (distanceFromBottom < 500 && !isLoadingMore && currentPage < totalPages) {
+                    loadMoreContent();
+                }
+            }, 300));
+
+            // Initial load
+            fetchContent();
+
+            // Functions
+            function switchType(type) {
+                if (currentType === type) return;
+                currentType = type;
+
+                if (type === 'movie') {
+                    elements.moviesBtn.classList.replace('text-gray-400', 'text-white');
+                    elements.moviesBtn.classList.replace('hover:text-white', 'bg-primary/20');
+                    elements.moviesBtn.classList.add('border', 'border-primary/50', 'shadow-[0_0_15px_rgba(56,189,248,0.3)]');
+
+                    elements.tvBtn.classList.remove('bg-primary/20', 'text-white', 'border', 'border-primary/50', 'shadow-[0_0_15px_rgba(56,189,248,0.3)]');
+                    elements.tvBtn.classList.add('text-gray-400', 'hover:text-white');
+                } else {
+                    elements.tvBtn.classList.replace('text-gray-400', 'text-white');
+                    elements.tvBtn.classList.replace('hover:text-white', 'bg-primary/20');
+                    elements.tvBtn.classList.add('border', 'border-primary/50', 'shadow-[0_0_15px_rgba(56,189,248,0.3)]');
+
+                    elements.moviesBtn.classList.remove('bg-primary/20', 'text-white', 'border', 'border-primary/50', 'shadow-[0_0_15px_rgba(56,189,248,0.3)]');
+                    elements.moviesBtn.classList.add('text-gray-400', 'hover:text-white');
+                }
+
+                fetchContent();
+            }
+
+            async function fetchContent() {
+                elements.grid.innerHTML = '';
+                elements.loading.classList.remove('hidden');
+                elements.error.classList.add('hidden');
+
+                // Reset pagination
+                currentPage = 1;
+                totalPages = 1;
+                isLoadingMore = false;
+
+                try {
+                    let endpoint = '';
+                    let params = new URLSearchParams();
+                    params.set('page', currentPage);
+
+                    if (currentQuery) {
+                        endpoint = `/api/tmdb/search/${currentType}`;
+                        params.set('query', currentQuery);
+                        params.set('include_adult', 'false');
+                    } else {
+                        // Default to trending/popular if no search
+                        endpoint = `/api/tmdb/${currentType}/popular`;
+                    }
+
+                    const response = await apiFetch(`${endpoint}?${params.toString()}`);
+                    if (!response) return; // Handled by apiFetch (auth redirect)
+
+                    const data = await response.json();
+                    if (data.error) throw new Error(data.error);
+
+                    totalPages = data.total_pages || 1;
+                    renderGrid(data.results || [], false); // false = replace, not append
+                } catch (err) {
+                    console.error('Failed to fetch media:', err);
+                    elements.errMsg.textContent = err.message || 'Failed to load content. Please try again later.';
+                    elements.error.classList.remove('hidden');
+                } finally {
+                    elements.loading.classList.add('hidden');
+                }
+            }
+
+            async function loadMoreContent() {
+                if (isLoadingMore || currentPage >= totalPages) return;
+
+                isLoadingMore = true;
+                currentPage++;
+
+                try {
+                    let endpoint = '';
+                    let params = new URLSearchParams();
+                    params.set('page', currentPage);
+
+                    if (currentQuery) {
+                        endpoint = `/api/tmdb/search/${currentType}`;
+                        params.set('query', currentQuery);
+                        params.set('include_adult', 'false');
+                    } else {
+                        endpoint = `/api/tmdb/${currentType}/popular`;
+                    }
+
+                    const response = await apiFetch(`${endpoint}?${params.toString()}`);
+                    if (!response) return;
+
+                    const data = await response.json();
+                    if (data.error) throw new Error(data.error);
+
+                    renderGrid(data.results || [], true); // true = append, don't replace
+                } catch (err) {
+                    console.error('Failed to load more media:', err);
+                    currentPage--; // Rollback page number on error
+                } finally {
+                    isLoadingMore = false;
+                }
+            }
+
+            function renderGrid(items, append = false) {
+                if (!items || items.length === 0) {
+                    if (!append) {
+                        elements.grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500">No results found ${currentQuery ? 'for "' + currentQuery + '"' : ''}.</div>`;
+                    }
+                    return;
+                }
+
+                const validItems = items.filter(item => item.poster_path);
+
+                const gridHTML = validItems.map(item => {
+                    const titleStr = currentType === 'movie' ? (item.title || '') : (item.name || '');
+                    const date = currentType === 'movie' ? item.release_date : item.first_air_date;
+                    const yearStr = date ? new Date(date).getFullYear() : 'N/A';
+
+                    let posterUrl = '';
+                    if (item.poster_path) {
+                        posterUrl = item.poster_path.startsWith('http') ? item.poster_path : `https://image.tmdb.org/t/p/w500${item.poster_path}`;
+                    } else {
+                        posterUrl = 'https://via.placeholder.com/500x750?text=No+Poster';
+                    }
+
+                    const itemData = encodeURIComponent(JSON.stringify(item));
+                    const cleanTitle = titleStr.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
+                    return `
+                    <div class="group relative bg-white/5 border border-white/10 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/20">
+                        <div class="aspect-[2/3] w-full overflow-hidden relative">
+                            <img class="movie-poster w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                 src="${posterUrl}" 
+                                 alt="${cleanTitle}" 
+                                 loading="lazy" 
+                                 onerror="this.src='https://via.placeholder.com/500x750?text=Image+Error'; this.onerror=null;"
+                                 onclick="event.stopPropagation(); window.openMedia('${itemData}')"
+                                 style="cursor: pointer;">
+                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-80 pointer-events-none"></div>
+                            
+                            <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md flex items-center gap-1 border border-white/10 pointer-events-none">
+                                <i class="fas fa-star text-yellow-500 text-xs"></i>
+                                <span class="text-xs font-bold text-white">${(item.vote_average ? item.vote_average.toFixed(1) : 'NR')}</span>
+                            </div>
+
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm pointer-events-none">
+                                <div onclick="event.stopPropagation(); window.openMedia('${itemData}')" 
+                                     class="w-12 h-12 bg-primary/90 text-white rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.6)] transform scale-50 group-hover:scale-100 transition-transform duration-300 delay-100 pointer-events-auto cursor-pointer">
+                                    <i class="fas fa-play ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 p-4 cursor-pointer" onclick="event.stopPropagation(); window.openMedia('${itemData}')">
+                            <h3 class="text-white font-bold leading-tight line-clamp-1 mb-1 shadow-sm">${titleStr}</h3>
+                            <p class="text-xs text-gray-300 shadow-sm">${yearStr}</p>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+
+                if (append) {
+                    elements.grid.insertAdjacentHTML('beforeend', gridHTML);
+                } else {
+                    elements.grid.innerHTML = gridHTML;
+                }
+            }
+        });
+
+        // Global function to open modal (called from inline onclick)
+        window.openMedia = function (encodedData) {
+            try {
+                const item = JSON.parse(decodeURIComponent(encodedData));
+                const isMovie = item.title !== undefined; // Movies have 'title', TV has 'name'
+
+                // Setup Modal UI
+                document.getElementById('modalTitle').textContent = isMovie ? item.title : item.name;
+
+                const date = isMovie ? item.release_date : item.first_air_date;
+                document.getElementById('modalYear').querySelector('span').textContent = date ? new Date(date).getFullYear() : 'Unknown';
+                document.getElementById('modalRating').querySelector('span').textContent = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
+
+                const typeBadge = document.getElementById('modalType');
+                typeBadge.textContent = isMovie ? 'Movie' : 'TV Show';
+
+                document.getElementById('modalOverview').textContent = item.overview || 'No synopsis available.';
+
+                // Show/Hide TV Controls
+                const tvControls = document.getElementById('tvControls');
+                if (isMovie) {
+                    tvControls.classList.add('hidden');
+                } else {
+                    tvControls.classList.remove('hidden');
+                    document.getElementById('seasonInput').value = 1;
+                    document.getElementById('episodeInput').value = 1;
+                }
+
+                // Store current media context globally
+                window.currentMediaCtx = {
+                    id: item.id,
+                    isMovie: isMovie,
+                    backdropPath: item.backdrop_path || item.poster_path
+                };
+
+                // Reset player & show placeholder
+                const player = document.getElementById('videoPlayer');
+                const placeholder = document.getElementById('videoPlaceholder');
+                const errorDiv = document.getElementById('videoError');
+                player.src = '';
+                player.classList.add('opacity-0');
+                placeholder.classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+
+                // Show Modal
+                const modal = document.getElementById('playerModal');
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+                // Auto-play default source
+                setTimeout(() => window.updatePlayerSource(), 100);
+
+            } catch (e) {
+                console.error('Error opening media:', e);
+                alert('Failed to load media details: ' + e.message);
+            }
+        };
+
+        window.updatePlayerSource = function () {
+            if (!window.currentMediaCtx) return;
+
+            const { id, isMovie, backdropPath } = window.currentMediaCtx;
+            const player = document.getElementById('videoPlayer');
+            const placeholder = document.getElementById('videoPlaceholder');
+            const errorDiv = document.getElementById('videoError');
+
+            // Set placeholder background image
+            if (backdropPath) {
+                const imgUrl = backdropPath.startsWith('http') ? backdropPath : `https://image.tmdb.org/t/p/original${backdropPath}`;
+                placeholder.style.backgroundImage = `url('${imgUrl}')`;
+            } else {
+                placeholder.style.backgroundImage = 'none';
+            }
+
+            // Show loading state
+            placeholder.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+            player.classList.add('opacity-0');
+
+            const source = window.currentStreamSource || 'vidsrc_me';
+            const season = isMovie ? 1 : (parseInt(document.getElementById('seasonInput')?.value) || 1);
+            const episode = isMovie ? 1 : (parseInt(document.getElementById('episodeInput')?.value) || 1);
+
+            // Build embed URL directly
+            let embedUrl = '';
+
+            if (isMovie) {
+                switch (source) {
+                    case 'vidsrc_me':
+                        embedUrl = `https://vidsrc.net/embed/movie?tmdb=${id}`;
+                        break;
+                    case 'vidsrc_icu':
+                        embedUrl = `https://embed.su/embed/movie/${id}`;
+                        break;
+                    case 'multiembed':
+                        embedUrl = `https://vidsrc.in/embed/movie?tmdb=${id}`;
+                        break;
+                    case '2embed':
+                        embedUrl = `https://autoembed.co/movie/tmdb/${id}`;
+                        break;
+                    default:
+                        embedUrl = `https://vidsrc.net/embed/movie?tmdb=${id}`;
+                }
+            } else {
+                switch (source) {
+                    case 'vidsrc_me':
+                        embedUrl = `https://vidsrc.net/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+                        break;
+                    case 'vidsrc_icu':
+                        embedUrl = `https://embed.su/embed/tv/${id}/${season}/${episode}`;
+                        break;
+                    case 'multiembed':
+                        embedUrl = `https://vidsrc.in/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+                        break;
+                    case '2embed':
+                        embedUrl = `https://autoembed.co/tv/tmdb/${id}-${season}-${episode}`;
+                        break;
+                    default:
+                        embedUrl = `https://vidsrc.net/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+                }
+            }
+
+            if (embedUrl) {
+                console.log('[MovieStream] Loading from', source, ':', embedUrl);
+
+                // Clear previous src first
+                player.src = '';
+
+                // Set data attribute to track current source
+                player.dataset.currentSource = source;
+                player.dataset.mediaId = id;
+
+                // Small delay to ensure iframe is cleared
+                setTimeout(() => {
+                    player.src = embedUrl;
+                }, 100);
+
+                // Setup multiple load detection mechanisms
+                let isLoaded = false;
+
+                const markAsLoaded = () => {
+                    if (!isLoaded) {
+                        isLoaded = true;
+                        console.log('[MovieStream] Stream loaded successfully from', source);
+                        clearAllTimeouts();
+                        placeholder.classList.add('hidden');
+                        player.classList.remove('opacity-0');
+                    }
+                };
+
+                const clearAllTimeouts = () => {
+                    if (loadTimeout) clearTimeout(loadTimeout);
+                    if (errorTimeout) clearTimeout(errorTimeout);
+                };
+
+                // Try multiple events to detect when iframe is ready
+                player.addEventListener('load', markAsLoaded, { once: true });
+                player.addEventListener('loadstart', () => {
+                    console.log('[MovieStream] iframe load started');
+                });
+
+                // Fallback timeout - assume loaded after 2.5 seconds
+                let loadTimeout = setTimeout(() => {
+                    markAsLoaded();
+                }, 2500);
+
+                // Error handling with fallback
+                let errorTimeout = setTimeout(() => {
+                    if (!isLoaded) {
+                        console.error('[MovieStream] Stream appears to have failed from:', source);
+                        handleStreamError(id, isMovie ? 'movie' : 'tv', source, season, episode);
+                    }
+                }, 4000);
+
+                // Also catch frame errors
+                const handleFrameError = () => {
+                    if (!isLoaded) {
+                        clearAllTimeouts();
+                        handleStreamError(id, isMovie ? 'movie' : 'tv', source, season, episode);
+                    }
+                };
+
+                player.addEventListener('error', handleFrameError, { once: true });
+            }
+        };
+
+        // Handle stream errors with auto-fallback
+        function handleStreamError(id, type, source, season, episode) {
+            const sources = ['vidsrc_me', 'vidsrc_icu', 'multiembed', '2embed'];
+            const currentIndex = sources.indexOf(source);
+            const nextIndex = (currentIndex + 1) % sources.length;
+
+            if (currentIndex !== nextIndex) {
+                console.log('[MovieStream] Auto-switching to source:', sources[nextIndex]);
+                window.currentStreamSource = sources[nextIndex];
+
+                // Update button states
+                document.querySelectorAll('.source-btn').forEach((btn) => {
+                    btn.classList.remove('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20', 'border-primary/50');
+                    btn.classList.add('bg-white/5', 'text-gray-300', 'border-white/10');
+
+                    if (btn.dataset.source === sources[nextIndex]) {
+                        btn.classList.remove('bg-white/5', 'text-gray-300', 'border-white/10');
+                        btn.classList.add('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20', 'border-primary/50');
+                    }
+                });
+
+                // Retry with next source
+                setTimeout(() => window.updatePlayerSource(), 400);
+            } else {
+                // All sources exhausted
+                console.error('[MovieStream] All streaming sources failed');
+                const placeholder = document.getElementById('videoPlaceholder');
+                const errorDiv = document.getElementById('videoError');
+                placeholder.classList.add('hidden');
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        window.retryStream = function () {
+            console.log('[MovieStream] Retrying current source...');
+            const placeholder = document.getElementById('videoPlaceholder');
+            const errorDiv = document.getElementById('videoError');
+            placeholder.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+            window.updatePlayerSource();
+        };
+
+        window.closeModal = function () {
+            const modal = document.getElementById('playerModal');
+            const player = document.getElementById('videoPlayer');
+
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+            player.src = ''; // Stop video playback
+            window.currentMediaCtx = null;
+        };
+
+        /**
+         * INTERACTIVE IMAGE VIEWER - Image Lightbox Module
+         */
+
+        let currentZoom = 1;
+        const MIN_ZOOM = 0.5;
+        const MAX_ZOOM = 4;
+        const ZOOM_STEP = 0.2;
+
+        // Open Image Viewer (formerly openImageViewer)
+        window.openViewer = function (imageSrc, imageTitle) {
+            const modal = document.getElementById('movieViewerModal');
+            const img = document.getElementById('viewerImage');
+
+            img.src = imageSrc;
+            img.alt = imageTitle || 'Image';
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Reset zoom
+            currentZoom = 1;
+            updateImageZoom();
+            showZoomIndicator();
+
+            // Add event listeners
+            document.addEventListener('keydown', handleKeyboard);
+            img.addEventListener('wheel', handleMouseWheel, { passive: false });
+        };
+
+        // Close Image Viewer
+        window.closeViewer = function () {
+            const modal = document.getElementById('movieViewerModal');
+            const img = document.getElementById('viewerImage');
+
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+
+            // Clean up
+            document.removeEventListener('keydown', handleKeyboard);
+            img.removeEventListener('wheel', handleMouseWheel);
+
+            // Reset state for next open
+            currentZoom = 1;
+            updateImageZoom();
+        };
+
+        // Zoom Logic (Increment/Decrement)
+        window.zoomIn = function () {
+            if (currentZoom < MAX_ZOOM) {
+                currentZoom = parseFloat((currentZoom + ZOOM_STEP).toFixed(2));
+                updateImageZoom();
+                showZoomIndicator();
+            }
+        };
+
+        window.zoomOut = function () {
+            if (currentZoom > MIN_ZOOM) {
+                currentZoom = parseFloat((currentZoom - ZOOM_STEP).toFixed(2));
+                updateImageZoom();
+                showZoomIndicator();
+            }
+        };
+
+        // Reset Zoom to 1:1
+        window.resetZoom = function () {
+            currentZoom = 1;
+            updateImageZoom();
+            hideZoomIndicator();
+        };
+
+        // Apply zoom transform to image
+        function updateImageZoom() {
+            const img = document.getElementById('viewerImage');
+            img.style.transform = `scale(${currentZoom.toFixed(2)})`;
+            updateZoomIndicator();
+        }
+
+        // Update zoom percentage display
+        function updateZoomIndicator() {
+            const indicator = document.getElementById('zoomIndicator');
+            const percent = document.getElementById('zoomPercent');
+            percent.textContent = `${Math.round(currentZoom * 100)}%`;
+        }
+
+        function showZoomIndicator() {
+            const indicator = document.getElementById('zoomIndicator');
+            indicator.classList.remove('hidden');
+
+            // Auto-hide after 2 seconds
+            clearTimeout(window.zoomIndicatorTimeout);
+            window.zoomIndicatorTimeout = setTimeout(() => {
+                indicator.classList.add('hidden');
+            }, 2000);
+        }
+
+        function hideZoomIndicator() {
+            const indicator = document.getElementById('zoomIndicator');
+            indicator.classList.add('hidden');
+        }
+
+        // Mouse wheel zoom support
+        function handleMouseWheel(event) {
+            event.preventDefault();
+
+            if (event.deltaY < 0) {
+                // Scroll up = zoom in
+                window.zoomIn();
+            } else {
+                // Scroll down = zoom out
+                window.zoomOut();
+            }
+        }
+
+        // Keyboard shortcuts
+        function handleKeyboard(event) {
+            const modal = document.getElementById('movieViewerModal');
+
+            // Only handle if modal is visible
+            if (modal.classList.contains('hidden')) return;
+
+            switch (event.key) {
+                case 'Escape':
+                    window.closeViewer();
+                    break;
+                case '+':
+                case '=':
+                    event.preventDefault();
+                    window.zoomIn();
+                    break;
+                case '-':
+                case '_':
+                    event.preventDefault();
+                    window.zoomOut();
+                    break;
+                case '0':
+                    event.preventDefault();
+                    window.resetZoom();
+                    break;
+                case 'f':
+                case 'F':
+                    event.preventDefault();
+                    window.toggleFullScreen();
+                    break;
+            }
+        }
+
+        // Fullscreen support
+        window.toggleFullScreen = function () {
+            const container = document.getElementById('viewerContainer');
+
+            if (!document.fullscreenElement) {
+                // Enter fullscreen
+                container.requestFullscreen()
+                    .catch(err => {
+                        console.error('[ImageViewer] Fullscreen error:', err);
+                    });
+            } else {
+                // Exit fullscreen
+                document.exitFullscreen();
+            }
+        };
+
+        // Initialize image viewer event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('movieViewerModal');
+
+            // Close modal when clicking on background
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        window.closeViewer();
+                    }
+                });
+            }
+
+            // Setup control button listeners
+            document.getElementById('zoomInBtn')?.addEventListener('click', window.zoomIn);
+            document.getElementById('zoomOutBtn')?.addEventListener('click', window.zoomOut);
+            document.getElementById('resetZoomBtn')?.addEventListener('click', window.resetZoom);
+            document.getElementById('fullscreenBtn')?.addEventListener('click', window.toggleFullScreen);
+            document.getElementById('closeViewerBtn')?.addEventListener('click', window.closeViewer);
+        });
+    </script>
+
+    <!-- Interactive Viewer Modal (Lightbox) - Enhanced with Zoom & Fullscreen -->
+    <div id="movieViewerModal"
+        class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center transition-opacity duration-300">
+
+        <!-- Top Control Bar -->
+        <div class="absolute top-4 right-4 flex gap-3 z-50">
+            <button onclick="zoomIn()"
+                class="w-10 h-10 rounded-full glass bg-white/10 hover:bg-white/20 text-white flex justify-center items-center backdrop-blur-md border border-white/10 transition-all hover:scale-110"
+                title="Zoom In (+)">
+                <i class="fas fa-search-plus"></i>
+            </button>
+            <button onclick="zoomOut()"
+                class="w-10 h-10 rounded-full glass bg-white/10 hover:bg-white/20 text-white flex justify-center items-center backdrop-blur-md border border-white/10 transition-all hover:scale-110"
+                title="Zoom Out (-)">
+                <i class="fas fa-search-minus"></i>
+            </button>
+            <button onclick="toggleFullScreen()"
+                class="w-10 h-10 rounded-full glass bg-white/10 hover:bg-white/20 text-white flex justify-center items-center backdrop-blur-md border border-white/10 transition-all hover:scale-110"
+                title="Toggle Fullscreen (⛶)">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button onclick="closeViewer()"
+                class="w-10 h-10 rounded-full bg-red-500/80 hover:bg-red-500 text-white flex justify-center items-center border border-red-500/50 transition-all hover:scale-110"
+                title="Close (✖)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Image Container (Where scaling happens) -->
+        <div class="overflow-hidden w-full h-full flex justify-center items-center p-4" id="viewerContainer">
+            <img id="viewerImage" src="" alt="Movie Poster"
+                class="max-h-[90vh] max-w-[90vw] object-contain transition-transform duration-300 ease-out shadow-2xl rounded-lg border border-white/10 cursor-grab active:cursor-grabbing select-none"
+                style="transform: scale(1);">
+        </div>
+
+        <!-- Zoom Level Indicator -->
+        <div id="zoomIndicator"
+            class="absolute bottom-4 left-4 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white text-sm font-medium hidden">
+            <span id="zoomPercent">100%</span>
+        </div>
+    </div>
+    <style>
+        /* Player Enhancements */
+        #videoPlayer {
+            background: #000;
+            border-radius: 12px;
+        }
+
+        #videoPlaceholder,
+        #videoError {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Smooth opacity transitions */
+        #videoPlayer {
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Loading spinner animation */
+        #videoPlaceholder .fa-spinner {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal improvements */
+        #playerModal {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Source buttons hover effect */
+        .source-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .source-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(56, 189, 248, 0.15);
+        }
+
+        .source-btn.bg-primary {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Improve aspect ratio video container */
+        .aspect-video {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        /* Better error styling */
+        #videoError {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Ensure iframe is fully visible when loaded */
+        #videoPlayer {
+            display: block;
+            background-color: #000;
+        }
+    </style>

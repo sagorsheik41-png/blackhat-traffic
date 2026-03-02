@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BlackHat Traffic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: #2d3748;
+        }
+
+        .wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--dark);
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a {
+            display: block;
+            padding: 15px 20px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: none;
+            border: none;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            margin: 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: var(--success);
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid var(--border);
+            gap: 10px;
+        }
+
+        .nav-tabs .nav-link {
+            color: #718096;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 12px 20px;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: none;
+        }
+
+        /* Form */
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+
+        .form-control {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .badge-primary {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: rgba(72, 187, 120, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(237, 137, 54, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(245, 101, 101, 0.1);
+            color: var(--danger);
+        }
+
+        /* Table */
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: var(--light);
+            border: none;
+            color: #4a5568;
+            font-weight: 600;
+            padding: 15px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: var(--light);
+        }
+
+        /* Modal */
+        .modal-content {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            border: none;
+            padding: 20px;
+            background: var(--light);
+        }
+
+        .modal-header h5 {
+            font-weight: bold;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            min-width: 300px;
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 2000;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-rocket"></i> BlackHat
+            </div>
+            <ul>
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="#tools" class="nav-link" data-section="tools"><i class="fas fa-tools"></i> Tools</a></li>
+                <li><a href="#campaigns" class="nav-link" data-section="campaigns"><i class="fas fa-project-diagram"></i> Campaigns</a></li>
+                <li><a href="#analytics" class="nav-link" data-section="analytics"><i class="fas fa-bar-chart"></i> Analytics</a></li>
+                <li><a href="#billing" class="nav-link" data-section="billing"><i class="fas fa-credit-card"></i> Billing</a></li>
+                <li><a href="#settings" class="nav-link" data-section="settings"><i class="fas fa-cog"></i> Settings</a></li>
+                <li style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);"><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <h1>Welcome back, <span id="userName">User</span>! 👋</h1>
+                <div class="user-profile">
+                    <div>
+                        <div style="font-weight: 600; text-align: right;" id="userNameDisplay">Loading...</div>
+                        <div style="font-size: 12px; color: #718096; text-align: right;">
+                            <span class="badge badge-primary" id="tierBadge">Free</span>
+                        </div>
+                    </div>
+                    <div class="user-avatar" id="userInitial">U</div>
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#profile">Profile</a></li>
+                            <li><a class="dropdown-item" href="#settings">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Current Tier</div>
+                        <div class="stat-value" id="tierDisplay">Free</div>
+                        <div class="stat-change"><a href="#billing" onclick="switchSection('billing')">Upgrade</a></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Visitors</div>
+                        <div class="stat-value" id="visitorCount">0</div>
+                        <div class="stat-change">+5% increase</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-value" id="revenueCount">$0</div>
+                        <div class="stat-change">From campaigns</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Campaigns</div>
+                        <div class="stat-value" id="campaignCount">0</div>
+                        <div class="stat-change">Running now</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <button class="btn btn-primary" onclick="switchSection('tools')"><i class="fas fa-wrench"></i> Access Tools</button>
+                            <button class="btn btn-primary" onclick="switchSection('campaigns')"><i class="fas fa-plus"></i> New Campaign</button>
+                            <button class="btn btn-outline-primary" onclick="switchSection('analytics')"><i class="fas fa-chart-pie"></i> View Analytics</button>
+                            <button class="btn btn-outline-primary" onclick="switchSection('billing')"><i class="fas fa-credit-card"></i> Upgrade Plan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Recent Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityTable">
+                                <tr><td colspan="3" class="text-center"><div class="spinner"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools Section -->
+            <div id="tools-section" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Available Tools</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-traffic-light"></i> Traffic Pro</h5>
+                            <p style="color: #718096; font-size: 14px; margin: 10px 0;">Drive high-quality traffic to your links</p>
+                            <button class="btn btn-primary btn-sm">Launch Tool</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-film"></i> Movie Streaming</h5>
+                            <p style="color: #718096; font-size: 14px; margin: 10px 0;">Stream and monetize video content</p>
+                            <button class="btn btn-primary btn-sm">Launch Tool</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-chart-line"></i> Trading Bot</h5>
+                            <p style="color: #718096; font-size: 14px; margin: 10px 0;">AI-powered trading signals</p>
+                            <button class="btn btn-primary btn-sm">Launch Tool</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-image"></i> Adobe Stock</h5>
+                            <p style="color: #718096; font-size: 14px; margin: 10px 0;">Access premium stock images</p>
+                            <button class="btn btn-primary btn-sm">Launch Tool</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-bitcoin"></i> Crypto Mining</h5>
+                            <p style="color: #718096; font-size: 14px; margin: 10px 0;">Passive income from mining</p>
+                            <button class="btn btn-primary btn-sm">Launch Tool</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-youtube"></i> YouTube Helper</h5>
+                            <p style="color: #718096; font-size: 14px; margin: 10px 0;">Grow your YouTube channel</p>
+                            <button class="btn btn-primary btn-sm">Launch Tool</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaigns Section -->
+            <div id="campaigns-section" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Your Campaigns</h2>
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h5 class="card-title">Active Campaigns</h5>
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Campaign</button>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Tool</th>
+                                    <th>Status</th>
+                                    <th>Visitors</th>
+                                    <th>Revenue</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="campaignsTable">
+                                <tr><td colspan="6" class="text-center">No campaigns yet. Create your first campaign to get started!</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics-section" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Analytics</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Traffic Overview</h5>
+                            <canvas id="trafficChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Revenue Distribution</h5>
+                            <canvas id="revenueChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Section -->
+            <div id="billing-section" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Billing & Subscription</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <!-- Free Plan -->
+                    <div class="card" id="planFree">
+                        <div class="card-body" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px 10px 0 0;">
+                            <h5 style="font-weight: bold; margin-bottom: 5px;">Free</h5>
+                            <div style="font-size: 28px; font-weight: bold; margin: 10px 0;">$0<span style="font-size: 14px;">/month</span></div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Basic Tools Access</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> 5 Campaigns/month</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Basic Analytics</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-times" style="color: var(--danger);"></i> No Premium Tools</li>
+                            </ul>
+                            <button class="btn btn-outline-primary" style="width: 100%; margin-top: 15px;" onclick="alert('You are currently on the Free plan')">Current Plan</button>
+                        </div>
+                    </div>
+
+                    <!-- Pro Plan -->
+                    <div class="card" id="planPro">
+                        <div class="card-body" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px 10px 0 0;">
+                            <h5 style="font-weight: bold; margin-bottom: 5px;">Pro</h5>
+                            <div style="font-size: 28px; font-weight: bold; margin: 10px 0;">$29<span style="font-size: 14px;">/month</span></div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> All Tools Access</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Unlimited Campaigns</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Advanced Analytics</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Priority Support</li>
+                            </ul>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="upgradePlan('pro')">Upgrade to Pro</button>
+                        </div>
+                    </div>
+
+                    <!-- Ultimate Plan -->
+                    <div class="card" id="planUltimate">
+                        <div class="card-body" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px 10px 0 0;">
+                            <h5 style="font-weight: bold; margin-bottom: 5px;">Ultimate</h5>
+                            <div style="font-size: 28px; font-weight: bold; margin: 10px 0;">$99<span style="font-size: 14px;">/month</span></div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Everything in Pro</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Custom API Access</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Dedicated Manager</li>
+                                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Lifetime Updates</li>
+                            </ul>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="upgradePlan('ultimate')">Upgrade to Ultimate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings-section" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Account Settings</h2>
+                
+                <!-- Profile Tab -->
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button">Profile</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button">Security</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="api-tab" data-bs-toggle="tab" data-bs-target="#api" type="button">API Keys</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <!-- Profile Content -->
+                        <div class="tab-pane fade show active" id="profile" role="tabpanel">
+                            <div style="padding: 20px;">
+                                <form id="profileForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group" style="margin-bottom: 15px;">
+                                                <label class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" id="fullName" placeholder="Your name">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group" style="margin-bottom: 15px;">
+                                                <label class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="email" placeholder="your@email.com" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group" style="margin-bottom: 15px;">
+                                                <label class="form-label">Phone</label>
+                                                <input type="tel" class="form-control" id="phone" placeholder="+1234567890">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group" style="margin-bottom: 15px;">
+                                                <label class="form-label">Avatar URL</label>
+                                                <input type="url" class="form-control" id="avatar" placeholder="https://...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Profile</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Security Content -->
+                        <div class="tab-pane fade" id="security" role="tabpanel">
+                            <div style="padding: 20px;">
+                                <form id="passwordForm">
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="currentPassword">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="newPassword">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- API Keys Content -->
+                        <div class="tab-pane fade" id="api" role="tabpanel">
+                            <div style="padding: 20px;">
+                                <form id="apiKeysForm">
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label class="form-label">Gemini API Key</label>
+                                        <input type="password" class="form-control" id="geminiKey" placeholder="sk-...">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 15px;">
+                                        <label class="form-label">TMDB API Key</label>
+                                        <input type="password" class="form-control" id="tmdbKey" placeholder="sk-...">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save API Keys</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="card" style="margin-top: 30px; border: 1px solid var(--danger);">
+                    <div class="card-header" style="background: rgba(245, 101, 101, 0.1);">
+                        <h5 class="card-title" style="color: var(--danger); margin: 0;"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h5>
+                    </div>
+                    <div class="card-body">
+                        <p style="color: #718096; margin-bottom: 15px;">Delete your account and all associated data. This action cannot be undone.</p>
+                        <button class="btn btn-danger" onclick="deleteAccount()">Delete My Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.dataset.section;
+                switchSection(section);
+            });
+        });
+
+        function switchSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(s => s.style.display = 'none');
+            
+            // Show selected section
+            document.getElementById(section + '-section').style.display = 'block';
+            
+            // Update active link
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`[data-section="${section}"]`)?.classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Show toast
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Load user data
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user/profile');
+                const data = await response.json();
+                
+                if (!data.success) throw new Error(data.error);
+                
+                const user = data.user;
+                document.getElementById('userName').textContent = user.name.split(' ')[0];
+                document.getElementById('userNameDisplay').textContent = user.name;
+                document.getElementById('userInitial').textContent = user.name.charAt(0).toUpperCase();
+                document.getElementById('tierDisplay').textContent = user.tier?.toUpperCase() || 'FREE';
+                document.getElementById('tierBadge').textContent = user.tier?.toUpperCase() || 'FREE';
+                
+                // Load stats
+                const statsResponse = await fetch('/api/user/stats');
+                const statsData = await statsResponse.json();
+                if (statsData.success) {
+                    document.getElementById('visitorCount').textContent = statsData.stats.totalVisitors.toLocaleString();
+                    document.getElementById('revenueCount').textContent = '$' + statsData.stats.totalRevenue.toFixed(2);
+                }
+                
+                // Load activity
+                loadActivity();
+                
+                // Fill form fields
+                document.getElementById('fullName').value = user.name;
+                document.getElementById('email').value = user.email;
+                document.getElementById('phone').value = user.phone || '';
+                document.getElementById('avatar').value = user.avatar || '';
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showToast('Failed to load user data', 'error');
+            }
+        }
+
+        // Load activity
+        async function loadActivity() {
+            try {
+                const response = await fetch('/api/user/activity?limit=5');
+                const data = await response.json();
+                
+                if (data.success && data.activity.length > 0) {
+                    const tbody = document.getElementById('activityTable');
+                    tbody.innerHTML = data.activity.map(activity => `
+                        <tr>
+                            <td><span class="badge badge-primary">${activity.action}</span></td>
+                            <td>${JSON.stringify(activity.details).substring(0, 40)}...</td>
+                            <td style="font-size: 12px;">${new Date(activity.timestamp).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        // Profile form
+        document.getElementById('profileForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch('/api/user/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('fullName').value,
+                        phone: document.getElementById('phone').value,
+                        avatar: document.getElementById('avatar').value
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Profile updated successfully');
+                    loadUserData();
+                } else {
+                    showToast('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showToast('Failed to update profile', 'error');
+            }
+        });
+
+        // Upgrade plan
+        function upgradePlan(tier) {
+            showToast('Initiating upgrade to ' + tier.toUpperCase() + '...');
+            // TODO: Implement payment processing
+        }
+
+        // Delete account
+        function deleteAccount() {
+            if (!confirm('Are you sure? You will lose all your data. This cannot be undone.')) return;
+            
+            const email = prompt('Enter your email to confirm deletion:');
+            if (email !== document.getElementById('email').value) {
+                showToast('Email confirmation failed', 'error');
+                return;
+            }
+            
+            // TODO: Delete account
+            showToast('Account deletion initiated', 'success');
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
+</body>
+</html>

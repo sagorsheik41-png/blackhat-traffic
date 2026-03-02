@@ -1,0 +1,255 @@
+<div class="px-4 py-8 max-w-7xl mx-auto min-h-screen">
+    <!-- Header & Tabs -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1
+                class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-2">
+                Realtime Signal Dashboards</h1>
+            <p class="text-gray-400">Live predictive signals and telemetry for popular casino games.</p>
+        </div>
+
+        <div class="glass-header rounded-xl p-1 flex">
+            <button id="tabAviator"
+                class="px-6 py-2 rounded-lg text-sm font-medium transition-all bg-primary/20 text-white border border-primary/50 shadow-[0_0_15px_rgba(56,189,248,0.3)]">Aviator</button>
+            <button id="tabCrazyTime"
+                class="px-6 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white">Crazy
+                Time</button>
+        </div>
+    </div>
+
+    <!-- AVIATOR DASHBOARD -->
+    <div id="aviatorView" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Signal Area -->
+        <div class="lg:col-span-2 glass-panel border border-white/10 rounded-2xl p-6 flex flex-col h-[600px]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-white"><i class="fas fa-plane-departure text-blue-400 mr-2"></i> Live
+                    Feed</h2>
+                <div class="flex gap-2">
+                    <button id="avClearBtn"
+                        class="px-3 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-sm text-gray-300 transition-colors">Clear</button>
+                    <button id="avPauseBtn"
+                        class="px-3 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-sm text-gray-300 transition-colors">Pause</button>
+                    <span id="avStatus"
+                        class="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-sm font-medium">Disconnected</span>
+                </div>
+            </div>
+
+            <!-- Mock Chart Area -->
+            <div
+                class="flex-1 bg-gray-900/50 rounded-xl border border-white/5 flex items-center justify-center mb-4 relative overflow-hidden backdrop-blur-sm">
+                <!-- Animated Background Grid -->
+                <div class="absolute inset-0 opacity-10"
+                    style="background-image: linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px); background-size: 20px 20px;">
+                </div>
+                <div class="text-center z-10 relative">
+                    <i class="fas fa-chart-line text-4xl text-blue-500/50 mb-3"></i>
+                    <p class="text-gray-500 font-medium">Realtime telemetry visualization rendering area.</p>
+                </div>
+            </div>
+
+            <!-- Signals Feed -->
+            <div class="h-48 bg-black/40 rounded-xl border border-white/5 p-2 overflow-y-auto custom-scrollbar"
+                id="avSignals">
+                <div
+                    class="text-center text-gray-500 py-4 text-sm align-middle h-full flex items-center justify-center">
+                    Awaiting incoming signals...</div>
+            </div>
+
+            <button id="avCopyLatestBtn"
+                class="mt-4 w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white rounded-xl font-bold shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all">Copy
+                Latest Signal</button>
+        </div>
+
+        <!-- Aviator Sidebar -->
+        <div class="flex flex-col gap-6">
+            <!-- Connection Config -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-link text-blue-400 mr-2"></i> Connection
+                </h3>
+
+                <div class="space-y-4">
+                    <div>
+                        <label
+                            class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">WebSocket /
+                            API URL</label>
+                        <input type="url" id="avWsUrl"
+                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                            placeholder="wss://demo.signals.example/ws">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Auth
+                            Token (Optional)</label>
+                        <input type="text" id="avToken"
+                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                            placeholder="Bearer...">
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button id="avConnectBtn"
+                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium transition-colors">Connect</button>
+                        <button id="avDisconnectBtn"
+                            class="flex-1 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 py-2 rounded-lg font-medium transition-colors">Disconnect</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Connecting transmits your IP. Ensure you are using a secure
+                        WSS proxy if operating stealthily.</p>
+                </div>
+            </div>
+
+            <!-- System Log -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6 flex-1 flex flex-col">
+                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-terminal text-blue-400 mr-2"></i> System
+                    Log</h3>
+                <div id="avLog"
+                    class="flex-1 bg-black/50 rounded-lg border border-white/5 p-3 text-xs font-mono text-gray-400 overflow-y-auto h-48 custom-scrollbar">
+                    <div class="text-gray-600">[System] Initialized Aviator telemetry engine.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CRAZY TIME DASHBOARD (Hidden by Default) -->
+    <div id="crazyTimeView" class="hidden grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Area -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+
+            <!-- Top Row: Game Status & Betting Signal -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Game Status -->
+                <div class="glass-panel border border-white/10 rounded-2xl p-6 relative overflow-hidden">
+                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
+                    <h2 class="text-xl font-bold text-white mb-1">Current Modus</h2>
+                    <p id="ctGameStatus" class="text-green-400 font-bold mb-4 text-lg">Waiting for connection...</p>
+
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Game ID</span>
+                            <span id="ctGameId" class="text-white font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Game
+                                Number</span>
+                            <span id="ctGameNumber" class="text-white font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Result</span>
+                            <span id="ctResult" class="text-white font-bold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span
+                                class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Multiplier</span>
+                            <span id="ctMultiplier" class="text-white font-bold">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Betting Prediction -->
+                <div
+                    class="glass-panel border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-white/5 to-emerald-500/5 mt-0 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+                    <h2 class="text-xl font-bold text-white mb-4"><i
+                            class="fas fa-crosshairs text-emerald-400 mr-2"></i> Predicted Modus</h2>
+
+                    <div class="flex justify-center mb-4">
+                        <div id="ctEarlyBettingSignal"
+                            class="text-center text-emerald-400 font-bold text-xl py-2 px-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 w-full min-h-[50px] flex items-center justify-center">
+                            Awaiting data...
+                        </div>
+                    </div>
+
+                    <p id="ctNextRoundPrediction" class="text-center text-sm text-gray-400 mb-6 min-h-[20px]">Analysis
+                        requires at least 3 spins.</p>
+
+                    <div class="grid grid-cols-4 gap-2" id="ctSignalBoxes">
+                        <div id="ct-sig-1"
+                            class="text-center py-2 rounded-lg bg-blue-500/20 border border-blue-500/40 text-blue-200 font-bold text-sm transition-all shadow-sm">
+                            1</div>
+                        <div id="ct-sig-2"
+                            class="text-center py-2 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 font-bold text-sm transition-all shadow-sm">
+                            2</div>
+                        <div id="ct-sig-5"
+                            class="text-center py-2 rounded-lg bg-pink-500/20 border border-pink-500/40 text-pink-200 font-bold text-sm transition-all shadow-sm">
+                            5</div>
+                        <div id="ct-sig-10"
+                            class="text-center py-2 rounded-lg bg-purple-500/20 border border-purple-500/40 text-purple-200 font-bold text-sm transition-all shadow-sm">
+                            10</div>
+
+                        <div id="ct-sig-b1"
+                            class="text-center py-1.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
+                            Coin Flip</div>
+                        <div id="ct-sig-b2"
+                            class="text-center py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
+                            Cash Hunt</div>
+                        <div id="ct-sig-b3"
+                            class="text-center py-1.5 rounded-lg bg-fuchsia-500/20 border border-fuchsia-500/40 text-fuchsia-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
+                            Pachinko</div>
+                        <div id="ct-sig-b4"
+                            class="text-center py-1.5 rounded-lg bg-rose-500/30 border border-rose-500/60 text-white font-bold text-[10px] leading-tight flex items-center justify-center shadow-[0_0_10px_rgba(244,63,94,0.3)]">
+                            Crazy Time</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spin History -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-history text-purple-400 mr-2"></i> Spin
+                    History</h3>
+                <div id="ctSpinHistory" class="flex flex-wrap gap-3">
+                    <div class="text-gray-500 text-sm">No recent spins captured.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Crazy Time Sidebar -->
+        <div class="flex flex-col gap-6">
+
+            <!-- Connection Settings -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-link text-purple-400 mr-2"></i> Evolution
+                    Source</h3>
+                <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">WebSocket
+                    URL</label>
+                <textarea id="ctWsUrl" rows="3"
+                    class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-gray-400 text-[10px] font-mono mb-3"
+                    placeholder="wss://babylonbetst.evo-games.com/public/crazytime/player/game/CrazyTime0000001/socket?messageFormat=json..."></textarea>
+
+                <div class="flex gap-3">
+                    <button id="ctConnectBtn"
+                        class="flex-[2] bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg font-medium transition-colors shadow-[0_0_15px_rgba(168,85,247,0.4)]">Connect</button>
+                    <button id="ctDisconnectBtn"
+                        class="flex-1 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 py-2 rounded-lg font-medium transition-colors">Stop</button>
+                </div>
+                <p id="ctConnStatus" class="mt-3 text-center text-sm font-medium text-red-400">Disconnected</p>
+            </div>
+
+            <!-- Top Winners -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6 flex-1">
+                <h3 class="text-lg font-bold text-white mb-2"><i class="fas fa-trophy text-yellow-400 mr-2"></i> Top
+                    Winners (Last Round)</h3>
+
+                <div class="flex justify-between text-xs text-gray-500 mb-4 pb-2 border-b border-white/5">
+                    <span id="ctTotalWinners">Total: 0</span>
+                    <span id="ctTotalAmount">Pool: 0 BDT</span>
+                </div>
+
+                <ul id="ctWinnersList" class="space-y-3">
+                    <li class="text-gray-500 text-sm text-center">N/A</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom animations & highlights for CT Signal Boxes */
+    .ct-signal-active {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px currentColor;
+        filter: brightness(1.5);
+        z-index: 10;
+    }
+</style>
+
+<!-- Load module-specific script -->
+<script src="/js/signals.js"></script>

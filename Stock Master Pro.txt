@@ -1,0 +1,89 @@
+<!-- Blogger Compatible Full HTML -->
+
+<div style="font-family: 'Inter', sans-serif; background: linear-gradient(45deg, #6366f1, #14b8a6); color: white; padding: 20px; border-radius: 15px; max-width: 1200px; margin: auto;">
+
+<h1 style="text-align:center;">📊 Stock Master Pro - Business Supercharger</h1>
+
+<!-- 🔹 Work Schedule & Guidelines -->
+
+<section style="margin-top: 30px;">
+<h2>🕒 Work Schedule & Guidelines</h2>
+<ul>
+<li>9:00 AM - New Content Upload</li>
+<li>3:00 PM - Trend Analysis</li>
+<li>8:00 PM - Team Meeting & Report</li>
+</ul>
+</section>
+
+<!-- 🔹 Real-time Market Trends -->
+
+<section style="margin-top: 30px;">
+<h2>📈 Market Trends (Real-time)</h2>
+<div id="marketPulse" style="background:#fff; padding:10px; border-radius:10px; color:black;"></div>
+</section>
+
+<!-- 🔹 Sales Growth Tips -->
+
+<section style="margin-top: 30px;">
+<h2>💡 Sales Growth Tips</h2>
+<ul>
+<li>Upload 4K Video Clips</li>
+<li>Use “AI Art” & “Metaverse” tags</li>
+<li>Follow trending themes from the Facebook Ads Library</li>
+</ul>
+</section>
+
+<!-- 🔹 Team Management & Challenges -->
+
+<section style="margin-top: 30px;">
+<h2>👥 Team Challenges</h2>
+<p>🛠️ <strong>Team Leader:</strong> Freelancer Sagor</p>
+<p>🎯 Today's Challenge: Upload 3 new trending video clips!</p>
+<p>🏆 Team Point System: Points will be accumulated based on success.</p>
+</section>
+
+<!-- 🔹 API Placeholder -->
+
+<section style="margin-top: 30px;">
+<h2>🔗 External API Integration (Demo)</h2>
+<ul>
+<li><strong>Google Trends:</strong> <a href="https://trends.google.com" target="_blank">trends.google.com</a></li>
+<li><strong>Shutterstock Trending:</strong> <a href="https://www.shutterstock.com/trends" target="_blank">shutterstock.com/trends</a></li>
+<li><strong>Facebook Ads Library:</strong> <a href="https://www.facebook.com/ads/library/" target="_blank">facebook.com/ads/library</a></li>
+</ul>
+</section>
+
+</div>
+
+<!-- ApexCharts CDN -->
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3"></script>
+
+<!-- Real-time Market Chart Script -->
+
+<script>
+const options = {
+series: [{
+name: 'Trending',
+data: [45, 60, 55, 70, 65, 80, 75]
+}],
+chart: {
+type: 'area',
+height: 300
+},
+colors: ['#ff6b6b'],
+xaxis: {
+categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']
+}
+};
+
+const chart = new ApexCharts(document.querySelector("#marketPulse"), options);
+chart.render();
+
+setInterval(() => {
+const newData = options.series[0].data.map(() =>
+Math.floor(Math.random() * 100)
+);
+chart.updateSeries([{ data: newData }]);
+}, 5000);
+</script>

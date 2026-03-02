@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart User-Agent & URL Preview Tool - Blogger Edition</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif !important;
+        }
+        
+        .blogger-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            min-height: 500px;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .input-modern {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .input-modern:focus {
+            outline: none;
+            border-color: rgba(79, 70, 229, 0.6);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .input-modern::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .select-modern {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .select-modern option {
+            background: #1f2937;
+            color: white;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background: #4f46e5;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .preview-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: #10b981;
+        }
+        
+        .notification.error {
+            background: #ef4444;
+        }
+        
+        .user-agent-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            color: #e5e7eb;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .stats-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            color: white;
+        }
+        
+        .browser-bar {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .browser-dots > div {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .url-display {
+            flex: 1;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-family: monospace;
+            color: #374151;
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .blogger-container {
+                padding: 5px;
+            }
+            
+            .grid-responsive {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-modern, .select-modern {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+        }
+        
+        .method-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .method-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: white;
+        }
+        
+        .method-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .method-option.active {
+            background: rgba(79, 70, 229, 0.3);
+            border-color: rgba(79, 70, 229, 0.6);
+        }
+        
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .fallback-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="blogger-container">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">
+                <i class="fas fa-globe mr-2"></i>
+                Smart User-Agent & URL Preview Tool
+            </h1>
+            <p class="text-white opacity-90 text-sm md:text-base">
+                🌐 URL Preview Testing | 🛠️ User-Agent Management | 📊 Real-time Analytics
+                <br>
+                <span class="text-sm">ইউআরএল প্রিভিউ টেস্টিং | ইউজার-এজেন্ট ম্যানেজমেন্ট | রিয়েল-টাইম অ্যানালিটিক্স</span>
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 grid-responsive">
+            <!-- Control Panel -->
+            <div class="lg:col-span-1">
+                <div class="glass-card p-4 text-white">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-cogs mr-2 text-yellow-400"></i>
+                        Control Panel | কন্ট্রোল প্যানেল
+                    </h2>
+
+                    <!-- Target URL -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">
+                            <i class="fas fa-link mr-2"></i>Target URL | টার্গেট URL
+                        </label>
+                        <input 
+                            type="url" 
+                            id="targetUrl" 
+                            class="input-modern"
+                            placeholder="https://example.com"
+                            value="https://httpbin.org/user-agent"
+                        >
+                    </div>
+
+                    <!-- Preview Method -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">
+                            <i class="fas fa-route mr-2"></i>Preview Method | প্রিভিউ পদ্ধতি
+                        </label>
+                        <div class="method-selector">
+                            <div class="method-option active" data-method="direct" onclick="selectMethod('direct')">
+                                <div class="text-xs font-bold">🔗 Direct</div>
+                                <div class="text-xs opacity-80">iframe</div>
+                            </div>
+                            <div class="method-option" data-method="proxy" onclick="selectMethod('proxy')">
+                                <div class="text-xs font-bold">🌐 Proxy</div>
+                                <div class="text-xs opacity-80">CORS bypass</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Agent Selection -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">
+                            <i class="fas fa-robot mr-2"></i>User-Agent | ইউজার-এজেন্ট
+                        </label>
+                        <select id="uaType" class="select-modern" onchange="updateUserAgent()">
+                            <option value="random">🎲 Random | র‍্যান্ডম</option>
+                            <option value="chrome-desktop">🖥️ Chrome Desktop</option>
+                            <option value="firefox-desktop">🦊 Firefox Desktop</option>
+                            <option value="safari-desktop">🍎 Safari Desktop</option>
+                            <option value="chrome-mobile">📱 Chrome Mobile</option>
+                            <option value="safari-mobile">📱 Safari Mobile</option>
+                            <option value="googlebot">🤖 Googlebot</option>
+                            <option value="custom">✏️ Custom | কাস্টম</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom User Agent -->
+                    <div class="mb-4" id="customUaSection" style="display: none;">
+                        <label class="block text-sm font-semibold mb-2">Custom User-Agent</label>
+                        <textarea 
+                            id="customUserAgent" 
+                            class="input-modern resize-none"
+                            rows="3"
+                            placeholder="Enter custom user-agent..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Current User Agent Display -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">Current Agent | বর্তমান এজেন্ট</label>
+                        <div class="user-agent-display mb-2">
+                            <p id="currentUserAgent">Loading...</p>
+                        </div>
+                        <button class="btn-primary text-sm w-full" onclick="copyUserAgent()">
+                            <i class="fas fa-copy mr-2"></i>Copy | কপি
+                        </button>
+                    </div>
+
+                    <!-- Auto Reload -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-semibold">
+                                <i class="fas fa-sync-alt mr-2"></i>Auto Reload | অটো রিলোড
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoReload" onchange="toggleAutoReload()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div id="reloadSettings" style="display: none;">
+                            <select id="reloadInterval" class="select-modern">
+                                <option value="5">5 seconds</option>
+                                <option value="10">10 seconds</option>
+                                <option value="30" selected>30 seconds</option>
+                                <option value="60">1 minute</option>
+                                <option value="300">5 minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-2">
+                        <button id="previewBtn" class="btn-primary w-full" onclick="startPreview()">
+                            <i class="fas fa-play mr-2"></i>Start Preview | প্রিভিউ শুরু
+                        </button>
+                        <button id="refreshBtn" class="btn-success w-full" onclick="refreshPreview()">
+                            <i class="fas fa-refresh mr-2"></i>Refresh | রিফ্রেশ
+                        </button>
+                        <button id="stopBtn" class="btn-danger w-full" onclick="stopPreview()">
+                            <i class="fas fa-stop mr-2"></i>Stop | বন্ধ
+                        </button>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mt-4 glass-dark p-3 rounded-lg">
+                        <div class="text-sm">
+                            <strong>Status:</strong> <span id="statusText">Ready | প্রস্তুত</span>
+                        </div>
+                        <div class="text-xs opacity-80 mt-1">
+                            Last updated: <span id="lastUpdated">Never</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="lg:col-span-2">
+                <div class="glass-card p-4 text-white">
+                    <h2 class="text-xl font-bold mb-4 flex items-center justify-between">
+                        <span>
+                            <i class="fas fa-desktop mr-2 text-blue-400"></i>
+                            Live Preview | লাইভ প্রিভিউ
+                        </span>
+                        <button class="btn-primary text-sm" onclick="openInNewTab()">
+                            <i class="fas fa-external-link-alt mr-1"></i>New Tab
+                        </button>
+                    </h2>
+
+                    <!-- Browser Bar -->
+                    <div class="browser-bar">
+                        <div class="browser-dots">
+                            <div class="bg-red-400"></div>
+                            <div class="bg-yellow-400"></div>
+                            <div class="bg-green-400"></div>
+                        </div>
+                        <div class="url-display">
+                            <span id="currentUrl">No URL loaded</span>
+                        </div>
+                    </div>
+
+                    <!-- Preview Content -->
+                    <div class="preview-container">
+                        <div id="loadingOverlay" class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-20" style="display: none;">
+                            <div class="text-center text-white">
+                                <div class="loading-spinner w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full mb-4"></div>
+                                <p class="text-lg font-semibold">Loading Preview...</p>
+                                <p class="text-sm opacity-80">প্রিভিউ লোড হচ্ছে...</p>
+                            </div>
+                        </div>
+                        
+                        <div id="previewContent" class="w-full h-full">
+                            <div class="fallback-content">
+                                <div class="text-center p-8">
+                                    <i class="fas fa-globe text-gray-400 text-6xl mb-4"></i>
+                                    <h3 class="text-2xl font-bold text-gray-600 mb-2">Ready for Preview</h3>
+                                    <p class="text-gray-500 mb-2">Enter a URL and click "Start Preview"</p>
+                                    <p class="text-gray-400 text-sm">একটি URL প্রবেশ করান এবং "Start Preview" ক্লিক করুন</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="errorDisplay" class="fallback-content" style="display: none;">
+                            <div class="text-center p-8">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-6xl mb-4"></i>
+                                <h3 class="text-2xl font-bold text-red-600 mb-2">Preview Error</h3>
+                                <p class="text-red-500 mb-2">Unable to load the URL</p>
+                                <p class="text-gray-500 text-sm mb-4">This might be due to CORS restrictions</p>
+                                <button class="btn-primary" onclick="retryPreview()">
+                                    <i class="fas fa-redo mr-2"></i>Retry | আবার চেষ্টা
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="grid grid-cols-4 gap-2 mt-4">
+                        <div class="stats-card">
+                            <div class="text-2xl font-bold text-blue-400" id="loadCount">0</div>
+                            <div class="text-xs">Loads</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="text-2xl font-bold text-green-400" id="successCount">0</div>
+                            <div class="text-xs">Success</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="text-2xl font-bold text-red-400" id="errorCount">0</div>
+                            <div class="text-xs">Errors</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="text-2xl font-bold text-yellow-400" id="uptime">0s</div>
+                            <div class="text-xs">Uptime</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User Agent Database
+        const userAgents = {
+            'chrome-desktop': [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+            ],
+            'firefox-desktop': [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0',
+                'Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0'
+            ],
+            'safari-desktop': [
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15'
+            ],
+            'chrome-mobile': [
+                'Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36',
+                'Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36'
+            ],
+            'safari-mobile': [
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Mobile/15E148 Safari/604.1',
+                'Mozilla/5.0 (iPad; CPU OS 17_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Mobile/15E148 Safari/604.1'
+            ],
+            'googlebot': [
+                'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+            ]
+        };
+
+        // Global variables
+        let currentUserAgent = '';
+        let currentMethod = 'direct';
+        let autoReloadTimer = null;
+        let startTime = null;
+        let uptimeTimer = null;
+        let stats = {
+            loadCount: 0,
+            successCount: 0,
+            errorCount: 0
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserAgent();
+            updateStats();
+            loadSettings();
+        });
+
+        function selectMethod(method) {
+            currentMethod = method;
+            document.querySelectorAll('.method-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('active');
+            saveSettings();
+        }
+
+        function updateUserAgent() {
+            const uaType = document.getElementById('uaType').value;
+            let userAgent = '';
+
+            if (uaType === 'custom') {
+                userAgent = document.getElementById('customUserAgent').value.trim();
+                if (!userAgent) {
+                    userAgent = getRandomUserAgent('chrome-desktop');
+                }
+                document.getElementById('customUaSection').style.display = 'block';
+            } else {
+                document.getElementById('customUaSection').style.display = 'none';
+                if (uaType === 'random') {
+                    const types = Object.keys(userAgents);
+                    const randomType = types[Math.floor(Math.random() * types.length)];
+                    userAgent = getRandomUserAgent(randomType);
+                } else {
+                    userAgent = getRandomUserAgent(uaType);
+                }
+            }
+
+            currentUserAgent = userAgent;
+            document.getElementById('currentUserAgent').textContent = userAgent;
+        }
+
+        function getRandomUserAgent(type) {
+            const agents = userAgents[type] || userAgents['chrome-desktop'];
+            return agents[Math.floor(Math.random() * agents.length)];
+        }
+
+        function startPreview() {
+            const url = document.getElementById('targetUrl').value.trim();
+            
+            if (!url) {
+                showNotification('Please enter a URL | একটি URL প্রবেশ করান', 'error');
+                return;
+            }
+
+            if (!isValidUrl(url)) {
+                showNotification('Please enter a valid URL | একটি বৈধ URL প্রবেশ করান', 'error');
+                return;
+            }
+
+            if (!startTime) {
+                startTime = Date.now();
+                startUptimeTimer();
+            }
+
+            loadPreview(url);
+            
+            if (document.getElementById('autoReload').checked) {
+                setupAutoReload();
+            }
+        }
+
+        function loadPreview(url) {
+            stats.loadCount++;
+            updateStats();
+
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const errorDisplay = document.getElementById('errorDisplay');
+            const previewContent = document.getElementById('previewContent');
+
+            loadingOverlay.style.display = 'flex';
+            errorDisplay.style.display = 'none';
+            document.getElementById('statusText').textContent = 'Loading... | লোড হচ্ছে...';
+            document.getElementById('currentUrl').textContent = url;
+
+            // Create preview content
+            setTimeout(() => {
+                try {
+                    const previewUrl = getPreviewUrl(url);
+                    const htmlContent = createPreviewContent(url, previewUrl);
+                    
+                    previewContent.innerHTML = htmlContent;
+                    loadingOverlay.style.display = 'none';
+                    document.getElementById('statusText').textContent = 'Loaded | লোড সম্পন্ন';
+                    document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+                    
+                    stats.successCount++;
+                    updateStats();
+                    showNotification('Preview loaded | প্রিভিউ লোড হয়েছে', 'success');
+                } catch (error) {
+                    loadingOverlay.style.display = 'none';
+                    errorDisplay.style.display = 'flex';
+                    document.getElementById('statusText').textContent = 'Error | ত্রুটি';
+                    
+                    stats.errorCount++;
+                    updateStats();
+                    showNotification('Failed to load | লোড ব্যর্থ', 'error');
+                }
+            }, 2000);
+        }
+
+        function getPreviewUrl(url) {
+            if (currentMethod === 'proxy') {
+                return `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+            }
+            return url;
+        }
+
+        function createPreviewContent(targetUrl, previewUrl) {
+            const loadTime = new Date().toLocaleString();
+            
+            return `
+                <div class="h-full bg-white">
+                    <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                        <h3 class="text-lg font-bold text-blue-800 mb-2">
+                            <i class="fas fa-info-circle mr-2"></i>Preview Information
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p><strong>Target URL:</strong></p>
+                                <p class="text-blue-600 break-all font-mono text-xs">${targetUrl}</p>
+                                <p class="mt-2"><strong>Method:</strong> ${currentMethod === 'direct' ? 'Direct iframe' : 'Proxy service'}</p>
+                                <p><strong>Load Time:</strong> ${loadTime}</p>
+                            </div>
+                            <div>
+                                <p><strong>User-Agent:</strong></p>
+                                <p class="text-gray-600 break-all font-mono text-xs">${currentUserAgent}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="iframe-container">
+                        ${createIframeContent(previewUrl, targetUrl)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function createIframeContent(previewUrl, targetUrl) {
+            return `
+                <iframe 
+                    src="${previewUrl}" 
+                    class="w-full h-full"
+                    onload="handleIframeLoad(this)"
+                    onerror="handleIframeError(this)"
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                ></iframe>
+                <div class="fallback-content" id="iframe-fallback" style="display: none;">
+                    <div class="text-center p-8">
+                        <i class="fas fa-external-link-alt text-gray-400 text-4xl mb-4"></i>
+                        <h4 class="text-xl font-bold text-gray-600 mb-2">Content Blocked</h4>
+                        <p class="text-gray-500 mb-4">This content cannot be displayed in a frame</p>
+                        <a href="${targetUrl}" target="_blank" class="btn-primary">
+                            <i class="fas fa-external-link-alt mr-2"></i>Open in New Tab
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleIframeLoad(iframe) {
+            // Iframe loaded successfully
+        }
+
+        function handleIframeError(iframe) {
+            iframe.style.display = 'none';
+            document.getElementById('iframe-fallback').style.display = 'flex';
+        }
+
+        function refreshPreview() {
+            const url = document.getElementById('targetUrl').value.trim();
+            if (url) {
+                updateUserAgent();
+                loadPreview(url);
+            }
+        }
+
+        function stopPreview() {
+            stopAutoReload();
+            stopUptimeTimer();
+            startTime = null;
+            document.getElementById('statusText').textContent = 'Stopped | বন্ধ';
+            document.getElementById('autoReload').checked = false;
+            document.getElementById('reloadSettings').style.display = 'none';
+        }
+
+        function toggleAutoReload() {
+            const autoReload = document.getElementById('autoReload');
+            const reloadSettings = document.getElementById('reloadSettings');
+            
+            reloadSettings.style.display = autoReload.checked ? 'block' : 'none';
+            
+            if (!autoReload.checked) {
+                stopAutoReload();
+            } else {
+                setupAutoReload();
+            }
+        }
+
+        function setupAutoReload() {
+            stopAutoReload();
+            const interval = parseInt(document.getElementById('reloadInterval').value) * 1000;
+            autoReloadTimer = setInterval(() => {
+                const url = document.getElementById('targetUrl').value.trim();
+                if (url && document.getElementById('autoReload').checked) {
+                    updateUserAgent();
+                    loadPreview(url);
+                }
+            }, interval);
+        }
+
+        function stopAutoReload() {
+            if (autoReloadTimer) {
+                clearInterval(autoReloadTimer);
+                autoReloadTimer = null;
+            }
+        }
+
+        function startUptimeTimer() {
+            uptimeTimer = setInterval(() => {
+                if (startTime) {
+                    const uptime = Math.floor((Date.now() - startTime) / 1000);
+                    document.getElementById('uptime').textContent = uptime + 's';
+                }
+            }, 1000);
+        }
+
+        function stopUptimeTimer() {
+            if (uptimeTimer) {
+                clearInterval(uptimeTimer);
+                uptimeTimer = null;
+            }
+            document.getElementById('uptime').textContent = '0s';
+        }
+
+        function retryPreview() {
+            const url = document.getElementById('targetUrl').value.trim();
+            if (url) {
+                loadPreview(url);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('loadCount').textContent = stats.loadCount;
+            document.getElementById('successCount').textContent = stats.successCount;
+            document.getElementById('errorCount').textContent = stats.errorCount;
+        }
+
+        function copyUserAgent() {
+            navigator.clipboard.writeText(currentUserAgent).then(() => {
+                showNotification('User-Agent copied | ইউজার-এজেন্ট কপি হয়েছে', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = currentUserAgent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('User-Agent copied | ইউজার-এজেন্ট কপি হয়েছে', 'success');
+            });
+        }
+
+        function openInNewTab() {
+            const url = document.getElementById('targetUrl').value.trim();
+            if (url && isValidUrl(url)) {
+                window.open(url, '_blank');
+            } else {
+                showNotification('Please enter a valid URL | একটি বৈধ URL প্রবেশ করান', 'error');
+            }
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                ${message}
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function saveSettings() {
+            const settings = {
+                targetUrl: document.getElementById('targetUrl').value,
+                uaType: document.getElementById('uaType').value,
+                customUserAgent: document.getElementById('customUserAgent').value,
+                autoReload: document.getElementById('autoReload').checked,
+                reloadInterval: document.getElementById('reloadInterval').value,
+                currentMethod: currentMethod
+            };
+            localStorage.setItem('bloggerSmartToolSettings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('bloggerSmartToolSettings');
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+                    if (settings.targetUrl) document.getElementById('targetUrl').value = settings.targetUrl;
+                    if (settings.uaType) document.getElementById('uaType').value = settings.uaType;
+                    if (settings.customUserAgent) document.getElementById('customUserAgent').value = settings.customUserAgent;
+                    if (settings.autoReload) document.getElementById('autoReload').checked = settings.autoReload;
+                    if (settings.reloadInterval) document.getElementById('reloadInterval').value = settings.reloadInterval;
+                    if (settings.currentMethod) {
+                        currentMethod = settings.currentMethod;
+                        selectMethod(currentMethod);
+                    }
+                    
+                    updateUserAgent();
+                    toggleAutoReload();
+                } catch (e) {
+                    console.warn('Failed to load settings');
+                }
+            }
+        }
+
+        // Auto-save settings
+        ['targetUrl', 'uaType', 'customUserAgent', 'autoReload', 'reloadInterval'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', saveSettings);
+                if (element.type === 'text' || element.type === 'url') {
+                    element.addEventListener('input', saveSettings);
+                }
+            }
+        });
+
+        // Custom user agent input handler
+        document.getElementById('customUserAgent').addEventListener('input', function() {
+            if (document.getElementById('uaType').value === 'custom') {
+                updateUserAgent();
+            }
+        });
+    </script>
+</body>
+</html>

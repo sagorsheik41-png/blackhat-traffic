@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Stock Metadata Generator Pro - Enhanced Download System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--gray-800);
+            padding: 2rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #7c3aed 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--gray-300);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.8) 100%);
+            cursor: pointer;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(248, 250, 252, 0.9) 100%);
+            transform: scale(1.02);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .file-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .file-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-svg { background: #3b82f6; color: white; }
+        .badge-png { background: #10b981; color: white; }
+        .badge-jpg { background: #f59e0b; color: white; }
+        .badge-jpeg { background: #f59e0b; color: white; }
+        .badge-eps { background: #8b5cf6; color: white; }
+        .badge-psd { background: #6366f1; color: white; }
+        .badge-other { background: #6b7280; color: white; }
+
+        .keyword-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+            color: var(--gray-700);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin: 2px 4px 2px 0;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: var(--gray-600);
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-text {
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-700) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 1rem;
+        }
+
+        .icon-blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .icon-green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .icon-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .icon-orange {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .success-animation {
+            animation: successPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .toast.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .download-preview {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(248, 250, 252, 0.9) 100%);
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .filename-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .filename-change .old-name {
+            text-decoration: line-through;
+            color: var(--gray-500);
+            font-size: 0.9em;
+        }
+
+        .filename-change .arrow {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .filename-change .new-name {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .processing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: var(--primary);
+        }
+
+        .download-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9em;
+            margin: 0.5rem 0;
+        }
+
+        /* PDF optimization */
+        @media print {
+            body {
+                background: white !important;
+                padding: 1rem !important;
+            }
+            
+            .glass-card, .feature-card, .stats-card, .file-item {
+                background: white !important;
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+            }
+            
+            .btn {
+                background: #6366f1 !important;
+                color: white !important;
+                box-shadow: none !important;
+            }
+            
+            .toast {
+                display: none !important;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .feature-card, .stats-card, .file-item {
+                padding: 1rem;
+            }
+            
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="glass-card header-gradient mb-8 p-6">
+            <div class="flex flex-col lg:flex-row justify-between items-center">
+                <div class="text-center lg:text-left mb-4 lg:mb-0">
+                    <h1 class="text-4xl lg:text-5xl font-bold hero-text mb-2">
+                        <i class="fas fa-magic mr-3 text-indigo-600"></i>
+                        Advanced Stock Metadata Generator
+                        <span class="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm px-3 py-1 rounded-full ml-3">PRO</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 font-medium mb-2">
+                        Professional SEO-optimized metadata generation with enhanced download system
+                    </p>
+                    <div class="text-sm text-green-600 font-semibold">
+                        <i class="fas fa-check-circle mr-1"></i>
+                        Enhanced Download: Files download with SEO-optimized names
+                    </div>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-2 mt-3">
+                        <span class="badge badge-svg">SVG Support</span>
+                        <span class="badge badge-png">PNG Ready</span>
+                        <span class="badge badge-jpg">JPG Compatible</span>
+                        <span class="badge badge-eps">EPS Professional</span>
+                        <span class="badge badge-psd">PSD Layered</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right text-sm">
+                        <div class="text-gray-600">Processing Status</div>
+                        <div id="overallStatus" class="font-semibold text-blue-600">Ready</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Enhanced Features Overview -->
+        <section class="mb-12">
+            <div class="glass-card p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4 hero-text text-center">Enhanced Download System Features</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center p-4">
+                        <i class="fas fa-file-signature text-3xl text-blue-500 mb-2"></i>
+                        <h3 class="font-semibold">SEO Filename Download</h3>
+                        <p class="text-sm text-gray-600">Files download with optimized SEO names</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <i class="fas fa-download text-3xl text-green-500 mb-2"></i>
+                        <h3 class="font-semibold">Smart Bulk Download</h3>
+                        <p class="text-sm text-gray-600">ZIP downloads with all renamed files</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <i class="fas fa-eye text-3xl text-purple-500 mb-2"></i>
+                        <h3 class="font-semibold">Download Preview</h3>
+                        <p class="text-sm text-gray-600">See filename changes before download</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="feature-card">
+                    <div class="feature-icon icon-blue">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Multi-Format Support</h3>
+                    <p class="text-gray-600">Supports SVG, PNG, JPG, JPEG, EPS, PSD and more formats with perfect processing.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon icon-green">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">SEO Optimization</h3>
+                    <p class="text-gray-600">Advanced SEO optimization for titles, keywords, and descriptions with market-proven strategies.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon icon-purple">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Batch Processing</h3>
+                    <p class="text-gray-600">Process hundreds of files simultaneously with our advanced batch processing system.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon icon-orange">
+                        <i class="fas fa-signature"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Smart Renaming</h3>
+                    <p class="text-gray-600">Automatically renames files with SEO-optimized titles for better marketplace performance.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- File Upload Section -->
+        <section class="glass-card p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 hero-text">Upload Your Files</h2>
+            
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt text-6xl text-indigo-500 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Drag & Drop Files Here</h3>
+                <p class="text-gray-600 mb-4">or click to browse files</p>
+                <div class="flex flex-wrap justify-center gap-2 mb-4">
+                    <span class="badge badge-svg">SVG</span>
+                    <span class="badge badge-png">PNG</span>
+                    <span class="badge badge-jpg">JPG/JPEG</span>
+                    <span class="badge badge-eps">EPS</span>
+                    <span class="badge badge-psd">PSD</span>
+                </div>
+                <input type="file" id="fileInput" multiple accept=".svg,.png,.jpg,.jpeg,.eps,.psd" class="hidden">
+            </div>
+
+            <div id="fileInfo" class="hidden mt-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-files text-2xl text-indigo-600 mr-3"></i>
+                        <span class="text-lg font-semibold">
+                            <span id="fileCount">0</span> files selected
+                        </span>
+                    </div>
+                    <button id="clearFiles" class="btn bg-red-500 text-white hover:bg-red-600">
+                        <i class="fas fa-trash mr-2"></i>
+                        Clear All
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="glass-card p-4">
+                        <h4 class="font-semibold mb-3">Processing Options</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="generateKeywords" checked class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Generate SEO Keywords</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="optimizeTitles" checked class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Optimize Titles</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="generateDescriptions" checked class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Generate Descriptions</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="suggestCategories" checked class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Suggest Categories</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4">
+                        <h4 class="font-semibold mb-3">Enhanced Download Options</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="renameFiles" checked class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Use SEO Names for Downloads</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="embedMetadata" checked class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Embed Metadata in SVG</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="createBackups" class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Keep Original Names in Metadata</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="showPreview" checked class="mr-3 w-4 h-4 text-indigo-600">
+                                <span>Show Download Preview</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="processBtn" class="btn btn-primary w-full text-lg py-4" disabled>
+                    <i class="fas fa-magic mr-3"></i>
+                    Generate Metadata & Prepare Downloads
+                </button>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="hidden">
+            <!-- Processing Stats -->
+            <div class="glass-card p-6 mb-8">
+                <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold hero-text">Processing Results</h2>
+                    <div class="flex gap-4 mt-4 lg:mt-0">
+                        <button id="downloadAllBtn" class="btn btn-success" disabled>
+                            <i class="fas fa-download mr-2"></i>
+                            Download All (ZIP)
+                        </button>
+                        <button id="downloadCsvBtn" class="btn btn-warning" disabled>
+                            <i class="fas fa-table mr-2"></i>
+                            Export CSV
+                        </button>
+                        <button id="downloadJsonBtn" class="btn btn-secondary" disabled>
+                            <i class="fas fa-code mr-2"></i>
+                            Export JSON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalFiles">0</div>
+                        <div class="text-gray-600 font-medium">Total Files</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="processedFiles">0</div>
+                        <div class="text-gray-600 font-medium">Processed</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalKeywords">0</div>
+                        <div class="text-gray-600 font-medium">Keywords</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalDownloads">0</div>
+                        <div class="text-gray-600 font-medium">Downloads</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="processingTime">00:00</div>
+                        <div class="text-gray-600 font-medium">Time Taken</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar mb-4">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                
+                <div class="text-center text-gray-600">
+                    <span id="progressText">Ready to process...</span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="glass-card p-6">
+                <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-200 pb-4">
+                    <button class="tab-button active" data-tab="files">File List</button>
+                    <button class="tab-button" data-tab="downloads">Download Preview</button>
+                    <button class="tab-button" data-tab="analytics">Analytics</button>
+                    <button class="tab-button" data-tab="export">Export Data</button>
+                </div>
+
+                <!-- File List Tab -->
+                <div id="filesTab" class="tab-content active">
+                    <div id="filesList" class="space-y-4">
+                        <div id="emptyState" class="text-center py-12">
+                            <i class="fas fa-file-import text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No files processed yet</h3>
+                            <p class="text-gray-500">Upload files and click process to see results here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Preview Tab -->
+                <div id="downloadsTab" class="tab-content">
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-4">Download Preview & Management</h3>
+                        <p class="text-gray-600 mb-4">Preview how your files will be downloaded with SEO-optimized names</p>
+                    </div>
+                    
+                    <div id="downloadPreviewList" class="space-y-4">
+                        <div class="text-center py-12">
+                            <i class="fas fa-download text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No downloads ready</h3>
+                            <p class="text-gray-500">Process files to see download preview</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analyticsTab" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">File Type Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="fileTypeChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">Metadata Coverage</h3>
+                            <div class="chart-container">
+                                <canvas id="metadataChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <h3 class="text-xl font-bold mb-4">Top Keywords</h3>
+                        <div id="topKeywords" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- Export Data Tab -->
+                <div id="exportTab" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">CSV Preview</h3>
+                            <div class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-auto">
+                                <pre id="csvPreview" class="text-sm text-gray-700"></pre>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">JSON Preview</h3>
+                            <div class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-auto">
+                                <pre id="jsonPreview" class="text-sm text-gray-700"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden glass-card p-8 mt-8 text-center success-animation">
+                <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+                <h2 class="text-3xl font-bold text-green-700 mb-2">Processing Complete!</h2>
+                <p class="text-lg text-gray-600 mb-6">All files have been successfully processed with SEO-optimized metadata and are ready for download with enhanced filenames.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button id="finalDownloadBtn" class="btn btn-success">
+                        <i class="fas fa-download mr-2"></i>
+                        Download All Files (SEO Names)
+                    </button>
+                    <button id="newBatchBtn" class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i>
+                        Process New Batch
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global variables
+        let processedFiles = [];
+        let csvData = [];
+        let downloadCount = 0;
+        let startTime = null;
+        let timerInterval = null;
+        let fileTypeChart = null;
+        let metadataChart = null;
+        
+        // File type configurations
+        const fileTypes = {
+            svg: { badge: 'badge-svg', name: 'SVG', color: '#3b82f6' },
+            png: { badge: 'badge-png', name: 'PNG', color: '#10b981' },
+            jpg: { badge: 'badge-jpg', name: 'JPG', color: '#f59e0b' },
+            jpeg: { badge: 'badge-jpg', name: 'JPEG', color: '#f59e0b' },
+            eps: { badge: 'badge-eps', name: 'EPS', color: '#8b5cf6' },
+            psd: { badge: 'badge-psd', name: 'PSD', color: '#6366f1' },
+            default: { badge: 'badge-other', name: 'OTHER', color: '#6b7280' }
+        };
+
+        // Industry-specific keywords
+        const industryKeywords = {
+            business: ['business', 'corporate', 'professional', 'office', 'meeting', 'team', 'strategy', 'success', 'growth', 'finance', 'marketing', 'sales', 'startup', 'entrepreneur', 'leadership', 'management', 'planning', 'analysis', 'report', 'presentation'],
+            technology: ['technology', 'digital', 'computer', 'software', 'app', 'mobile', 'web', 'internet', 'network', 'data', 'cloud', 'artificial intelligence', 'machine learning', 'innovation', 'coding', 'programming', 'development', 'tech', 'electronic', 'device'],
+            design: ['design', 'creative', 'art', 'graphic', 'illustration', 'vector', 'modern', 'minimal', 'clean', 'elegant', 'stylish', 'trendy', 'artistic', 'visual', 'aesthetic', 'layout', 'typography', 'color', 'pattern', 'texture'],
+            icons: ['icon', 'symbol', 'sign', 'pictogram', 'glyph', 'ui', 'interface', 'button', 'navigation', 'menu', 'arrow', 'pointer', 'indicator', 'marker', 'badge', 'label', 'tag', 'stamp', 'seal', 'emblem'],
+            nature: ['nature', 'natural', 'organic', 'environment', 'ecology', 'green', 'plant', 'tree', 'flower', 'leaf', 'forest', 'garden', 'landscape', 'outdoor', 'fresh', 'clean', 'sustainable', 'eco-friendly', 'earth', 'wildlife']
+        };
+
+        // Stock categories
+        const stockCategories = [
+            'Business & Finance', 'Technology & IT', 'Design & Creative', 'Icons & Symbols', 
+            'Nature & Environment', 'Food & Drink', 'Travel & Transportation', 'Health & Medical',
+            'Education & Learning', 'Sports & Fitness', 'Fashion & Beauty', 'Home & Lifestyle',
+            'Abstract & Backgrounds', 'Industrial & Manufacturing', 'Science & Research'
+        ];
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            updateOverallStatus('Ready');
+        });
+
+        function initializeEventListeners() {
+            // File upload
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelection);
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+            
+            // Buttons
+            document.getElementById('clearFiles').addEventListener('click', clearFiles);
+            document.getElementById('processBtn').addEventListener('click', processFiles);
+            document.getElementById('downloadAllBtn').addEventListener('click', downloadAllFiles);
+            document.getElementById('downloadCsvBtn').addEventListener('click', downloadCsv);
+            document.getElementById('downloadJsonBtn').addEventListener('click', downloadJson);
+            document.getElementById('finalDownloadBtn').addEventListener('click', downloadAllFiles);
+            document.getElementById('newBatchBtn').addEventListener('click', startNewBatch);
+            
+            // Tabs
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+            });
+        }
+
+        function updateOverallStatus(status) {
+            document.getElementById('overallStatus').textContent = status;
+        }
+
+        function handleFileSelection(event) {
+            const files = Array.from(event.target.files);
+            if (files.length > 0) {
+                displayFileInfo(files);
+                document.getElementById('processBtn').disabled = false;
+                updateOverallStatus(`${files.length} files selected`);
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            document.getElementById('uploadArea').classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            document.getElementById('uploadArea').classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            document.getElementById('uploadArea').classList.remove('dragover');
+            
+            const files = Array.from(event.dataTransfer.files);
+            const validFiles = files.filter(file => {
+                const ext = file.name.split('.').pop().toLowerCase();
+                return ['svg', 'png', 'jpg', 'jpeg', 'eps', 'psd'].includes(ext);
+            });
+            
+            if (validFiles.length > 0) {
+                // Create a new FileList-like object
+                const dt = new DataTransfer();
+                validFiles.forEach(file => dt.items.add(file));
+                document.getElementById('fileInput').files = dt.files;
+                
+                displayFileInfo(validFiles);
+                document.getElementById('processBtn').disabled = false;
+                updateOverallStatus(`${validFiles.length} files selected`);
+            } else {
+                showToast('Please select valid image files (SVG, PNG, JPG, EPS, PSD)', 'error');
+            }
+        }
+
+        function displayFileInfo(files) {
+            document.getElementById('fileInfo').classList.remove('hidden');
+            document.getElementById('fileCount').textContent = files.length;
+        }
+
+        function clearFiles() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').classList.add('hidden');
+            document.getElementById('processBtn').disabled = true;
+            document.getElementById('resultsSection').classList.add('hidden');
+            processedFiles = [];
+            csvData = [];
+            downloadCount = 0;
+            updateOverallStatus('Ready');
+        }
+
+        async function processFiles() {
+            const files = Array.from(document.getElementById('fileInput').files);
+            if (files.length === 0) return;
+
+            updateOverallStatus('Processing files...');
+
+            // Show results section and hide success message
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('emptyState').style.display = 'none';
+
+            // Update stats
+            document.getElementById('totalFiles').textContent = files.length;
+            document.getElementById('processedFiles').textContent = '0';
+            document.getElementById('totalDownloads').textContent = '0';
+
+            // Start timer
+            startTime = Date.now();
+            startTimer();
+
+            // Process files
+            processedFiles = [];
+            csvData = [];
+            const filesList = document.getElementById('filesList');
+            filesList.innerHTML = '';
+
+            const options = {
+                generateKeywords: document.getElementById('generateKeywords').checked,
+                optimizeTitles: document.getElementById('optimizeTitles').checked,
+                generateDescriptions: document.getElementById('generateDescriptions').checked,
+                suggestCategories: document.getElementById('suggestCategories').checked,
+                renameFiles: document.getElementById('renameFiles').checked,
+                embedMetadata: document.getElementById('embedMetadata').checked,
+                createBackups: document.getElementById('createBackups').checked,
+                showPreview: document.getElementById('showPreview').checked
+            };
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const progress = Math.round(((i + 1) / files.length) * 100);
+                
+                // Update progress
+                document.getElementById('progressFill').style.width = `${progress}%`;
+                document.getElementById('processedFiles').textContent = i + 1;
+                document.getElementById('progressText').textContent = `Processing ${file.name}...`;
+                
+                // Process individual file
+                try {
+                    const result = await processIndividualFile(file, options);
+                    processedFiles.push(result);
+                    
+                    // Add to CSV data
+                    csvData.push({
+                        originalName: file.name,
+                        newName: result.newFileName,
+                        title: result.title,
+                        description: result.description,
+                        keywords: result.keywords.join(', '),
+                        categories: result.categories.join(', '),
+                        fileSize: Math.round(file.size / 1024) + ' KB',
+                        fileType: result.fileType.toUpperCase()
+                    });
+                    
+                    // Add to file list
+                    addFileToList(result);
+                    
+                } catch (error) {
+                    console.error('Error processing file:', file.name, error);
+                }
+                
+                // Small delay to show progress
+                await new Promise(resolve => setTimeout(resolve, 150));
+            }
+
+            // Update final stats
+            updateStats();
+            enableDownloadButtons();
+            stopTimer();
+            updateDownloadPreview();
+            updateOverallStatus('Processing complete');
+            
+            // Show success message
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('hidden');
+                updateOverallStatus('Ready for download');
+            }, 500);
+
+            showToast('All files processed successfully! Enhanced download system ready.', 'success');
+        }
+
+        async function processIndividualFile(file, options) {
+            const extension = file.name.split('.').pop().toLowerCase();
+            const baseName = file.name.replace(/\.[^/.]+$/, "");
+            
+            // Clean and optimize filename
+            let cleanTitle = baseName
+                .replace(/[-_]/g, ' ')
+                .replace(/^\d+[\s\-_]*/, '')
+                .trim()
+                .replace(/\s+/g, ' ');
+
+            // Generate SEO title
+            let seoTitle = cleanTitle;
+            if (options.optimizeTitles) {
+                seoTitle = generateSEOTitle(cleanTitle, extension);
+            }
+
+            // Generate keywords
+            let keywords = [];
+            if (options.generateKeywords) {
+                keywords = generateKeywords(seoTitle, extension);
+            }
+
+            // Generate description
+            let description = '';
+            if (options.generateDescriptions) {
+                description = generateDescription(seoTitle, extension);
+            }
+
+            // Suggest categories
+            let categories = [];
+            if (options.suggestCategories) {
+                categories = suggestCategories(seoTitle);
+            }
+
+            // Generate new filename - THIS IS THE KEY FIX
+            let newFileName = file.name;
+            if (options.renameFiles) {
+                const seoFileName = seoTitle
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+                    .replace(/\s+/g, '-') // Replace spaces with hyphens
+                    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+                    .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
+                    .substring(0, 100); // Limit length for filesystem compatibility
+                
+                newFileName = `${seoFileName}.${extension}`;
+            }
+
+            // Read file content
+            const fileContent = await readFileAsDataURL(file);
+
+            // Process SVG metadata if needed
+            let processedContent = fileContent;
+            if (extension === 'svg' && options.embedMetadata) {
+                processedContent = await embedSVGMetadata(fileContent, seoTitle, description);
+            }
+
+            return {
+                originalFile: file,
+                originalFileName: file.name,
+                newFileName: newFileName, // This will be used for downloads
+                title: seoTitle,
+                description: description,
+                keywords: keywords,
+                categories: categories,
+                fileType: extension,
+                fileSize: file.size,
+                content: processedContent,
+                downloadUrl: null // Will be set when needed
+            };
+        }
+
+        function generateSEOTitle(title, fileType) {
+            const adjectives = ['Professional', 'Modern', 'Creative', 'Premium', 'High-Quality', 'Elegant', 'Stylish', 'Clean', 'Minimalist', 'Beautiful'];
+            const contexts = ['Vector', 'Design', 'Illustration', 'Graphic', 'Icon', 'Element', 'Template', 'Asset'];
+            
+            const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const context = contexts[Math.floor(Math.random() * contexts.length)];
+            
+            // Detect content type from title
+            let contentType = context;
+            if (title.toLowerCase().includes('icon')) contentType = 'Icon';
+            if (title.toLowerCase().includes('logo')) contentType = 'Logo';
+            if (title.toLowerCase().includes('pattern')) contentType = 'Pattern';
+            if (title.toLowerCase().includes('background')) contentType = 'Background';
+            
+            return `${adjective} ${title} ${contentType}`;
+        }
+
+        function generateKeywords(title, fileType) {
+            const baseKeywords = ['design', 'vector', 'creative', 'professional', 'modern', 'high-quality', 'digital', 'graphic'];
+            const fileTypeKeywords = {
+                svg: ['svg', 'scalable', 'vector', 'xml'],
+                png: ['png', 'transparent', 'raster'],
+                jpg: ['jpg', 'jpeg', 'photo', 'image'],
+                eps: ['eps', 'vector', 'print', 'adobe'],
+                psd: ['psd', 'photoshop', 'layered', 'editable']
+            };
+
+            let keywords = [...baseKeywords];
+            
+            // Add file type specific keywords
+            if (fileTypeKeywords[fileType]) {
+                keywords.push(...fileTypeKeywords[fileType]);
+            }
+
+            // Add title-based keywords
+            const titleWords = title.toLowerCase().split(' ').filter(word => word.length > 2);
+            keywords.push(...titleWords);
+
+            // Add industry-specific keywords
+            const industry = detectIndustry(title);
+            if (industryKeywords[industry]) {
+                keywords.push(...industryKeywords[industry].slice(0, 10));
+            }
+
+            // Remove duplicates and limit to 30 keywords
+            return [...new Set(keywords)].slice(0, 30);
+        }
+
+        function generateDescription(title, fileType) {
+            const templates = [
+                `Professional ${title} perfect for commercial use. High-quality ${fileType.toUpperCase()} file with clean, modern design suitable for websites, presentations, and marketing materials.`,
+                `Premium ${title} featuring elegant design and professional quality. This ${fileType.toUpperCase()} asset is ideal for creative projects, branding, and digital media applications.`,
+                `Modern ${title} with sophisticated styling and premium quality. Perfect for business presentations, web design, and professional marketing materials.`,
+                `Creative ${title} designed for versatile use across multiple platforms. High-resolution ${fileType.toUpperCase()} format ensures crisp quality in all applications.`
+            ];
+            
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+
+        function suggestCategories(title) {
+            const titleLower = title.toLowerCase();
+            const suggestions = [];
+            
+            if (titleLower.includes('business') || titleLower.includes('office') || titleLower.includes('corporate')) {
+                suggestions.push('Business & Finance');
+            }
+            if (titleLower.includes('tech') || titleLower.includes('computer') || titleLower.includes('digital')) {
+                suggestions.push('Technology & IT');
+            }
+            if (titleLower.includes('icon') || titleLower.includes('symbol')) {
+                suggestions.push('Icons & Symbols');
+            }
+            if (titleLower.includes('nature') || titleLower.includes('plant') || titleLower.includes('green')) {
+                suggestions.push('Nature & Environment');
+            }
+            if (titleLower.includes('abstract') || titleLower.includes('pattern') || titleLower.includes('background')) {
+                suggestions.push('Abstract & Backgrounds');
+            }
+            
+            // Default categories if none detected
+            if (suggestions.length === 0) {
+                suggestions.push('Design & Creative');
+            }
+            
+            return suggestions.slice(0, 3);
+        }
+
+        function detectIndustry(title) {
+            const titleLower = title.toLowerCase();
+            
+            if (titleLower.includes('business') || titleLower.includes('office') || titleLower.includes('corporate')) {
+                return 'business';
+            }
+            if (titleLower.includes('tech') || titleLower.includes('computer') || titleLower.includes('digital')) {
+                return 'technology';
+            }
+            if (titleLower.includes('icon') || titleLower.includes('symbol')) {
+                return 'icons';
+            }
+            if (titleLower.includes('nature') || titleLower.includes('plant') || titleLower.includes('eco')) {
+                return 'nature';
+            }
+            
+            return 'design';
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function embedSVGMetadata(dataURL, title, description) {
+            // For SVG files, we would embed title and description tags
+            if (dataURL.startsWith('data:image/svg+xml')) {
+                try {
+                    const svgContent = atob(dataURL.split(',')[1]);
+                    const parser = new DOMParser();
+                    const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+                    const svgElement = svgDoc.documentElement;
+                    
+                    // Add title element
+                    let titleElement = svgDoc.createElement('title');
+                    titleElement.textContent = title;
+                    svgElement.insertBefore(titleElement, svgElement.firstChild);
+                    
+                    // Add description element
+                    let descElement = svgDoc.createElement('desc');
+                    descElement.textContent = description;
+                    svgElement.insertBefore(descElement, titleElement.nextSibling);
+                    
+                    const serializer = new XMLSerializer();
+                    const newSvgContent = serializer.serializeToString(svgDoc);
+                    return 'data:image/svg+xml;base64,' + btoa(newSvgContent);
+                } catch (error) {
+                    console.error('Error embedding SVG metadata:', error);
+                }
+            }
+            return dataURL;
+        }
+
+        function addFileToList(fileData) {
+            const filesList = document.getElementById('filesList');
+            const fileElement = document.createElement('div');
+            fileElement.className = 'file-item';
+            
+            const fileTypeInfo = fileTypes[fileData.fileType] || fileTypes.default;
+            
+            fileElement.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center">
+                        <span class="badge ${fileTypeInfo.badge} mr-3">${fileTypeInfo.name}</span>
+                        <div>
+                            <h4 class="font-bold text-lg">${fileData.title}</h4>
+                            <div class="filename-change">
+                                <span class="old-name">${fileData.originalFileName}</span>
+                                <span class="arrow">→</span>
+                                <span class="new-name">${fileData.newFileName}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success btn-sm" onclick="downloadSingleFile(${processedFiles.length - 1})">
+                        <i class="fas fa-download mr-1"></i>
+                        Download (SEO Name)
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <h5 class="font-semibold mb-2">Description</h5>
+                        <p class="text-sm text-gray-600">${fileData.description}</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold mb-2">Categories</h5>
+                        <div class="flex flex-wrap gap-1">
+                            ${fileData.categories.map(cat => `<span class="badge badge-other">${cat}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="font-semibold mb-2">Keywords</h5>
+                    <div class="flex flex-wrap gap-1">
+                        ${fileData.keywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            filesList.appendChild(fileElement);
+        }
+
+        // ENHANCED DOWNLOAD FUNCTION - This is the key fix
+        function downloadSingleFile(index) {
+            const fileData = processedFiles[index];
+            if (!fileData) {
+                showToast('File not found', 'error');
+                return;
+            }
+            
+            try {
+                // Create download link with the SEO-optimized filename
+                const link = document.createElement('a');
+                link.href = fileData.content;
+                link.download = fileData.newFileName; // THIS IS THE KEY - Use the SEO filename
+                link.style.display = 'none';
+                
+                // Add to DOM, click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Update download counter
+                downloadCount++;
+                document.getElementById('totalDownloads').textContent = downloadCount;
+                
+                // Show success message with actual filename
+                showToast(`Downloaded: ${fileData.newFileName}`, 'success');
+                
+                // Add visual feedback to the file item
+                const fileItems = document.querySelectorAll('.file-item');
+                if (fileItems[index]) {
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'download-success';
+                    successDiv.innerHTML = `<i class="fas fa-check mr-2"></i>Downloaded as: ${fileData.newFileName}`;
+                    fileItems[index].appendChild(successDiv);
+                }
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                showToast('Download failed. Please try again.', 'error');
+            }
+        }
+
+        async function downloadAllFiles() {
+            if (processedFiles.length === 0) {
+                showToast('No files to download', 'error');
+                return;
+            }
+
+            showToast('Creating ZIP file with SEO-optimized names...', 'info');
+            updateOverallStatus('Creating ZIP download...');
+            
+            try {
+                const zip = new JSZip();
+                
+                // Add all processed files to ZIP with their SEO names
+                for (const fileData of processedFiles) {
+                    // Convert data URL to blob
+                    const response = await fetch(fileData.content);
+                    const blob = await response.blob();
+                    
+                    // Use the SEO-optimized filename in the ZIP
+                    zip.file(fileData.newFileName, blob);
+                }
+                
+                // Add metadata CSV
+                const csvContent = generateCSVContent();
+                zip.file('metadata.csv', csvContent);
+                
+                // Add metadata JSON
+                const jsonContent = JSON.stringify(csvData, null, 2);
+                zip.file('metadata.json', jsonContent);
+                
+                // Add filename mapping file
+                const mappingContent = processedFiles.map(file => 
+                    `${file.originalFileName} → ${file.newFileName}`
+                ).join('\n');
+                zip.file('filename-mapping.txt', mappingContent);
+                
+                // Generate and download ZIP
+                const zipBlob = await zip.generateAsync({type: 'blob'});
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(zipBlob);
+                link.download = 'seo-optimized-assets.zip';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Update download counter
+                downloadCount += processedFiles.length;
+                document.getElementById('totalDownloads').textContent = downloadCount;
+                
+                updateOverallStatus('Download complete');
+                showToast('All files downloaded with SEO-optimized names!', 'success');
+                
+            } catch (error) {
+                console.error('Error creating ZIP:', error);
+                showToast('Error creating ZIP file', 'error');
+                updateOverallStatus('Download failed');
+            }
+        }
+
+        function updateDownloadPreview() {
+            const previewList = document.getElementById('downloadPreviewList');
+            
+            if (processedFiles.length === 0) {
+                previewList.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-download text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No downloads ready</h3>
+                        <p class="text-gray-500">Process files to see download preview</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            previewList.innerHTML = '';
+            
+            processedFiles.forEach((file, index) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'download-preview';
+                
+                const fileTypeInfo = fileTypes[file.fileType] || fileTypes.default;
+                
+                previewItem.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center">
+                            <span class="badge ${fileTypeInfo.badge} mr-3">${fileTypeInfo.name}</span>
+                            <span class="font-semibold">${file.title}</span>
+                        </div>
+                        <button class="btn btn-success btn-sm" onclick="downloadSingleFile(${index})">
+                            <i class="fas fa-download mr-1"></i>
+                            Download
+                        </button>
+                    </div>
+                    <div class="filename-change">
+                        <span class="text-sm">Original:</span>
+                        <span class="old-name">${file.originalFileName}</span>
+                        <span class="arrow">→</span>
+                        <span class="text-sm">SEO Download:</span>
+                        <span class="new-name">${file.newFileName}</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        Size: ${Math.round(file.fileSize / 1024)} KB | 
+                        Keywords: ${file.keywords.length} | 
+                        Categories: ${file.categories.length}
+                    </div>
+                `;
+                
+                previewList.appendChild(previewItem);
+            });
+        }
+
+        function downloadCsv() {
+            const csvContent = generateCSVContent();
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'seo-metadata.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('CSV downloaded successfully!', 'success');
+        }
+
+        function downloadJson() {
+            const jsonContent = JSON.stringify(csvData, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'seo-metadata.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('JSON downloaded successfully!', 'success');
+        }
+
+        function generateCSVContent() {
+            const headers = ['Original Name', 'SEO Optimized Name', 'Title', 'Description', 'Keywords', 'Categories', 'File Size', 'File Type'];
+            const rows = csvData.map(row => [
+                `"${row.originalName}"`,
+                `"${row.newName}"`,
+                `"${row.title}"`,
+                `"${row.description}"`,
+                `"${row.keywords}"`,
+                `"${row.categories}"`,
+                `"${row.fileSize}"`,
+                `"${row.fileType}"`
+            ]);
+            
+            return [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+        }
+
+        function updateStats() {
+            const totalKeywords = processedFiles.reduce((sum, file) => sum + file.keywords.length, 0);
+            document.getElementById('totalKeywords').textContent = totalKeywords;
+            
+            // Update analytics if visible
+            if (document.getElementById('analyticsTab').classList.contains('active')) {
+                updateAnalytics();
+            }
+            
+            // Update previews if visible
+            if (document.getElementById('exportTab').classList.contains('active')) {
+                updatePreviews();
+            }
+        }
+
+        function enableDownloadButtons() {
+            document.getElementById('downloadAllBtn').disabled = false;
+            document.getElementById('downloadCsvBtn').disabled = false;
+            document.getElementById('downloadJsonBtn').disabled = false;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (startTime) {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                    const seconds = (elapsed % 60).toString().padStart(2, '0');
+                    document.getElementById('processingTime').textContent = `${minutes}:${seconds}`;
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabName);
+            });
+            
+            // Update tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === tabName + 'Tab');
+            });
+            
+            // Update specific content
+            if (tabName === 'analytics') {
+                updateAnalytics();
+            } else if (tabName === 'export') {
+                updatePreviews();
+            } else if (tabName === 'downloads') {
+                updateDownloadPreview();
+            }
+        }
+
+        function updateAnalytics() {
+            if (processedFiles.length === 0) return;
+            
+            // File type distribution
+            const fileTypeCounts = {};
+            processedFiles.forEach(file => {
+                fileTypeCounts[file.fileType] = (fileTypeCounts[file.fileType] || 0) + 1;
+            });
+            
+            updateFileTypeChart(fileTypeCounts);
+            updateMetadataChart();
+            updateTopKeywords();
+        }
+
+        function updateFileTypeChart(data) {
+            const ctx = document.getElementById('fileTypeChart').getContext('2d');
+            
+            if (fileTypeChart) {
+                fileTypeChart.destroy();
+            }
+            
+            fileTypeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data).map(type => type.toUpperCase()),
+                    datasets: [{
+                        data: Object.values(data),
+                        backgroundColor: Object.keys(data).map(type => fileTypes[type]?.color || '#6b7280'),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateMetadataChart() {
+            const ctx = document.getElementById('metadataChart').getContext('2d');
+            
+            if (metadataChart) {
+                metadataChart.destroy();
+            }
+            
+            const data = {
+                'Titles': processedFiles.filter(f => f.title).length,
+                'Descriptions': processedFiles.filter(f => f.description).length,
+                'Keywords': processedFiles.filter(f => f.keywords.length > 0).length,
+                'Categories': processedFiles.filter(f => f.categories.length > 0).length,
+                'SEO Names': processedFiles.filter(f => f.newFileName !== f.originalFileName).length
+            };
+            
+            metadataChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        label: 'Coverage',
+                        data: Object.values(data),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: processedFiles.length
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTopKeywords() {
+            const keywordCounts = {};
+            processedFiles.forEach(file => {
+                file.keywords.forEach(keyword => {
+                    keywordCounts[keyword] = (keywordCounts[keyword] || 0) + 1;
+                });
+            });
+            
+            const topKeywords = Object.entries(keywordCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20);
+            
+            const container = document.getElementById('topKeywords');
+            container.innerHTML = topKeywords
+                .map(([keyword, count]) => `<span class="keyword-tag">${keyword} (${count})</span>`)
+                .join('');
+        }
+
+        function updatePreviews() {
+            // CSV Preview
+            const csvPreview = document.getElementById('csvPreview');
+            const csvContent = generateCSVContent();
+            const lines = csvContent.split('\n');
+            csvPreview.textContent = lines.slice(0, 6).join('\n') + 
+                (lines.length > 6 ? `\n... and ${lines.length - 6} more rows` : '');
+            
+            // JSON Preview
+            const jsonPreview = document.getElementById('jsonPreview');
+            const previewData = csvData.slice(0, 3);
+            jsonPreview.textContent = JSON.stringify(previewData, null, 2);
+        }
+
+        function startNewBatch() {
+            clearFiles();
+            document.getElementById('successMessage').classList.add('hidden');
+            downloadCount = 0;
+            document.getElementById('totalDownloads').textContent = '0';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: 'check',
+                error: 'times',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            
+            toast.innerHTML = `
+                <i class="fas fa-${icons[type]} mr-2"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Make downloadSingleFile globally accessible
+        window.downloadSingleFile = downloadSingleFile;
+    </script>
+</body>
+</html>

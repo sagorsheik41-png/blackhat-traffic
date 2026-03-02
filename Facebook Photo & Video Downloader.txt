@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facebook Photo & Video Downloader</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f0f2f5;
+      padding: 20px;
+      margin: 0;
+    }
+    #fb-downloader {
+      max-width: 760px;
+      margin: 12px auto;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .container {
+      border: 1px solid #e6e6e6;
+      padding: 14px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+      background-color: white;
+    }
+    h3 {
+      margin: 0 0 8px;
+    }
+    p {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: #555;
+    }
+    #fb-url {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+    .button-group {
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 0;
+      cursor: pointer;
+    }
+    #btn-extract {
+      background: #1877f2;
+      color: #fff;
+    }
+    #btn-clear {
+      background: #fff;
+      border: 1px solid #ddd;
+    }
+    #fb-result {
+      margin-top: 12px;
+      display: none;
+    }
+    h4 {
+      margin: 8px 0 6px;
+    }
+    #images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .media-card {
+      width: 160px;
+      border: 1px solid #eee;
+      padding: 6px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .media-card img {
+      max-width: 140px;
+      max-height: 120px;
+      border-radius: 4px;
+    }
+    .download-link {
+      margin-top: 6px;
+    }
+    #videos {
+      margin-top: 10px;
+    }
+    .video-wrapper {
+      margin-bottom: 10px;
+    }
+    video {
+      max-width: 100%;
+      border: 1px solid #eee;
+      border-radius: 6px;
+    }
+    .video-links {
+      margin-top: 6px;
+    }
+    #fb-msg {
+      margin-top: 10px;
+      color: #b00;
+    }
+    .note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Facebook Photo & Video Downloader Widget for Blogger -->
+  <div id="fb-downloader">
+    <div class="container">
+      <h3>Facebook Photo & Video Downloader</h3>
+      <p>Paste a Facebook profile/post URL (public) and click Extract.</p>
+
+      <input id="fb-url" type="text" placeholder="https://www.facebook.com/username/posts/..." />
+      <div class="button-group">
+        <button id="btn-extract">Extract</button>
+        <button id="btn-clear">Clear</button>
+      </div>
+
+      <div id="fb-result">
+        <h4>Found Media</h4>
+        <div id="images"></div>
+        <div id="videos"></div>
+      </div>
+
+      <div id="fb-msg"></div>
+      <p class="note">Note: Only works for public posts/pages. Respect copyright & privacy.</p>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // Mock server response for demonstration purposes
+      const mockResponse = {
+        ok: true,
+        images: [
+          "https://placehold.co/600x400/FF0000/FFFFFF?text=FB+Image+1",
+          "https://placehold.co/600x400/00FF00/FFFFFF?text=FB+Image+2",
+          "https://placehold.co/600x400/0000FF/FFFFFF?text=FB+Image+3"
+        ],
+        videos: [
+          "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+        ]
+      };
+
+      const btn = document.getElementById('btn-extract');
+      const urlInput = document.getElementById('fb-url');
+      const resBox = document.getElementById('fb-result');
+      const imagesDiv = document.getElementById('images');
+      const videosDiv = document.getElementById('videos');
+      const msg = document.getElementById('fb-msg');
+      const clearBtn = document.getElementById('btn-clear');
+
+      clearBtn.onclick = () => {
+        urlInput.value = '';
+        imagesDiv.innerHTML = '';
+        videosDiv.innerHTML = '';
+        resBox.style.display = 'none';
+        msg.textContent = '';
+      };
+
+      btn.onclick = async () => {
+        msg.textContent = '';
+        imagesDiv.innerHTML = '';
+        videosDiv.innerHTML = '';
+        resBox.style.display = 'none';
+
+        let url = urlInput.value.trim();
+        if (!url) { 
+          msg.textContent = 'Please paste a Facebook profile or post URL.'; 
+          return; 
+        }
+
+        // Show loading state
+        btn.innerHTML = '<span class="loading"></span>Processing...';
+        btn.disabled = true;
+
+        try {
+          // Simulate API call delay
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          
+          // In a real implementation, you would make an API call to your server
+          // const resp = await fetch((server.replace(/\/$/, '')) + '/api/extract', {
+          //   method: 'POST',
+          //   headers: { 'Content-Type': 'application/json' },
+          //   body: JSON.stringify({ url })
+          // });
+          // const data = await resp.json();
+          
+          // Using mock response for demo
+          const data = mockResponse;
+          
+          if (!data.ok) {
+            msg.textContent = data.error || 'No media found or the post is private.';
+            return;
+          }
+          
+          const { images = [], videos = [] } = data;
+          if (images.length === 0 && videos.length === 0) {
+            msg.textContent = 'No downloadable media found. Try a different post or public profile.';
+            return;
+          }
+          
+          // Show images
+          images.forEach(src => {
+            const card = document.createElement('div');
+            card.className = 'media-card';
+            card.innerHTML = `
+              <a target="_blank" href="${src}">
+                <img src="${src}" alt="image">
+              </a>
+              <div class="download-link">
+                <a download href="${src}">Download</a>
+              </div>
+            `;
+            imagesDiv.appendChild(card);
+          });
+
+          // Show videos
+          videos.forEach(src => {
+            const wrap = document.createElement('div');
+            wrap.className = 'video-wrapper';
+            wrap.innerHTML = `
+              <video controls>
+                <source src="${src}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              <div class="video-links">
+                <a target="_blank" href="${src}">Open video</a> • 
+                <a download href="${src}">Download</a>
+              </div>
+            `;
+            videosDiv.appendChild(wrap);
+          });
+
+          resBox.style.display = 'block';
+        } catch (err) {
+          console.error(err);
+          msg.textContent = 'An error occurred while processing your request.';
+        } finally {
+          // Reset button
+          btn.innerHTML = 'Extract';
+          btn.disabled = false;
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

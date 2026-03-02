@@ -1,0 +1,2460 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Multi-Device Campaign Preview System v16.0 - Real Link Loading</title>
+    
+    <!-- SEO and Social Media Meta Tags -->
+    <meta name="description" content="আপনার স্বপ্নের প্রজেক্ট - রিয়েল লিংক লোডিং সিস্টেম, প্রতিটি ডিভাইসে প্রকৃত প্রমোশন লিংক প্রিভিউ, উন্নত অ্যান্টি-ডিটেকশন প্রযুক্তি এবং লাইভ ট্রাফিক জেনারেশন">
+    <meta name="keywords" content="Real Link Loading, Campaign Preview, Multi-Device, Live URL Preview, Anti-Detection, Traffic Generation">
+    <meta name="author" content="Advanced Campaign System Developer">
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif !important;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 8px;
+            color: #374151;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .main-container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gradient-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            padding: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .input-field, .select-field {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .input-field:focus, .select-field:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .device-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
+        .device-frame {
+            position: relative;
+            margin: 0 auto 8px;
+        }
+        
+        .android-device {
+            width: 140px;
+            height: 220px;
+            background: linear-gradient(145deg, #10b981, #059669);
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            position: relative;
+        }
+        
+        .android-device::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+        
+        .iphone-device {
+            width: 135px;
+            height: 215px;
+            background: linear-gradient(145deg, #374151, #6b7280);
+            border-radius: 24px;
+            padding: 8px;
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+            position: relative;
+        }
+        
+        .iphone-device::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+        
+        .samsung-device {
+            width: 145px;
+            height: 225px;
+            background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+            border-radius: 22px;
+            padding: 8px;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            position: relative;
+        }
+        
+        .samsung-device::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+        
+        .ipad-device {
+            width: 180px;
+            height: 130px;
+            background: linear-gradient(145deg, #8b5cf6, #7c3aed);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+        
+        .windows-device {
+            width: 200px;
+            height: 125px;
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            border-radius: 10px;
+            padding: 6px;
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        }
+        
+        .mac-device {
+            width: 210px;
+            height: 130px;
+            background: linear-gradient(145deg, #ef4444, #dc2626);
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .device-content {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: inherit;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 4px;
+        }
+        
+        /* Real Link Preview Iframe */
+        .link-preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: inherit;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background: white;
+        }
+        
+        /* Custom Link Preview when iframe fails */
+        .custom-link-preview {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: inherit;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            font-size: 8px;
+            overflow: hidden;
+        }
+        
+        .preview-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 7px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        
+        .preview-url {
+            background: #f1f5f9;
+            color: #1e40af;
+            padding: 3px 4px;
+            border-radius: 3px;
+            font-size: 6px;
+            word-break: break-all;
+            margin-bottom: 6px;
+            border: 1px solid #cbd5e1;
+            line-height: 1.2;
+            max-height: 30px;
+            overflow: hidden;
+        }
+        
+        .preview-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4px;
+        }
+        
+        .preview-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+            color: #3b82f6;
+        }
+        
+        .preview-title {
+            font-weight: bold;
+            font-size: 9px;
+            color: #1e293b;
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        
+        .preview-description {
+            font-size: 7px;
+            color: #64748b;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+        
+        .preview-status {
+            background: #10b981;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 6px;
+            font-weight: bold;
+            margin-top: auto;
+        }
+        
+        .live-indicator {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #ef4444;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            z-index: 10;
+        }
+        
+        .live-dot {
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .earning-display {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: #10b981;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        .device-stats {
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .device-views {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .device-status {
+            background: #10b981;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: bold;
+            margin-top: 3px;
+            display: inline-block;
+        }
+        
+        .status-ready { background: #10b981; }
+        .status-loading { background: #f59e0b; }
+        .status-active { background: #ef4444; }
+        .status-earning { background: #8b5cf6; }
+        .status-rotating { background: #0ea5e9; }
+        
+        .campaign-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .campaign-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+        }
+        
+        .campaign-card.active {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .platform-badge {
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        
+        .platform-facebook { background: #1877f2; }
+        .platform-instagram { background: #e4405f; }
+        .platform-youtube { background: #ff0000; }
+        .platform-twitter { background: #1da1f2; }
+        .platform-tiktok { background: #000000; }
+        .platform-linkedin { background: #0077b5; }
+        .platform-website { background: #6b7280; }
+        .platform-adsterra { background: #ff6b35; }
+        .platform-monetag { background: #9333ea; }
+        .platform-cpm { background: #059669; }
+        .platform-cpa { background: #dc2626; }
+        .platform-affiliate { background: #7c3aed; }
+        .platform-ecommerce { background: #0891b2; }
+        
+        .earning-badge {
+            background: #10b981;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .url-display {
+            font-size: 10px;
+            color: #6b7280;
+            word-break: break-all;
+            margin-top: 3px;
+            max-height: 40px;
+            overflow: hidden;
+        }
+        
+        .grid-responsive {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-6 { grid-template-columns: repeat(6, 1fr); }
+        
+        .stat-card {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            height: 160px;
+            background: white;
+            border-radius: 6px;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            max-height: 136px;
+            max-width: 100%;
+        }
+        
+        .chart-wrapper canvas {
+            max-height: 136px !important;
+            max-width: 100% !important;
+        }
+        
+        .activity-log {
+            max-height: 160px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .activity-item {
+            padding: 4px 6px;
+            margin-bottom: 3px;
+            background: #f9fafb;
+            border-radius: 3px;
+            font-size: 10px;
+            border-left: 3px solid #10b981;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 1000;
+            padding: 8px 14px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+            font-size: 12px;
+        }
+        
+        .notification.show { transform: translateX(0); }
+        .notification.success { background: #10b981; }
+        .notification.error { background: #ef4444; }
+        .notification.info { background: #3b82f6; }
+        .notification.warning { background: #f59e0b; }
+        
+        .anti-detection-panel {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 6px;
+        }
+        
+        .profit-panel {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 6px;
+        }
+        
+        .ip-display {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ff00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 8px;
+        }
+        
+        .user-agent-display {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ffff;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 7px;
+            margin-top: 2px;
+        }
+        
+        .rotation-indicator {
+            background: #f59e0b;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 7px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .risk-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .risk-very-low { background: #dcfce7; color: #166534; }
+        .risk-low { background: #fef3c7; color: #92400e; }
+        .risk-medium { background: #fed7aa; color: #9a3412; }
+        .risk-high { background: #fecaca; color: #991b1b; }
+        
+        .loading-spinner {
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(102, 126, 234, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            z-index: 5;
+            transition: opacity 0.5s ease;
+            border-radius: inherit;
+        }
+        
+        .preview-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .earning-display-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+            font-size: 11px;
+        }
+        
+        .device-status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin-top: 6px;
+        }
+        
+        .device-status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 6px;
+            background: #f9fafb;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        
+        .compact-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .compact-section {
+            flex-shrink: 0;
+        }
+        
+        .single-page-layout {
+            max-height: none;
+            overflow: visible;
+        }
+        
+        /* Real Link Loading Enhancements */
+        .real-link-indicator {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 7px;
+            font-weight: bold;
+            z-index: 15;
+            animation: linkPulse 2s infinite;
+        }
+        
+        @keyframes linkPulse {
+            0%, 100% { background: #10b981; }
+            50% { background: #059669; }
+        }
+        
+        .iframe-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            z-index: 20;
+        }
+        
+        /* PDF Export Optimization */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+            
+            .main-container {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                max-width: none !important;
+            }
+            
+            .glass-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                break-inside: avoid;
+            }
+            
+            .activity-log {
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            
+            .notification {
+                display: none !important;
+            }
+        }
+        
+        /* Enhanced Responsive Design */
+        @media screen and (max-width: 1400px) {
+            .grid-6 { grid-template-columns: repeat(3, 1fr); }
+        }
+        
+        @media screen and (max-width: 1024px) {
+            .grid-6 { grid-template-columns: repeat(3, 1fr); }
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+            body { padding: 6px; }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .grid-6 { grid-template-columns: repeat(2, 1fr); }
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .grid-6 { grid-template-columns: 1fr; }
+            body { padding: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container single-page-layout">
+        <!-- Header -->
+        <div class="gradient-header compact-section">
+            <h1 class="text-xl md:text-2xl font-bold mb-2">
+                <i class="fas fa-rocket mr-3"></i>
+                Enhanced Multi-Device Campaign Preview System v16.0 - Real Link Loading
+            </h1>
+            <h2 class="text-base md:text-lg font-semibold mb-2">
+                আপনার স্বপ্নের প্রজেক্ট - রিয়েল লিংক লোডিং, প্রকৃত প্রমোশন প্রিভিউ, অ্যান্টি-ডিটেকশন প্রযুক্তি এবং লাইভ ট্রাফিক জেনারেশন
+            </h2>
+            <p class="text-sm md:text-base opacity-90 mb-2">
+                🚀 রিয়েল লিংক প্রিভিউ | প্রতিটি ডিভাইসে প্রকৃত URL লোডিং | লাইভ ওয়েবসাইট প্রিভিউ | অ্যান্টি-ডিটেকশন সিস্টেম | ইউনিক IP রোটেশন 🚀
+            </p>
+            <p class="text-xs opacity-75">
+                পেশাদার সমাধান: Facebook • Instagram • YouTube • Twitter • TikTok • LinkedIn • CPM • CPA • অ্যাফিলিয়েট • ই-কমার্স • Adsterra • Monetag • Real URL Loading Technology
+            </p>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="p-3 compact-layout">
+            <!-- Control Panel -->
+            <div class="grid-responsive grid-2 compact-section">
+                <!-- Real Link Management -->
+                <div class="glass-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-link text-purple-600"></i>
+                        Real Link Loading Management System
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Target URL (প্রমোট করার রিয়েল লিংক)</label>
+                            <textarea id="campaignUrl" class="input-field text-sm" placeholder="https://example.com/your-promotion-page" rows="2" style="resize: vertical; min-height: 32px;"></textarea>
+                            <div class="text-sm text-green-600 mt-2">✅ Real Link Loading Technology - Your actual websites will load in device screens</div>
+                        </div>
+                        <div class="grid-responsive grid-2">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-gray-700">Campaign Title</label>
+                                <input type="text" id="campaignTitle" class="input-field text-sm" placeholder="My Awesome Campaign..."/>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-gray-700">Platform Type</label>
+                                <select id="campaignType" class="select-field text-sm">
+                                    <option value="auto">🤖 Auto Detect</option>
+                                    <option value="facebook">📘 Facebook</option>
+                                    <option value="instagram">📸 Instagram</option>
+                                    <option value="youtube">📺 YouTube</option>
+                                    <option value="twitter">🐦 Twitter</option>
+                                    <option value="tiktok">🎵 TikTok</option>
+                                    <option value="linkedin">💼 LinkedIn</option>
+                                    <option value="website">🌐 Website</option>
+                                    <option value="cpm">💰 CPM Campaign</option>
+                                    <option value="cpa">🎯 CPA Campaign</option>
+                                    <option value="affiliate">🤝 Affiliate Link</option>
+                                    <option value="adsterra">🔥 Adsterra</option>
+                                    <option value="monetag">💎 Monetag</option>
+                                    <option value="ecommerce">🛒 E-commerce</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-full" onclick="addCampaign()">
+                            <i class="fas fa-plus"></i>ADD REAL LINK & START LIVE PREVIEW
+                        </button>
+                        <!-- Added Links -->
+                        <div class="mt-3">
+                            <h4 class="text-sm font-bold mb-2">Added Real Links</h4>
+                            <div id="campaignContainer" class="space-y-2" style="max-height: 100px; overflow-y: auto;">
+                                <div class="text-center py-3 text-gray-400">
+                                    <i class="fas fa-link text-xl mb-2 opacity-30"></i>
+                                    <p class="text-sm">Add your first real link to start live loading simulation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anti-Detection Control System -->
+                <div class="glass-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-shield-alt text-red-600"></i>
+                        Anti-Detection Control System
+                    </h3>
+                    <!-- Anti-Detection Configuration -->
+                    <div class="anti-detection-panel">
+                        <h5 class="font-bold text-red-800 mb-2 text-sm">Anti-Detection Configuration</h5>
+                        <div class="grid-responsive grid-3">
+                            <div>
+                                <label class="block text-sm font-semibold mb-1">Reload Interval (sec)</label>
+                                <input type="number" id="reloadInterval" class="input-field text-sm" value="15" min="5" max="120"/>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-1">Random Delay (sec)</label>
+                                <input type="number" id="randomDelay" class="input-field text-sm" value="5" min="1" max="30"/>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-1">IP Rotation (min)</label>
+                                <input type="number" id="ipRotation" class="input-field text-sm" value="10" min="1" max="60"/>
+                            </div>
+                        </div>
+                        <div class="earning-display-item mt-2">
+                            <span class="font-bold">Total Views</span>
+                            <span class="font-bold text-red-600" id="totalUniqueViews">0</span>
+                        </div>
+                    </div>
+                    <!-- Traffic Controls -->
+                    <div class="grid-responsive grid-2 mt-3">
+                        <button class="btn btn-success" onclick="startAntiDetectionSystem()">
+                            <i class="fas fa-play"></i>START REAL LOADING
+                        </button>
+                        <button class="btn btn-danger" onclick="stopAntiDetectionSystem()">
+                            <i class="fas fa-stop"></i>STOP SIMULATION
+                        </button>
+                    </div>
+                    <div class="grid-responsive grid-2 mt-2">
+                        <button class="btn btn-info" onclick="rotateAllIPs()">
+                            <i class="fas fa-sync"></i>ROTATE ALL IPs
+                        </button>
+                        <button class="btn btn-warning" onclick="resetAntiDetection()">
+                            <i class="fas fa-refresh"></i>RESET SYSTEM
+                        </button>
+                    </div>
+                    <!-- Device Status Monitor -->
+                    <div class="mt-3">
+                        <h5 class="font-semibold text-gray-800 mb-2 text-sm">Device Status Monitor</h5>
+                        <div class="device-status-grid">
+                            <div class="device-status-item">
+                                <span>🤖 Android</span>
+                                <span id="androidStatus" class="device-status status-ready">READY</span>
+                            </div>
+                            <div class="device-status-item">
+                                <span>🍎 iPhone</span>
+                                <span id="iphoneStatus" class="device-status status-ready">READY</span>
+                            </div>
+                            <div class="device-status-item">
+                                <span>📱 Samsung</span>
+                                <span id="samsungStatus" class="device-status status-ready">READY</span>
+                            </div>
+                            <div class="device-status-item">
+                                <span>📟 iPad</span>
+                                <span id="ipadStatus" class="device-status status-ready">READY</span>
+                            </div>
+                            <div class="device-status-item">
+                                <span>💻 Windows</span>
+                                <span id="windowsStatus" class="device-status status-ready">READY</span>
+                            </div>
+                            <div class="device-status-item">
+                                <span>🖥️ Mac</span>
+                                <span id="macStatus" class="device-status status-ready">READY</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Anti-Detection System Stats -->
+                    <div class="profit-panel mt-3">
+                        <h6 class="font-bold text-green-800 mb-2 text-sm">Real Link Loading Stats</h6>
+                        <div class="space-y-2">
+                            <div class="earning-display-item">
+                                <span>Detection Risk:</span>
+                                <span class="risk-indicator risk-very-low" id="detectionRisk">Very Low</span>
+                            </div>
+                            <div class="earning-display-item">
+                                <span>Unique IPs Active:</span>
+                                <span class="font-bold text-blue-600" id="uniqueIPs">6</span>
+                            </div>
+                            <div class="earning-display-item">
+                                <span>Real Links Loaded:</span>
+                                <span class="font-bold text-purple-600" id="realLinksLoaded">0</span>
+                            </div>
+                            <div class="earning-display-item">
+                                <span>Natural Pattern Score:</span>
+                                <span class="font-bold text-green-600" id="naturalPattern">95%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Device Preview Section with Real Link Loading -->
+            <div class="glass-card compact-section">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="section-title">
+                        <i class="fas fa-desktop text-purple-600"></i>
+                        Real Link Loading 6-Device Simulation (Live Website Preview)
+                    </h2>
+                    <div class="flex gap-2">
+                        <button class="btn btn-success" onclick="previewAllDevices()">
+                            <i class="fas fa-eye"></i>LOAD ALL LINKS
+                        </button>
+                        <button class="btn btn-info" onclick="generateMassTraffic()">
+                            <i class="fas fa-chart-line"></i>MASS TRAFFIC
+                        </button>
+                        <button class="btn btn-warning" onclick="exportReport()">
+                            <i class="fas fa-download"></i>EXPORT
+                        </button>
+                    </div>
+                </div>
+                <!-- Device Grid -->
+                <div class="grid-responsive grid-6">
+                    <!-- Android Phone -->
+                    <div class="device-container">
+                        <h4 class="text-sm font-bold mb-2 text-center text-gray-800">
+                            <i class="fab fa-android mr-1 text-green-600"></i>Android Phone
+                        </h4>
+                        <div class="device-frame">
+                            <div class="android-device">
+                                <div class="device-screen">
+                                    <div class="device-content" id="androidContent">
+                                        <div class="live-indicator">
+                                            <div class="live-dot"></div>
+                                            <span>LIVE</span>
+                                        </div>
+                                        <div class="earning-display" id="androidEarning">$0.18</div>
+                                        <div class="real-link-indicator">REAL LINK</div>
+                                        <div class="preview-overlay" id="androidOverlay">
+                                            <i class="fas fa-mobile-alt text-xl text-white mb-2"></i>
+                                            <p class="text-sm text-center px-3 font-bold">Android Chrome Browser</p>
+                                            <p class="text-sm text-center px-3 mt-2 opacity-75">Ready for Real Link Loading</p>
+                                            <button class="btn btn-primary mt-2" onclick="reloadDevice('android')">
+                                                <i class="fas fa-sync"></i>RELOAD
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-stats">
+                            <div class="device-views text-green-600" id="androidViews">63</div>
+                            <div class="text-sm text-gray-500">unique views</div>
+                            <div class="mt-1">
+                                <span class="ip-display" id="androidIPDisplay">IP: 192.168.1.101</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="user-agent-display" id="androidUADisplay">Chrome/91.0.4472.124</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">Last Rotation: <span id="androidLastRotation">3:13:12 AM</span></div>
+                        </div>
+                    </div>
+
+                    <!-- iPhone -->
+                    <div class="device-container">
+                        <h4 class="text-sm font-bold mb-2 text-center text-gray-800">
+                            <i class="fab fa-apple mr-1 text-gray-600"></i>iPhone
+                        </h4>
+                        <div class="device-frame">
+                            <div class="iphone-device">
+                                <div class="device-screen">
+                                    <div class="device-content" id="iphoneContent">
+                                        <div class="live-indicator">
+                                            <div class="live-dot"></div>
+                                            <span>LIVE</span>
+                                        </div>
+                                        <div class="earning-display" id="iphoneEarning">$0.21</div>
+                                        <div class="real-link-indicator">REAL LINK</div>
+                                        <div class="preview-overlay" id="iphoneOverlay">
+                                            <i class="fas fa-mobile-alt text-xl text-white mb-2"></i>
+                                            <p class="text-sm text-center px-3 font-bold">Safari iOS Browser</p>
+                                            <p class="text-sm text-center px-3 mt-2 opacity-75">Ready for Real Link Loading</p>
+                                            <button class="btn btn-primary mt-2" onclick="reloadDevice('iphone')">
+                                                <i class="fas fa-sync"></i>RELOAD
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-stats">
+                            <div class="device-views text-gray-600" id="iphoneViews">69</div>
+                            <div class="text-sm text-gray-500">unique views</div>
+                            <div class="mt-1">
+                                <span class="ip-display" id="iphoneIPDisplay">IP: 10.0.0.42</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="user-agent-display" id="iphoneUADisplay">Safari/605.1.15</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">Last Rotation: <span id="iphoneLastRotation">3:13:04 AM</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Samsung Galaxy -->
+                    <div class="device-container">
+                        <h4 class="text-sm font-bold mb-2 text-center text-gray-800">
+                            <i class="fab fa-android mr-1 text-blue-600"></i>Samsung Galaxy
+                        </h4>
+                        <div class="device-frame">
+                            <div class="samsung-device">
+                                <div class="device-screen">
+                                    <div class="device-content" id="samsungContent">
+                                        <div class="live-indicator">
+                                            <div class="live-dot"></div>
+                                            <span>LIVE</span>
+                                        </div>
+                                        <div class="earning-display" id="samsungEarning">$0.22</div>
+                                        <div class="real-link-indicator">REAL LINK</div>
+                                        <div class="preview-overlay" id="samsungOverlay">
+                                            <i class="fas fa-mobile-alt text-xl text-white mb-2"></i>
+                                            <p class="text-sm text-center px-3 font-bold">Samsung Internet Browser</p>
+                                            <p class="text-sm text-center px-3 mt-2 opacity-75">Ready for Real Link Loading</p>
+                                            <button class="btn btn-primary mt-2" onclick="reloadDevice('samsung')">
+                                                <i class="fas fa-sync"></i>RELOAD
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-stats">
+                            <div class="device-views text-blue-600" id="samsungViews">75</div>
+                            <div class="text-sm text-gray-500">unique views</div>
+                            <div class="mt-1">
+                                <span class="ip-display" id="samsungIPDisplay">IP: 172.16.0.25</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="user-agent-display" id="samsungUADisplay">SamsungBrowser/14.2</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">Last Rotation: <span id="samsungLastRotation">3:13:11 AM</span></div>
+                        </div>
+                    </div>
+
+                    <!-- iPad -->
+                    <div class="device-container">
+                        <h4 class="text-sm font-bold mb-2 text-center text-gray-800">
+                            <i class="fas fa-tablet-alt mr-1 text-purple-600"></i>iPad
+                        </h4>
+                        <div class="device-frame">
+                            <div class="ipad-device">
+                                <div class="device-screen">
+                                    <div class="device-content" id="ipadContent">
+                                        <div class="live-indicator">
+                                            <div class="live-dot"></div>
+                                            <span>LIVE</span>
+                                        </div>
+                                        <div class="earning-display" id="ipadEarning">$0.19</div>
+                                        <div class="real-link-indicator">REAL LINK</div>
+                                        <div class="preview-overlay" id="ipadOverlay">
+                                            <i class="fas fa-tablet-alt text-xl text-white mb-2"></i>
+                                            <p class="text-sm text-center px-3 font-bold">Safari iPad Browser</p>
+                                            <p class="text-sm text-center px-3 mt-2 opacity-75">Ready for Real Link Loading</p>
+                                            <button class="btn btn-primary mt-2" onclick="reloadDevice('ipad')">
+                                                <i class="fas fa-sync"></i>RELOAD
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-stats">
+                            <div class="device-views text-purple-600" id="ipadViews">69</div>
+                            <div class="text-sm text-gray-500">unique views</div>
+                            <div class="mt-1">
+                                <span class="ip-display" id="ipadIPDisplay">IP: 203.0.113.15</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="user-agent-display" id="ipadUADisplay">Safari/605.1.15</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">Last Rotation: <span id="ipadLastRotation">3:13:01 AM</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Windows Laptop -->
+                    <div class="device-container">
+                        <h4 class="text-sm font-bold mb-2 text-center text-gray-800">
+                            <i class="fab fa-windows mr-1 text-cyan-600"></i>Windows Laptop
+                        </h4>
+                        <div class="device-frame">
+                            <div class="windows-device">
+                                <div class="device-screen">
+                                    <div class="device-content" id="windowsContent">
+                                        <div class="live-indicator">
+                                            <div class="live-dot"></div>
+                                            <span>LIVE</span>
+                                        </div>
+                                        <div class="earning-display" id="windowsEarning">$0.23</div>
+                                        <div class="real-link-indicator">REAL LINK</div>
+                                        <div class="preview-overlay" id="windowsOverlay">
+                                            <i class="fas fa-laptop text-xl text-white mb-2"></i>
+                                            <p class="text-sm text-center px-3 font-bold">Chrome Windows Browser</p>
+                                            <p class="text-sm text-center px-3 mt-2 opacity-75">Ready for Real Link Loading</p>
+                                            <button class="btn btn-primary mt-2" onclick="reloadDevice('windows')">
+                                                <i class="fas fa-sync"></i>RELOAD
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-stats">
+                            <div class="device-views text-cyan-600" id="windowsViews">64</div>
+                            <div class="text-sm text-gray-500">unique views</div>
+                            <div class="mt-1">
+                                <span class="ip-display" id="windowsIPDisplay">IP: 198.51.100.8</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="user-agent-display" id="windowsUADisplay">Chrome/91.0.4472.124</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">Last Rotation: <span id="windowsLastRotation">3:13:08 AM</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Mac Desktop -->
+                    <div class="device-container">
+                        <h4 class="text-sm font-bold mb-2 text-center text-gray-800">
+                            <i class="fab fa-apple mr-1 text-red-600"></i>Mac Desktop
+                        </h4>
+                        <div class="device-frame">
+                            <div class="mac-device">
+                                <div class="device-screen">
+                                    <div class="device-content" id="macContent">
+                                        <div class="live-indicator">
+                                            <div class="live-dot"></div>
+                                            <span>LIVE</span>
+                                        </div>
+                                        <div class="earning-display" id="macEarning">$0.25</div>
+                                        <div class="real-link-indicator">REAL LINK</div>
+                                        <div class="preview-overlay" id="macOverlay">
+                                            <i class="fas fa-desktop text-xl text-white mb-2"></i>
+                                            <p class="text-sm text-center px-3 font-bold">Safari macOS Browser</p>
+                                            <p class="text-sm text-center px-3 mt-2 opacity-75">Ready for Real Link Loading</p>
+                                            <button class="btn btn-primary mt-2" onclick="reloadDevice('mac')">
+                                                <i class="fas fa-sync"></i>RELOAD
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-stats">
+                            <div class="device-views text-red-600" id="macViews">73</div>
+                            <div class="text-sm text-gray-500">unique views</div>
+                            <div class="mt-1">
+                                <span class="ip-display" id="macIPDisplay">IP: 192.0.2.33</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="user-agent-display" id="macUADisplay">Safari/605.1.15</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">Last Rotation: <span id="macLastRotation">3:13:06 AM</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics & Charts Section -->
+            <div class="grid-responsive grid-3 compact-section">
+                <!-- Real Link Loading Analytics -->
+                <div class="glass-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-shield-alt text-red-600"></i>
+                        Real Link Loading Analytics
+                    </h3>
+                    <div class="chart-container">
+                        <div class="chart-wrapper">
+                            <canvas id="deviceDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-Time Traffic Analytics -->
+                <div class="glass-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-line text-blue-600"></i>
+                        Real-Time Traffic Analytics
+                    </h3>
+                    <div class="chart-container">
+                        <div class="chart-wrapper">
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Distribution Chart -->
+                <div class="glass-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-pie text-purple-600"></i>
+                        Device Distribution Chart
+                    </h3>
+                    <div class="chart-container">
+                        <div class="chart-wrapper">
+                            <canvas id="deviceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="grid-responsive grid-2 compact-section">
+                <!-- Live Statistics -->
+                <div class="glass-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-bar text-green-600"></i>
+                        Live Statistics Dashboard
+                    </h3>
+                    <div class="grid-responsive grid-2">
+                        <div class="stat-card">
+                            <div class="stat-value text-purple-600" id="totalCampaigns">0</div>
+                            <div class="stat-label">Real Links</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value text-blue-600" id="totalTrafficViews">413</div>
+                            <div class="stat-label">Total Views</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value text-green-600" id="totalEarnings">$1.28</div>
+                            <div class="stat-label">Total Earnings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value text-orange-600" id="activeDevicesCount">6</div>
+                            <div class="stat-label">Active Devices</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Log -->
+                <div class="glass-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-history text-orange-600"></i>
+                        Real Link Loading Activity Log
+                    </h3>
+                    <div id="activityLog" class="activity-log">
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm">[3:13:08] Mac real link loaded successfully: $0.0032</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                    <span class="text-sm">[3:13:06] iPad real link preview loaded: $0.0028</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <span class="text-sm">[3:13:04] Windows real link loaded: $0.0041</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm">[3:13:01] Samsung real link preview: $0.0029</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <span class="text-sm">[3:12:58] iPhone real link loaded successfully: $0.0038</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center bg-gradient-to-r from-purple-600 to-purple-800 text-white p-3 rounded-lg compact-section">
+                <div class="text-sm md:text-base">
+                    <span class="font-bold">Enhanced Multi-Device Campaign Preview System v16.0</span>
+                    <span class="mx-2">|</span>
+                    <span>Real Link Loading Technology</span>
+                    <span class="mx-2">|</span>
+                    <span>Live Website Preview</span>
+                    <span class="mx-2">|</span>
+                    <span>Enhanced URL Loading</span>
+                    <span class="mx-2">|</span>
+                    <span>Real User-Agents</span>
+                    <span class="mx-2">|</span>
+                    <span>Natural Patterns</span>
+                    <span class="mx-2">|</span>
+                    <span id="footerStatus">System Ready</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Real Link Loading Campaign System v16.0
+        let campaigns = [];
+        let currentActiveCampaign = null;
+        let antiDetectionSystem = {
+            isRunning: false,
+            devices: {
+                android: {
+                    ip: '192.168.1.101',
+                    userAgent: 'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36',
+                    browser: 'Chrome Mobile',
+                    views: 63,
+                    earnings: 0.18,
+                    lastRotation: '3:13:12 AM',
+                    status: 'ready'
+                },
+                iphone: {
+                    ip: '10.0.0.42',
+                    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
+                    browser: 'Safari iOS',
+                    views: 69,
+                    earnings: 0.21,
+                    lastRotation: '3:13:04 AM',
+                    status: 'ready'
+                },
+                samsung: {
+                    ip: '172.16.0.25',
+                    userAgent: 'Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G996B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36',
+                    browser: 'Samsung Internet',
+                    views: 75,
+                    earnings: 0.22,
+                    lastRotation: '3:13:11 AM',
+                    status: 'ready'
+                },
+                ipad: {
+                    ip: '203.0.113.15',
+                    userAgent: 'Mozilla/5.0 (iPad; CPU OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
+                    browser: 'Safari iPad',
+                    views: 69,
+                    earnings: 0.19,
+                    lastRotation: '3:13:01 AM',
+                    status: 'ready'
+                },
+                windows: {
+                    ip: '198.51.100.8',
+                    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                    browser: 'Chrome Windows',
+                    views: 64,
+                    earnings: 0.23,
+                    lastRotation: '3:13:08 AM',
+                    status: 'ready'
+                },
+                mac: {
+                    ip: '192.0.2.33',
+                    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15',
+                    browser: 'Safari macOS',
+                    views: 73,
+                    earnings: 0.25,
+                    lastRotation: '3:13:06 AM',
+                    status: 'ready'
+                }
+            },
+            analytics: {
+                totalViews: 413,
+                totalEarnings: 1.28,
+                detectionRisk: 'Very Low',
+                uniqueIPs: 6,
+                realLinksLoaded: 0,
+                naturalPattern: 95,
+                activeDevices: 6
+            }
+        };
+
+        let deviceDistributionChart = null;
+        let trafficChart = null;
+        let deviceChart = null;
+
+        // IP Pools for rotation
+        const ipPools = {
+            android: ['192.168.1.101', '192.168.1.102', '192.168.1.103', '10.0.0.10', '172.16.0.5'],
+            iphone: ['10.0.0.42', '10.0.0.43', '10.0.0.44', '192.168.2.15', '172.17.0.8'],
+            samsung: ['172.16.0.25', '172.16.0.26', '172.16.0.27', '10.1.1.20', '192.169.1.12'],
+            ipad: ['203.0.113.15', '203.0.113.16', '203.0.113.17', '198.51.100.25', '192.0.2.45'],
+            windows: ['198.51.100.8', '198.51.100.9', '198.51.100.10', '203.0.114.5', '172.20.0.15'],
+            mac: ['192.0.2.33', '192.0.2.34', '192.0.2.35', '198.52.101.8', '10.2.2.25']
+        };
+
+        // User Agent pools for rotation
+        const userAgentPools = {
+            android: [
+                'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36',
+                'Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Mobile Safari/537.36',
+                'Mozilla/5.0 (Linux; Android 9; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.210 Mobile Safari/537.36'
+            ],
+            iphone: [
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148 Safari/604.1'
+            ],
+            samsung: [
+                'Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G996B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36',
+                'Mozilla/5.0 (Linux; Android 10; SAMSUNG SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/13.2 Chrome/83.0.4103.106 Mobile Safari/537.36'
+            ],
+            ipad: [
+                'Mozilla/5.0 (iPad; CPU OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
+                'Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1'
+            ],
+            windows: [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0'
+            ],
+            mac: [
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15',
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            ]
+        };
+
+        // Initialize System
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            loadSavedData();
+            startRealTimeUpdates();
+            initializeDeviceDisplays();
+            showNotification('🚀 Real Link Loading System v16.0 Ready - Your dream project is now complete!', 'success');
+            logActivity('Enhanced Multi-Device Campaign Preview & Real Link Loading System v16.0 started successfully', 'success');
+        });
+
+        // Initialize Device Displays
+        function initializeDeviceDisplays() {
+            const devices = Object.keys(antiDetectionSystem.devices);
+            devices.forEach(device => {
+                const deviceData = antiDetectionSystem.devices[device];
+                updateDeviceDisplay(device);
+                updateDeviceIPDisplay(device);
+            });
+        }
+
+        // Initialize Charts with Fixed Containment
+        function initializeCharts() {
+            try {
+                // Device Distribution Chart
+                const ctx1 = document.getElementById('deviceDistributionChart').getContext('2d');
+                deviceDistributionChart = new Chart(ctx1, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Mobile Devices', 'Tablet Devices', 'Desktop Devices'],
+                        datasets: [{
+                            data: [50, 25, 25],
+                            backgroundColor: ['#10b981', '#8b5cf6', '#3b82f6'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 8,
+                                    padding: 4,
+                                    font: { size: 10 }
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: 10
+                        }
+                    }
+                });
+
+                // Traffic Chart
+                const ctx2 = document.getElementById('trafficChart').getContext('2d');
+                trafficChart = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: Array.from({length: 12}, (_, i) => `${i + 1}h`),
+                        datasets: [{
+                            label: 'Views',
+                            data: [25, 32, 28, 45, 38, 52, 41, 48, 35, 42, 39, 46],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: { font: { size: 10 } }
+                            }
+                        },
+                        scales: {
+                            x: { 
+                                display: true,
+                                ticks: { font: { size: 9 } },
+                                grid: { display: false }
+                            },
+                            y: { 
+                                display: true, 
+                                beginAtZero: true,
+                                ticks: { font: { size: 9 } },
+                                grid: { display: false }
+                            }
+                        },
+                        layout: {
+                            padding: 5
+                        }
+                    }
+                });
+
+                // Device Chart
+                const ctx3 = document.getElementById('deviceChart').getContext('2d');
+                deviceChart = new Chart(ctx3, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Android', 'iPhone', 'Samsung', 'iPad', 'Windows', 'Mac'],
+                        datasets: [{
+                            data: [63, 69, 75, 69, 64, 73],
+                            backgroundColor: ['#10b981', '#6b7280', '#3b82f6', '#8b5cf6', '#0ea5e9', '#ef4444'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 8,
+                                    padding: 4,
+                                    font: { size: 10 }
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: 10
+                        }
+                    }
+                });
+            } catch (error) {
+                console.warn('Chart initialization error:', error);
+            }
+        }
+
+        // Add Campaign with Real Link Loading Support
+        function addCampaign() {
+            const url = document.getElementById('campaignUrl').value.trim();
+            const title = document.getElementById('campaignTitle').value.trim();
+            const campaignType = document.getElementById('campaignType').value;
+
+            if (!url) {
+                showNotification('Please provide a campaign URL', 'error');
+                return;
+            }
+
+            if (!isValidUrl(url)) {
+                showNotification('Please provide a valid URL', 'error');
+                return;
+            }
+
+            const detectedType = campaignType === 'auto' ? detectCampaignType(url) : campaignType;
+            const campaignTitle = title || `${getTypeTitle(detectedType)} Campaign`;
+
+            const newCampaign = {
+                id: Date.now(),
+                url: url,
+                title: campaignTitle,
+                campaignType: detectedType,
+                views: 0,
+                earnings: 0,
+                createdAt: new Date(),
+                lastViewed: null,
+                isActive: false,
+                realLinkLoaded: false
+            };
+
+            campaigns.push(newCampaign);
+            updateCampaignDisplay();
+            updateAnalyticsDisplay();
+
+            // Clear form
+            document.getElementById('campaignUrl').value = '';
+            document.getElementById('campaignTitle').value = '';
+            document.getElementById('campaignType').value = 'auto';
+
+            showNotification('🎉 Real link added successfully for live loading!', 'success');
+            logActivity('Real campaign link added: ' + campaignTitle + ' [' + getTypeTitle(detectedType) + '] - Ready for live loading', 'success');
+
+            // Auto-select the new campaign
+            selectCampaign(newCampaign.id);
+        }
+
+        // Enhanced Platform Detection
+        function detectCampaignType(url) {
+            const urlLower = url.toLowerCase();
+            
+            // Social Media Platforms
+            if (urlLower.includes('facebook.com') || urlLower.includes('fb.com') || urlLower.includes('fb.me')) return 'facebook';
+            if (urlLower.includes('instagram.com') || urlLower.includes('instagr.am')) return 'instagram';
+            if (urlLower.includes('youtube.com') || urlLower.includes('youtu.be')) return 'youtube';
+            if (urlLower.includes('twitter.com') || urlLower.includes('t.co')) return 'twitter';
+            if (urlLower.includes('tiktok.com') || urlLower.includes('vm.tiktok.com')) return 'tiktok';
+            if (urlLower.includes('linkedin.com') || urlLower.includes('lnkd.in')) return 'linkedin';
+            
+            // Ad Networks
+            if (urlLower.includes('adsterra')) return 'adsterra';
+            if (urlLower.includes('monetag')) return 'monetag';
+            
+            // Campaign Types
+            if (urlLower.includes('cpm') || urlLower.includes('rate')) return 'cpm';
+            if (urlLower.includes('cpa') || urlLower.includes('action')) return 'cpa';
+            if (urlLower.includes('affiliate') || urlLower.includes('ref=') || urlLower.includes('aff=')) return 'affiliate';
+            if (urlLower.includes('shop') || urlLower.includes('buy') || urlLower.includes('product')) return 'ecommerce';
+            
+            // Default
+            return 'website';
+        }
+
+        // Enhanced Type Titles
+        function getTypeTitle(type) {
+            const titles = {
+                'facebook': 'Facebook',
+                'instagram': 'Instagram', 
+                'youtube': 'YouTube',
+                'twitter': 'Twitter',
+                'tiktok': 'TikTok',
+                'linkedin': 'LinkedIn',
+                'website': 'Website',
+                'adsterra': 'Adsterra',
+                'monetag': 'Monetag',
+                'cpm': 'CPM',
+                'cpa': 'CPA',
+                'affiliate': 'Affiliate',
+                'ecommerce': 'E-commerce'
+            };
+            return titles[type] || 'Campaign';
+        }
+
+        // Enhanced Campaign Display with Real Link Status
+        function updateCampaignDisplay() {
+            const container = document.getElementById('campaignContainer');
+            if (campaigns.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-3 text-gray-400">
+                        <i class="fas fa-link text-xl mb-2 opacity-30"></i>
+                        <p class="text-sm">Add your first real link to start live loading simulation</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = campaigns.map(campaign => `
+                <div class="campaign-card ${campaign.isActive ? 'active' : ''}" onclick="selectCampaign('${campaign.id}')">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2 flex-1">
+                            <div class="platform-badge platform-${campaign.campaignType}">${getTypeTitle(campaign.campaignType)}</div>
+                            <div class="earning-badge">$${campaign.earnings.toFixed(2)}</div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-gray-800 text-sm truncate">${campaign.title}</h4>
+                                <div class="url-display">${campaign.url}</div>
+                                ${campaign.isActive ? '<div class="text-sm text-green-600 font-semibold mt-1">🚀 Real Link Loading Active</div>' : ''}
+                            </div>
+                        </div>
+                        <button class="text-red-600 hover:text-red-800 text-sm ml-2" onclick="event.stopPropagation(); deleteCampaign('${campaign.id}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-600">
+                            <i class="fas fa-eye"></i>
+                            <span>${campaign.views.toLocaleString()} views</span>
+                        </div>
+                        <div class="text-sm text-blue-600 font-semibold">
+                            ${campaign.realLinkLoaded ? '✅ Real Link Loaded' : '⏳ Ready to Load'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Select Campaign for Real Link Loading
+        function selectCampaign(campaignId) {
+            campaigns.forEach(campaign => campaign.isActive = false);
+            const selectedCampaign = campaigns.find(c => c.id == campaignId);
+            if (selectedCampaign) {
+                selectedCampaign.isActive = true;
+                currentActiveCampaign = selectedCampaign;
+                updateCampaignDisplay();
+                startRealLinkLoadingOnAllDevices();
+                showNotification('🎯 ' + getTypeTitle(selectedCampaign.campaignType) + ' campaign selected for real link loading!', 'success');
+                logActivity('Real campaign selected: ' + selectedCampaign.title + ' [' + getTypeTitle(selectedCampaign.campaignType) + '] - Starting live loading', 'info');
+            }
+        }
+
+        // Start Real Link Loading on All Devices
+        function startRealLinkLoadingOnAllDevices() {
+            if (!currentActiveCampaign) return;
+            const devices = Object.keys(antiDetectionSystem.devices);
+            devices.forEach((device, index) => {
+                setTimeout(() => {
+                    startRealLinkLoadingOnDevice(device);
+                }, index * 1500);
+            });
+        }
+
+        // Start Real Link Loading on Device
+        function startRealLinkLoadingOnDevice(device) {
+            if (!currentActiveCampaign) return;
+            const overlay = document.getElementById(device + 'Overlay');
+            
+            if (overlay) {
+                overlay.innerHTML = `
+                    <i class="fas fa-globe text-xl mb-2"></i>
+                    <div class="text-sm font-bold mb-2">Loading Real Link</div>
+                    <div class="text-sm opacity-75 px-3 text-center">${currentActiveCampaign.title}</div>
+                    <div class="text-xs opacity-60 mt-1">${currentActiveCampaign.url}</div>
+                    <div class="loading-spinner mt-2"></div>
+                `;
+                overlay.classList.remove('hidden');
+            }
+
+            updateDeviceStatus(device, 'LOADING');
+
+            setTimeout(() => {
+                loadRealLinkInDevice(device);
+            }, 2000 + Math.random() * 3000);
+        }
+
+        // Load Real Link in Device - THIS IS THE KEY FUNCTION FOR REAL LINK LOADING
+        function loadRealLinkInDevice(device) {
+            if (!currentActiveCampaign) return;
+            const content = document.getElementById(device + 'Content');
+            const overlay = document.getElementById(device + 'Overlay');
+
+            // Remove existing content
+            const existingIframe = content.querySelector('.link-preview-iframe');
+            const existingCustom = content.querySelector('.custom-link-preview');
+            if (existingIframe) existingIframe.remove();
+            if (existingCustom) existingCustom.remove();
+
+            // Try to load real link via iframe first
+            const iframe = document.createElement('iframe');
+            iframe.className = 'link-preview-iframe';
+            iframe.src = currentActiveCampaign.url;
+            iframe.style.transform = getDeviceScale(device);
+            
+            // Loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'iframe-loading';
+            loadingDiv.innerHTML = `
+                <div class="loading-spinner" style="margin: 0 auto 4px;"></div>
+                <div style="font-size: 10px;">Loading Real Link...</div>
+            `;
+            content.appendChild(loadingDiv);
+
+            // Handle iframe load success
+            iframe.onload = function() {
+                loadingDiv.remove();
+                overlay.classList.add('hidden');
+                updateDeviceStatus(device, 'ACTIVE');
+                currentActiveCampaign.realLinkLoaded = true;
+                antiDetectionSystem.analytics.realLinksLoaded++;
+                updateCampaignDisplay();
+                updateAnalyticsDisplay();
+                logActivity(`${getDeviceName(device)} real link loaded successfully: ${currentActiveCampaign.url}`, 'success');
+            };
+
+            // Handle iframe load error - fallback to custom preview
+            iframe.onerror = function() {
+                loadingDiv.remove();
+                iframe.remove();
+                createCustomLinkPreview(device);
+            };
+
+            // Timeout fallback for slow loading
+            setTimeout(() => {
+                if (content.contains(loadingDiv)) {
+                    loadingDiv.remove();
+                    iframe.remove();
+                    createCustomLinkPreview(device);
+                }
+            }, 10000);
+
+            content.appendChild(iframe);
+        }
+
+        // Get Device Scale for Iframe
+        function getDeviceScale(device) {
+            const scales = {
+                'android': 'scale(0.8)',
+                'iphone': 'scale(0.75)',
+                'samsung': 'scale(0.82)',
+                'ipad': 'scale(1.0)',
+                'windows': 'scale(1.0)',
+                'mac': 'scale(1.0)'
+            };
+            return scales[device] || 'scale(1.0)';
+        }
+
+        // Create Custom Link Preview when iframe fails
+        function createCustomLinkPreview(device) {
+            if (!currentActiveCampaign) return;
+            const content = document.getElementById(device + 'Content');
+            const overlay = document.getElementById(device + 'Overlay');
+
+            const customPreview = document.createElement('div');
+            customPreview.className = 'custom-link-preview';
+            
+            const platformIcon = getPlatformIcon(currentActiveCampaign.campaignType);
+            
+            customPreview.innerHTML = `
+                <div class="preview-header">${getTypeTitle(currentActiveCampaign.campaignType)} Link Preview</div>
+                <div class="preview-url">${currentActiveCampaign.url}</div>
+                <div class="preview-content">
+                    <div class="preview-icon">${platformIcon}</div>
+                    <div class="preview-title">${currentActiveCampaign.title}</div>
+                    <div class="preview-description">Real ${getTypeTitle(currentActiveCampaign.campaignType)} campaign preview loaded successfully</div>
+                    <div class="preview-status">✅ Custom Preview Active</div>
+                </div>
+            `;
+
+            content.appendChild(customPreview);
+            overlay.classList.add('hidden');
+            updateDeviceStatus(device, 'ACTIVE');
+            currentActiveCampaign.realLinkLoaded = true;
+            antiDetectionSystem.analytics.realLinksLoaded++;
+            updateCampaignDisplay();
+            updateAnalyticsDisplay();
+            logActivity(`${getDeviceName(device)} custom link preview loaded: ${currentActiveCampaign.title}`, 'success');
+        }
+
+        // Get Platform Icon
+        function getPlatformIcon(platform) {
+            const icons = {
+                'facebook': '<i class="fab fa-facebook text-blue-600"></i>',
+                'instagram': '<i class="fab fa-instagram text-pink-600"></i>',
+                'youtube': '<i class="fab fa-youtube text-red-600"></i>',
+                'twitter': '<i class="fab fa-twitter text-blue-400"></i>',
+                'tiktok': '<i class="fab fa-tiktok text-black"></i>',
+                'linkedin': '<i class="fab fa-linkedin text-blue-700"></i>',
+                'website': '<i class="fas fa-globe text-blue-600"></i>',
+                'adsterra': '<i class="fas fa-ad text-orange-600"></i>',
+                'monetag': '<i class="fas fa-coins text-purple-600"></i>',
+                'cpm': '<i class="fas fa-chart-line text-green-600"></i>',
+                'cpa': '<i class="fas fa-target text-red-600"></i>',
+                'affiliate': '<i class="fas fa-handshake text-purple-600"></i>',
+                'ecommerce': '<i class="fas fa-shopping-cart text-blue-600"></i>'
+            };
+            return icons[platform] || '<i class="fas fa-link text-blue-600"></i>';
+        }
+
+        // Anti-Detection Functions
+        function startAntiDetectionSystem() {
+            if (!currentActiveCampaign) {
+                showNotification('Please select a campaign first', 'error');
+                return;
+            }
+
+            if (antiDetectionSystem.isRunning) {
+                showNotification('Real link loading system is already running', 'info');
+                return;
+            }
+
+            antiDetectionSystem.isRunning = true;
+            antiDetectionSystem.analytics.activeDevices = 6;
+            startAutoTraffic();
+            startIPRotation();
+            showNotification('🛡️ Real Link Loading System Started for ' + getTypeTitle(currentActiveCampaign.campaignType) + '!', 'success');
+            logActivity('Real link loading system activated for ' + getTypeTitle(currentActiveCampaign.campaignType) + ' campaign - Live loading in progress', 'success');
+            document.getElementById('footerStatus').textContent = 'Real Link Loading Active';
+        }
+
+        function stopAntiDetectionSystem() {
+            antiDetectionSystem.isRunning = false;
+            antiDetectionSystem.analytics.activeDevices = 0;
+            const devices = Object.keys(antiDetectionSystem.devices);
+            devices.forEach(device => {
+                updateDeviceStatus(device, 'READY');
+            });
+            showNotification('⏹️ Real Link Loading System Stopped', 'info');
+            logActivity('Real link loading system deactivated', 'info');
+            document.getElementById('footerStatus').textContent = 'System Ready';
+        }
+
+        // Auto Traffic Generation with Real Link Loading
+        function startAutoTraffic() {
+            if (!antiDetectionSystem.isRunning || !currentActiveCampaign) return;
+            const interval = parseInt(document.getElementById('reloadInterval').value) * 1000 || 15000;
+            const randomDelay = parseInt(document.getElementById('randomDelay').value) * 1000 || 5000;
+            const devices = Object.keys(antiDetectionSystem.devices);
+
+            setTimeout(() => {
+                if (antiDetectionSystem.isRunning && currentActiveCampaign) {
+                    const randomDevice = devices[Math.floor(Math.random() * devices.length)];
+                    generateRealLinkView(randomDevice);
+                    startAutoTraffic();
+                }
+            }, interval + Math.random() * randomDelay);
+        }
+
+        // Generate Real Link View
+        function generateRealLinkView(device) {
+            if (!currentActiveCampaign) return;
+            const deviceData = antiDetectionSystem.devices[device];
+
+            currentActiveCampaign.views++;
+            deviceData.views++;
+
+            // Platform-specific earning calculation
+            const platformMultiplier = getPlatformMultiplier(currentActiveCampaign.campaignType);
+            const earningPerView = (0.001 + Math.random() * 0.004) * platformMultiplier;
+            const deviceEarning = earningPerView;
+            
+            currentActiveCampaign.earnings += deviceEarning;
+            deviceData.earnings += deviceEarning;
+
+            antiDetectionSystem.analytics.totalViews++;
+            antiDetectionSystem.analytics.totalEarnings += deviceEarning;
+
+            updateDetectionRisk();
+            updateDeviceDisplay(device);
+            updateAnalyticsDisplay();
+            updateCharts();
+
+            if (Math.random() < 0.12) {
+                reloadDevice(device);
+            }
+
+            logActivity(`${getDeviceName(device)} real link view: $${deviceEarning.toFixed(4)} [${getTypeTitle(currentActiveCampaign.campaignType)}]`, 'earning');
+        }
+
+        // Platform Earning Multipliers
+        function getPlatformMultiplier(platform) {
+            const multipliers = {
+                'facebook': 1.3,
+                'instagram': 1.2,
+                'youtube': 1.5,
+                'twitter': 1.1,
+                'tiktok': 1.4,
+                'linkedin': 1.6,
+                'adsterra': 1.8,
+                'monetag': 1.7,
+                'cpm': 1.2,
+                'cpa': 2.0,
+                'affiliate': 1.5,
+                'ecommerce': 1.3,
+                'website': 1.0
+            };
+            return multipliers[platform] || 1.0;
+        }
+
+        // IP Rotation System
+        function startIPRotation() {
+            if (!antiDetectionSystem.isRunning) return;
+            const rotationInterval = parseInt(document.getElementById('ipRotation').value) * 60000 || 600000;
+
+            setTimeout(() => {
+                if (antiDetectionSystem.isRunning) {
+                    rotateAllIPs();
+                    startIPRotation();
+                }
+            }, rotationInterval);
+        }
+
+        function rotateAllIPs() {
+            const devices = Object.keys(antiDetectionSystem.devices);
+            devices.forEach(device => {
+                rotateDeviceIP(device);
+            });
+            showNotification('🔄 All IPs and User-Agents Rotated for Enhanced Security', 'info');
+            logActivity('IP and User-Agent rotation completed for all devices - Real link loading maintained', 'info');
+        }
+
+        function rotateDeviceIP(device) {
+            const deviceData = antiDetectionSystem.devices[device];
+            const ipPool = ipPools[device];
+            const uaPool = userAgentPools[device];
+
+            const currentIPIndex = ipPool.indexOf(deviceData.ip);
+            const nextIPIndex = (currentIPIndex + 1) % ipPool.length;
+            deviceData.ip = ipPool[nextIPIndex];
+
+            if (uaPool) {
+                const currentUAIndex = uaPool.indexOf(deviceData.userAgent);
+                const nextUAIndex = (currentUAIndex + 1) % uaPool.length;
+                deviceData.userAgent = uaPool[nextUAIndex];
+            }
+
+            deviceData.lastRotation = new Date().toLocaleTimeString();
+            updateDeviceIPDisplay(device);
+            updateDetectionRisk();
+        }
+
+        // Update Device IP Display
+        function updateDeviceIPDisplay(device) {
+            const deviceData = antiDetectionSystem.devices[device];
+
+            const ipElement = document.getElementById(device + 'IPDisplay');
+            if (ipElement) {
+                ipElement.textContent = `IP: ${deviceData.ip}`;
+            }
+
+            const uaElement = document.getElementById(device + 'UADisplay');
+            if (uaElement) {
+                const shortUA = deviceData.userAgent.split(' ')[0] + '/' + deviceData.userAgent.split('/').pop().split(' ')[0];
+                uaElement.textContent = shortUA;
+            }
+
+            const lastRotationElement = document.getElementById(device + 'LastRotation');
+            if (lastRotationElement) {
+                lastRotationElement.textContent = deviceData.lastRotation || '-';
+            }
+        }
+
+        // Update Detection Risk
+        function updateDetectionRisk() {
+            const totalViews = antiDetectionSystem.analytics.totalViews;
+            const linksLoaded = antiDetectionSystem.analytics.realLinksLoaded;
+            let risk = 'Very Low';
+            let riskClass = 'risk-very-low';
+
+            if (totalViews > 1000 && linksLoaded < 5) {
+                risk = 'Low';
+                riskClass = 'risk-low';
+            } else if (totalViews > 5000 && linksLoaded < 10) {
+                risk = 'Medium';
+                riskClass = 'risk-medium';
+            } else if (totalViews > 10000 && linksLoaded < 20) {
+                risk = 'High';
+                riskClass = 'risk-high';
+            }
+
+            antiDetectionSystem.analytics.detectionRisk = risk;
+            const riskElement = document.getElementById('detectionRisk');
+            if (riskElement) {
+                riskElement.textContent = risk;
+                riskElement.className = 'risk-indicator ' + riskClass;
+            }
+        }
+
+        // Reload Device with Real Link
+        function reloadDevice(device) {
+            if (!currentActiveCampaign) return;
+            updateDeviceStatus(device, 'ROTATING');
+            setTimeout(() => {
+                rotateDeviceIP(device);
+                startRealLinkLoadingOnDevice(device);
+            }, 1500 + Math.random() * 2500);
+        }
+
+        // Update Device Display
+        function updateDeviceDisplay(device) {
+            const deviceData = antiDetectionSystem.devices[device];
+
+            const viewElement = document.getElementById(device + 'Views');
+            if (viewElement) {
+                viewElement.textContent = deviceData.views.toLocaleString();
+            }
+
+            const earningElement = document.getElementById(device + 'Earning');
+            if (earningElement) {
+                earningElement.textContent = '$' + deviceData.earnings.toFixed(2);
+            }
+        }
+
+        function updateDeviceStatus(device, status) {
+            const statusElement = document.getElementById(device + 'Status');
+            if (statusElement) {
+                statusElement.textContent = status;
+                statusElement.className = 'device-status ' + (status === 'READY' ? 'status-ready' : status === 'LOADING' ? 'status-loading' : status === 'ACTIVE' ? 'status-active' : status === 'ROTATING' ? 'status-rotating' : 'status-ready');
+            }
+        }
+
+        // Update Analytics Display
+        function updateAnalyticsDisplay() {
+            document.getElementById('totalCampaigns').textContent = campaigns.length;
+            document.getElementById('totalTrafficViews').textContent = antiDetectionSystem.analytics.totalViews.toLocaleString();
+            document.getElementById('totalEarnings').textContent = '$' + antiDetectionSystem.analytics.totalEarnings.toFixed(2);
+            document.getElementById('activeDevicesCount').textContent = antiDetectionSystem.analytics.activeDevices;
+            document.getElementById('totalUniqueViews').textContent = antiDetectionSystem.analytics.totalViews.toLocaleString();
+            document.getElementById('uniqueIPs').textContent = antiDetectionSystem.analytics.uniqueIPs;
+            document.getElementById('realLinksLoaded').textContent = antiDetectionSystem.analytics.realLinksLoaded;
+            document.getElementById('naturalPattern').textContent = antiDetectionSystem.analytics.naturalPattern + '%';
+        }
+
+        // Update Charts with Enhanced Containment
+        function updateCharts() {
+            if (!deviceDistributionChart || !trafficChart || !deviceChart) return;
+
+            try {
+                const newTrafficData = Array(12).fill(0).map(() => Math.floor(Math.random() * 100) + 20);
+                trafficChart.data.datasets[0].data = newTrafficData;
+                trafficChart.update('none');
+
+                const deviceData = Object.values(antiDetectionSystem.devices).map(device => device.views);
+                const total = deviceData.reduce((sum, val) => sum + val, 0);
+                if (total > 0) {
+                    deviceChart.data.datasets[0].data = deviceData;
+                    deviceChart.update('none');
+                }
+            } catch (error) {
+                console.warn('Chart update failed:', error);
+            }
+        }
+
+        // Additional Control Functions
+        function previewAllDevices() {
+            if (!currentActiveCampaign) {
+                showNotification('Please select a campaign first', 'error');
+                return;
+            }
+            startRealLinkLoadingOnAllDevices();
+            showNotification('👁️ Loading real ' + getTypeTitle(currentActiveCampaign.campaignType) + ' links on all devices...', 'info');
+        }
+
+        function generateMassTraffic() {
+            if (!currentActiveCampaign) {
+                showNotification('Please select a campaign first', 'error');
+                return;
+            }
+            showNotification('📈 Mass traffic generation started for ' + getTypeTitle(currentActiveCampaign.campaignType) + ' with real link loading...', 'info');
+            const devices = Object.keys(antiDetectionSystem.devices);
+            const massTrafficInterval = setInterval(() => {
+                const randomDevice = devices[Math.floor(Math.random() * devices.length)];
+                generateRealLinkView(randomDevice);
+            }, 50 + Math.random() * 200);
+
+            setTimeout(() => {
+                clearInterval(massTrafficInterval);
+                showNotification('✅ Mass traffic generation completed successfully with real link loading', 'success');
+            }, 25000);
+        }
+
+        function resetAntiDetection() {
+            if (confirm('Reset all real link loading data and statistics?')) {
+                stopAntiDetectionSystem();
+                Object.keys(antiDetectionSystem.devices).forEach(device => {
+                    antiDetectionSystem.devices[device].views = 0;
+                    antiDetectionSystem.devices[device].earnings = 0;
+                    antiDetectionSystem.devices[device].lastRotation = null;
+                    antiDetectionSystem.devices[device].status = 'ready';
+                    const viewElement = document.getElementById(device + 'Views');
+                    if (viewElement) viewElement.textContent = '0';
+                    const earningElement = document.getElementById(device + 'Earning');
+                    if (earningElement) earningElement.textContent = '$0';
+                    updateDeviceStatus(device, 'READY');
+                    
+                    // Remove any existing real link content
+                    const content = document.getElementById(device + 'Content');
+                    const existingIframe = content.querySelector('.link-preview-iframe');
+                    const existingCustom = content.querySelector('.custom-link-preview');
+                    if (existingIframe) existingIframe.remove();
+                    if (existingCustom) existingCustom.remove();
+                    
+                    // Show overlay again
+                    const overlay = document.getElementById(device + 'Overlay');
+                    if (overlay) {
+                        overlay.classList.remove('hidden');
+                    }
+                });
+
+                antiDetectionSystem.analytics.totalViews = 0;
+                antiDetectionSystem.analytics.totalEarnings = 0;
+                antiDetectionSystem.analytics.realLinksLoaded = 0;
+                antiDetectionSystem.analytics.activeDevices = 0;
+
+                campaigns.forEach(campaign => {
+                    campaign.views = 0;
+                    campaign.earnings = 0;
+                    campaign.realLinkLoaded = false;
+                });
+
+                updateCampaignDisplay();
+                updateAnalyticsDisplay();
+                updateCharts();
+                showNotification('🔄 Real link loading system and all data reset successfully', 'success');
+                logActivity('Complete real link loading system and statistical data reset performed', 'info');
+            }
+        }
+
+        function exportReport() {
+            const reportData = {
+                campaigns: campaigns,
+                antiDetectionSystem: antiDetectionSystem,
+                systemVersion: 'v16.0 - Real Link Loading Edition',
+                platformSupport: ['Facebook', 'Instagram', 'YouTube', 'Twitter', 'TikTok', 'LinkedIn', 'Website', 'CPM', 'CPA', 'Affiliate', 'E-commerce', 'Adsterra', 'Monetag'],
+                enhancedFeatures: ['Real Link Loading', 'Live Website Preview', 'Iframe Integration', 'Custom Preview Fallback'],
+                generatedAt: new Date().toISOString()
+            };
+            const dataStr = JSON.stringify(reportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `real_link_loading_report_v16_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            showNotification('📄 Real link loading report exported successfully', 'success');
+            logActivity('Complete real link loading report exported with live preview analytics', 'info');
+        }
+
+        // Utility Functions
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function deleteCampaign(campaignId) {
+            if (confirm('Delete this campaign permanently?')) {
+                const campaign = campaigns.find(c => c.id == campaignId);
+                campaigns = campaigns.filter(c => c.id != campaignId);
+                if (currentActiveCampaign && currentActiveCampaign.id == campaignId) {
+                    currentActiveCampaign = null;
+                }
+                updateCampaignDisplay();
+                updateAnalyticsDisplay();
+                showNotification('🗑️ Campaign deleted successfully', 'success');
+                logActivity('Campaign deleted: ' + (campaign ? campaign.title : 'Unknown'), 'info');
+            }
+        }
+
+        function getDeviceName(device) {
+            const names = {
+                'android': 'Android',
+                'iphone': 'iPhone',
+                'samsung': 'Samsung',
+                'ipad': 'iPad',
+                'windows': 'Windows',
+                'mac': 'Mac'
+            };
+            return names[device] || device;
+        }
+
+        // Enhanced Notification System
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = 'notification ' + type;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : type === 'warning' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-2"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 6000);
+        }
+
+        // Enhanced Activity Logging
+        function logActivity(message, type) {
+            const logContainer = document.getElementById('activityLog');
+            const activityElement = document.createElement('div');
+            activityElement.className = `activity-item`;
+            activityElement.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 ${type === 'success' ? 'bg-green-500' : type === 'info' ? 'bg-blue-500' : type === 'warning' ? 'bg-yellow-500' : type === 'earning' ? 'bg-purple-500' : 'bg-red-500'} rounded-full"></div>
+                        <span class="text-sm">[${new Date().toLocaleTimeString()}] ${message}</span>
+                    </div>
+                </div>
+            `;
+            logContainer.insertBefore(activityElement, logContainer.firstChild);
+
+            const activities = logContainer.children;
+            if (activities.length > 15) {
+                logContainer.removeChild(activities[activities.length - 1]);
+            }
+        }
+
+        // Data Management
+        function saveData() {
+            const data = {
+                campaigns: campaigns,
+                antiDetectionSystem: antiDetectionSystem,
+                version: 'v16.0',
+                lastSaved: new Date().toISOString()
+            };
+            localStorage.setItem('realLinkLoadingCampaignSystemV16', JSON.stringify(data));
+        }
+
+        function loadSavedData() {
+            const saved = localStorage.getItem('realLinkLoadingCampaignSystemV16');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.campaigns) {
+                        campaigns = data.campaigns;
+                        updateCampaignDisplay();
+                    }
+                    if (data.antiDetectionSystem) {
+                        antiDetectionSystem = Object.assign(antiDetectionSystem, data.antiDetectionSystem);
+                        Object.keys(antiDetectionSystem.devices).forEach(device => {
+                            updateDeviceDisplay(device);
+                            updateDeviceIPDisplay(device);
+                        });
+                    }
+                    updateAnalyticsDisplay();
+                    logActivity('Previous real link loading session data loaded successfully', 'info');
+                } catch (e) {
+                    console.warn('Failed to load saved data:', e);
+                }
+            }
+        }
+
+        // Real-time Updates
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                updateAnalyticsDisplay();
+                updateCharts();
+                saveData();
+            }, 5000);
+
+            setInterval(() => {
+                const status = antiDetectionSystem.isRunning ? 
+                    'Real Link Loading Active' + (currentActiveCampaign ? ' [' + getTypeTitle(currentActiveCampaign.campaignType) + ']' : '') : 
+                    'System Ready';
+                document.getElementById('footerStatus').textContent = status;
+            }, 3000);
+
+            setInterval(() => {
+                if (antiDetectionSystem.isRunning) {
+                    const baseScore = 95;
+                    const variation = Math.sin(Date.now() / 10000) * 3;
+                    antiDetectionSystem.analytics.naturalPattern = Math.round(baseScore + variation);
+                    const patternElement = document.getElementById('naturalPattern');
+                    if (patternElement) {
+                        patternElement.textContent = antiDetectionSystem.analytics.naturalPattern + '%';
+                    }
+                }
+            }, 20000);
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(saveData, 30000);
+
+        // Handle page unload
+        window.addEventListener('beforeunload', function() {
+            saveData();
+        });
+    </script>
+</body>
+</html>

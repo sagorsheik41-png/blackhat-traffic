@@ -1,0 +1,99 @@
+<!-- Profile Page -->
+<div class="max-w-2xl mx-auto space-y-6">
+    <div class="glass-card p-6">
+        <div class="flex items-center gap-4 mb-6">
+            <div
+                class="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl">
+                <%= user.name.charAt(0).toUpperCase() %>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-white">
+                    <%= user.name %>
+                </h2>
+                <p class="text-gray-400">
+                    <%= user.email %>
+                </p>
+                <span class="inline-block mt-1 px-3 py-0.5 text-xs font-bold uppercase rounded-full
+          <%= user.tier === 'ultimate' ? 'bg-purple-500/20 text-purple-400' :
+             user.tier === 'pro' ? 'bg-yellow-500/20 text-yellow-400' :
+             'bg-gray-500/20 text-gray-400' %>">
+                    <%= user.tier %> Plan
+                </span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="p-3 rounded-lg bg-white/5"><span class="text-gray-400">Role:</span> <span
+                    class="text-white capitalize">
+                    <%= user.role %>
+                </span></div>
+            <div class="p-3 rounded-lg bg-white/5"><span class="text-gray-400">Joined:</span> <span class="text-white">
+                    <%= new Date(user.createdAt).toLocaleDateString() %>
+                </span></div>
+            <div class="p-3 rounded-lg bg-white/5"><span class="text-gray-400">Last Login:</span> <span
+                    class="text-white">
+                    <%= user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A' %>
+                </span></div>
+            <div class="p-3 rounded-lg bg-white/5"><span class="text-gray-400">Status:</span> <span
+                    class="text-green-400 font-semibold">Active</span></div>
+        </div>
+    </div>
+
+    <!-- API Integrations Section -->
+    <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-key text-indigo-400 mr-2"></i> API Integrations
+        </h3>
+        <p class="text-xs text-gray-400 mb-6">Configure your external API keys to enable premium AI features across the
+            platform.</p>
+
+        <form id="apiKeysForm" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Google Gemini API
+                    Key</label>
+                <div class="relative">
+                    <input type="password" name="gemini" id="geminiKey" value="<%= user.apiKeys?.gemini || '' %>"
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-indigo-500 transition-colors"
+                        placeholder="Paste your Gemini API key here">
+                    <button type="button" onclick="togglePassword('geminiKey')"
+                        class="absolute right-3 top-3.5 text-gray-500 hover:text-white">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <p class="text-[10px] text-gray-500 mt-2">Required for YouTube Content Generator & AI Marketing
+                    Strategy.</p>
+            </div>
+
+            <button type="submit"
+                class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-indigo-500/20 transition-all">
+                Save API Keys
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function togglePassword(id) {
+        const input = document.getElementById(id);
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('apiKeysForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const gemini = document.getElementById('geminiKey').value;
+
+        try {
+            const res = await fetch('/api/user/keys', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ apiKeys: { gemini } })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('API keys updated successfully', 'success');
+            } else {
+                showToast(data.error || 'Update failed', 'error');
+            }
+        } catch (err) {
+            showToast('Failed to connect to server', 'error');
+        }
+    });
+</script>

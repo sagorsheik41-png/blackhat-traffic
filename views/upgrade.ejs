@@ -1,0 +1,207 @@
+<!-- Upgrade Plan Page -->
+<div class="max-w-4xl mx-auto">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Choose Your Plan</h1>
+        <p class="text-gray-400">Unlock more tools and features with a premium subscription</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Free -->
+        <div
+            class="glass-card p-6 border-2 <%= user.tier === 'free' ? 'border-indigo-500' : 'border-transparent' %> flex flex-col">
+            <div class="text-center mb-6">
+                <div class="text-xs font-bold uppercase text-gray-400 mb-2">Free</div>
+                <div class="text-4xl font-black text-white">$0</div>
+                <div class="text-gray-500 text-sm">forever</div>
+            </div>
+            <ul class="space-y-3 text-sm text-gray-300 mb-6 flex-grow">
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>Adobe Stock Suite</li>
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>Movie Streaming FULL SD</li>
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>YouTube Content</li>
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>URL Tools</li>
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>View Calculator</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>Traffic Pro</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>Multi-Device</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>AI Trading Bot</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>Signal Dashboards</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>Crypto Mining dApp</li>
+            </ul>
+            <div class="mt-auto">
+                <% if (user.tier==='free' ) { %>
+                    <div class="text-center text-sm text-indigo-400 font-bold py-3">Current Plan</div>
+                    <% } %>
+            </div>
+        </div>
+
+        <!-- Pro -->
+        <div
+            class="glass-card p-6 border-2 relative <%= user.tier === 'pro' ? 'border-yellow-500' : 'border-transparent' %> flex flex-col">
+            <div
+                class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-xs font-bold text-white shadow-lg shadow-yellow-500/20">
+                POPULAR
+            </div>
+            <div class="text-center mb-6">
+                <div class="text-xs font-bold uppercase text-yellow-400 mb-2">Pro</div>
+                <div class="text-4xl font-black text-white">
+                    <%= (typeof settings !=='undefined' && settings.useBDT) ? '৳' + settings.pricingBDT.pro : '$29' %>
+                </div>
+                <div class="text-gray-500 text-sm">/month</div>
+            </div>
+            <ul class="space-y-3 text-sm text-gray-300 mb-6 flex-grow">
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>Everything in Free</li>
+                <li class="font-bold text-white"><i class="fas fa-bolt text-yellow-400 mr-2 w-4"></i>Traffic Pro</li>
+                <li class="font-bold text-white"><i class="fas fa-mobile-alt text-yellow-400 mr-2 w-4"></i>Multi-Device
+                </li>
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>Signal Dashboards</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>NO AI Trading Bot</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>NO Crypto Mining</li>
+                <li class="text-gray-600"><i class="fas fa-times text-red-500/50 mr-2 w-4"></i>NO Unlimited Traffic</li>
+            </ul>
+            <div class="mt-auto">
+                <% if (user.tier==='pro' ) { %>
+                    <div class="text-center text-sm text-yellow-400 font-bold py-3">Current Plan</div>
+                    <% } else if (user.tier==='free' ) { %>
+                        <button onclick="openPaymentModal('pro')"
+                            class="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold rounded-xl hover:shadow-lg transition-all">
+                            Upgrade to Pro
+                        </button>
+                        <% } %>
+            </div>
+        </div>
+
+        <!-- Ultimate -->
+        <div
+            class="glass-card p-6 border-2 <%= user.tier === 'ultimate' ? 'border-purple-500' : 'border-transparent' %> flex flex-col">
+            <div class="text-center mb-6">
+                <div class="text-xs font-bold uppercase text-purple-400 mb-2">Ultimate</div>
+                <div class="text-4xl font-black text-white">
+                    <%= (typeof settings !=='undefined' && settings.useBDT) ? '৳' + settings.pricingBDT.ultimate : '$99'
+                        %>
+                </div>
+                <div class="text-gray-500 text-sm">/year</div>
+            </div>
+            <ul class="space-y-3 text-sm text-gray-300 mb-6 flex-grow">
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>Everything in Pro</li>
+                <li class="font-bold text-purple-300"><i class="fas fa-robot text-purple-400 mr-2 w-4"></i>AI Trading
+                    Bot</li>
+                <li class="font-bold text-purple-300"><i class="fas fa-coins text-purple-400 mr-2 w-4"></i>Crypto Mining
+                    dApp</li>
+                <li class="font-bold text-purple-300"><i class="fas fa-infinity text-purple-400 mr-2 w-4"></i>Unlimited
+                    Traffic Pro</li>
+                <li class="font-bold text-purple-300"><i
+                        class="fas fa-layer-group text-purple-400 mr-2 w-4"></i>Unlimited Multi-Device</li>
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>4K Movie Streaming</li>
+                <li><i class="fas fa-check text-green-400 mr-2 w-4"></i>VIP Signals</li>
+            </ul>
+            <div class="mt-auto">
+                <% if (user.tier==='ultimate' ) { %>
+                    <div class="text-center text-sm text-purple-400 font-bold py-3">Current Plan</div>
+                    <% } else { %>
+                        <button onclick="openPaymentModal('ultimate')"
+                            class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-purple-500/20 transition-all">
+                            Upgrade to Ultimate
+                        </button>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manual Payment Modal -->
+<div id="paymentModal"
+    class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card w-full max-w-lg p-8 relative animate-in fade-in zoom-in duration-300">
+        <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+
+        <h2 class="text-2xl font-bold text-white mb-2">Upgrade to <span id="selectedTierName"
+                class="text-indigo-400">Pro</span></h2>
+        <p class="text-gray-400 text-sm mb-6">Submit payment details for manual verification.</p>
+
+        <div class="space-y-6">
+            <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
+                <h3 class="text-xs font-bold text-indigo-400 uppercase mb-3">Merchant Numbers (Send Money)</h3>
+                <div class="grid grid-cols-1 gap-2 text-sm">
+                    <div class="flex justify-between items-center"><span
+                            class="text-gray-400 flex items-center gap-1.5"><i class="fas fa-wallet text-pink-500"></i>
+                            bKash</span> <span class="text-white font-mono font-bold">
+                            <%= settings.merchantNumbers.bkash %>
+                        </span></div>
+                    <div class="flex justify-between items-center"><span
+                            class="text-gray-400 flex items-center gap-1.5"><i
+                                class="fas fa-wallet text-orange-500"></i> Nagad</span> <span
+                            class="text-white font-mono font-bold">
+                            <%= settings.merchantNumbers.nagad %>
+                        </span></div>
+                    <div class="flex justify-between items-center"><span
+                            class="text-gray-400 flex items-center gap-1.5"><i
+                                class="fas fa-wallet text-purple-500"></i> Rocket</span> <span
+                            class="text-white font-mono font-bold">
+                            <%= settings.merchantNumbers.rocket %>
+                        </span></div>
+                </div>
+            </div>
+
+            <form id="paymentForm" class="space-y-4">
+                <input type="hidden" name="tier" id="formTierInput">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Method</label>
+                        <select name="method" required
+                            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                            <option value="bkash">bKash</option>
+                            <option value="nagad">Nagad</option>
+                            <option value="rocket">Rocket</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Sender Number</label>
+                        <input type="text" name="senderNumber" placeholder="017..." required
+                            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase">Transaction ID (TrxID)</label>
+                    <input type="text" name="trxId" placeholder="ABC123XYZ" required
+                        class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <button type="submit"
+                    class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold rounded-2xl transition-all shadow-lg shadow-indigo-600/20">
+                    Submit for Approval
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openPaymentModal(tier) {
+        document.getElementById('formTierInput').value = tier;
+        document.getElementById('selectedTierName').textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
+        document.getElementById('paymentModal').classList.remove('hidden');
+        document.getElementById('paymentModal').classList.add('flex');
+    }
+    function closePaymentModal() {
+        document.getElementById('paymentModal').classList.add('hidden');
+        document.getElementById('paymentModal').classList.remove('flex');
+    }
+    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target).entries());
+        try {
+            const res = await fetch('/api/payments/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (result.success) {
+                showToast(result.message, 'success');
+                closePaymentModal();
+            } else {
+                showToast(result.error || 'Submission failed', 'error');
+            }
+        } catch (err) { showToast('Network error', 'error'); }
+    });
+</script>

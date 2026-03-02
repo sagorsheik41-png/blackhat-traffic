@@ -1,0 +1,291 @@
+<div class="px-4 py-8 max-w-7xl mx-auto min-h-screen">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1
+                class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">
+                Multi-Device Campaign Preview</h1>
+            <p class="text-gray-400">Simulate URL rendering and generate traffic telemetry across multiple device
+                profiles.</p>
+        </div>
+        <div class="glass-header rounded-xl p-3 flex gap-4">
+            <div class="text-center">
+                <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Active URLs</div>
+                <div class="text-xl font-bold text-blue-400" id="mdActiveUrlCount">0</div>
+            </div>
+            <div class="w-px bg-white/10"></div>
+            <div class="text-center">
+                <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Total Views</div>
+                <div class="text-xl font-bold text-emerald-400" id="mdTotalViews">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar Controls -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+
+            <!-- Add URL Panel -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-link text-blue-400 mr-2"></i> Campaign
+                    URL</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Target
+                            URL</label>
+                        <input type="url" id="mdTargetUrl"
+                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                            placeholder="https://example.com/promo">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Campaign
+                            Title (Optional)</label>
+                        <input type="text" id="mdCampaignTitle"
+                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                            placeholder="Summer Sale 2024">
+                    </div>
+                    <button id="mdAddUrlBtn"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium transition-colors shadow-[0_0_15px_rgba(59,130,246,0.3)]"><i
+                            class="fas fa-plus mr-2"></i> Add to System</button>
+                </div>
+            </div>
+
+            <!-- Auto Traffic Generator Panel -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute -right-6 -top-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white"><i class="fas fa-robot text-emerald-400 mr-2"></i> Auto
+                        Traffic</h3>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="mdAutoTrafficToggle" class="sr-only peer">
+                        <div
+                            class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <div
+                            class="flex justify-between text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">
+                            <span>Traffic Rate</span>
+                            <span id="mdRateDisplay" class="text-emerald-400 font-bold">100 /hr</span>
+                        </div>
+                        <input type="range" id="mdTrafficRate" min="10" max="1000" step="10" value="100"
+                            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Traffic
+                            Pattern</label>
+                        <select id="mdTrafficPattern"
+                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm bg-gray-900/50">
+                            <option value="organic">Organic Growth</option>
+                            <option value="viral">Viral Burst</option>
+                            <option value="steady">Steady Flow</option>
+                            <option value="random">Random Spikes</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2">
+                        <div class="text-[10px] text-center text-gray-500 font-medium" id="mdStatusText">System Idle -
+                            Waiting for URLs</div>
+                        <div class="w-full h-1 bg-gray-800 rounded-full mt-2 overflow-hidden hidden"
+                            id="mdTrafficBarContainer">
+                            <div class="h-full bg-gradient-to-r from-emerald-500 to-blue-500 w-1/2 rounded-full animate-[flow_2s_linear_infinite]"
+                                style="background-size: 200% 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-2">
+                <button id="mdSimulateAllBtn"
+                    class="w-full bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 py-2 rounded-lg font-medium transition-colors text-sm"><i
+                        class="fas fa-play mr-2"></i> Force Visit All URLs</button>
+                <button id="mdOptimizeBtn"
+                    class="w-full bg-white/5 border border-white/10 hover:bg-white/10 text-purple-300 py-2 rounded-lg font-medium transition-colors text-sm"><i
+                        class="fas fa-magic mr-2"></i> AI Optimize CTR</button>
+                <button id="mdClearBtn"
+                    class="w-full bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 py-2 rounded-lg font-medium transition-colors text-sm mt-4"><i
+                        class="fas fa-trash mr-2"></i> Clear All Data</button>
+            </div>
+
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="lg:col-span-3 flex flex-col gap-6">
+
+            <!-- High Level Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div
+                    class="glass-panel border border-white/10 rounded-xl p-4 text-center hover:-translate-y-1 transition-transform">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-1">Total Visitors</div>
+                    <div class="text-2xl font-bold text-white" id="mdStatVisitors">0</div>
+                </div>
+                <div
+                    class="glass-panel border border-white/10 rounded-xl p-4 text-center hover:-translate-y-1 transition-transform">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-1">Total Clicks</div>
+                    <div class="text-2xl font-bold text-blue-400" id="mdStatClicks">0</div>
+                </div>
+                <div
+                    class="glass-panel border border-white/10 rounded-xl p-4 text-center hover:-translate-y-1 transition-transform">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-1">Avg CTR</div>
+                    <div class="text-2xl font-bold text-emerald-400" id="mdStatCtr">0%</div>
+                </div>
+                <div
+                    class="glass-panel border border-white/10 rounded-xl p-4 text-center hover:-translate-y-1 transition-transform">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-1">Active Devices</div>
+                    <div class="text-2xl font-bold text-purple-400" id="mdStatDevices">0</div>
+                </div>
+            </div>
+
+            <!-- Live Devices Simulation -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-6 flex justify-between items-center">
+                    <span><i class="fas fa-laptop-mobile text-blue-400 mr-2"></i> Live Telemetry Feeds</span>
+                    <span class="text-xs font-normal text-gray-500 px-2 py-1 bg-white/5 rounded">Updated
+                        Real-Time</span>
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    <!-- Desktop Frame -->
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-full aspect-video max-w-[240px] bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg p-2 border border-white/10 shadow-xl relative mt-4 md:mt-12 group">
+                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500/20 border border-blue-500/50 text-blue-300 text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap shadow-[0_0_10px_rgba(59,130,246,0.5)] z-10"
+                                id="statusDesktop">Idle</div>
+                            <div class="w-full h-full bg-gray-900 rounded border border-gray-800 flex items-center justify-center relative overflow-hidden"
+                                id="screenDesktop">
+                                <i class="fas fa-desktop text-gray-700 text-3xl transition-opacity duration-300"></i>
+                                <iframe src="about:blank"
+                                    class="absolute inset-0 w-full h-full border-none opacity-0 transition-opacity duration-500"
+                                    id="iframeDesktop"></iframe>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <div class="font-bold text-sm text-gray-300">Desktop</div>
+                            <div class="text-[10px] text-gray-500 font-mono" id="uaDesktop">Windows 11 • Chrome</div>
+                        </div>
+                    </div>
+
+                    <!-- Tablet Frame -->
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-[180px] h-[240px] bg-gradient-to-br from-gray-700 to-gray-900 rounded-[1.5rem] p-3 border border-white/10 shadow-xl relative group">
+                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap shadow-[0_0_10px_rgba(16,185,129,0.5)] z-10"
+                                id="statusTablet">Idle</div>
+                            <div class="w-full h-full bg-gray-900 rounded-xl border border-gray-800 flex items-center justify-center relative overflow-hidden"
+                                id="screenTablet">
+                                <i class="fas fa-tablet-alt text-gray-700 text-3xl transition-opacity duration-300"></i>
+                                <iframe src="about:blank"
+                                    class="absolute inset-0 w-full h-full border-none opacity-0 transition-opacity duration-500"
+                                    id="iframeTablet"></iframe>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <div class="font-bold text-sm text-gray-300">Tablet</div>
+                            <div class="text-[10px] text-gray-500 font-mono" id="uaTablet">iPadOS 16 • Safari</div>
+                        </div>
+                    </div>
+
+                    <!-- Android Frame -->
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-[120px] h-[240px] bg-gradient-to-br from-teal-800 to-green-900 rounded-[2rem] p-2 border border-white/10 shadow-xl relative group">
+                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-500/20 border border-teal-500/50 text-teal-300 text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap shadow-[0_0_10px_rgba(20,184,166,0.5)] z-10"
+                                id="statusAndroid">Idle</div>
+                            <div class="w-full h-full bg-gray-900 rounded-[1.5rem] border border-gray-800 flex items-center justify-center relative overflow-hidden"
+                                id="screenAndroid">
+                                <i class="fab fa-android text-gray-700 text-3xl transition-opacity duration-300"></i>
+                                <iframe src="about:blank"
+                                    class="absolute inset-0 w-full h-full border-none opacity-0 transition-opacity duration-500"
+                                    id="iframeAndroid"></iframe>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <div class="font-bold text-sm text-gray-300">Android</div>
+                            <div class="text-[10px] text-gray-500 font-mono" id="uaAndroid">Galaxy S23 • Chrome</div>
+                        </div>
+                    </div>
+
+                    <!-- iPhone Frame -->
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-[120px] h-[240px] bg-gradient-to-br from-gray-800 to-black rounded-[2rem] p-2 border border-white/10 shadow-xl relative group">
+                            <div class="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-3 bg-black rounded-full z-20">
+                            </div> <!-- Notch -->
+                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500/20 border border-purple-500/50 text-purple-300 text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap shadow-[0_0_10px_rgba(168,85,247,0.5)] z-10"
+                                id="statusIphone">Idle</div>
+                            <div class="w-full h-full bg-gray-900 rounded-[1.5rem] border border-gray-800 flex items-center justify-center relative overflow-hidden"
+                                id="screenIphone">
+                                <i class="fab fa-apple text-gray-700 text-3xl transition-opacity duration-300"></i>
+                                <iframe src="about:blank"
+                                    class="absolute inset-0 w-full h-full border-none opacity-0 transition-opacity duration-500"
+                                    id="iframeIphone"></iframe>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <div class="font-bold text-sm text-gray-300">iPhone</div>
+                            <div class="text-[10px] text-gray-500 font-mono" id="uaIphone">iOS 17 • Safari</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Active URLs List -->
+            <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-list text-purple-400 mr-2"></i> Active
+                    Campaign URLs</h3>
+
+                <div id="mdUrlList" class="space-y-3">
+                    <div class="text-center py-8 text-gray-500 text-sm border border-dashed border-white/10 rounded-xl">
+                        No URLs added. Add a URL to begin simulation.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Utilities for Multi-Device Animations */
+    @keyframes flow {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    .device-screen-active {
+        animation: bg-pulse 2s infinite alternate;
+    }
+
+    @keyframes bg-pulse {
+        from {
+            background-color: rgba(17, 24, 39, 1);
+        }
+
+        to {
+            background-color: rgba(31, 41, 55, 1);
+        }
+    }
+
+    .glass-input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #10b981;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+</style>
+
+<script src="/js/multiDevice.js"></script>

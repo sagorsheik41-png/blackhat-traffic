@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>কিছু লাগবে? — সম্পূর্ণ লাইভ অর্ডার ও পেমেন্ট সিস্টেম</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-1px);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+        }
+        .payment-method {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .payment-method:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+        .payment-method.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            padding: 16px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .notification.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content.sm {
+            max-width: 400px;
+        }
+        .modal-content.lg {
+            max-width: 800px;
+        }
+        .invoice-section {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        @media print {
+            body { background: white !important; }
+            .no-print { display: none !important; }
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* পণ্য মডাল স্টাইল */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .product-item {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+        .product-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+        .category-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .category-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between flex-wrap">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <i class="fas fa-shopping-cart text-blue-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800" id="businessName">কিছু লাগবে?</h1>
+                        <p class="text-gray-600">
+                            <i class="fas fa-phone text-green-500"></i> 
+                            <span id="businessPhone">01679773718</span> | 
+                            <i class="fab fa-whatsapp text-green-500"></i> বিকাশ/নগদ | 
+                            <span id="currentTime" class="text-sm"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 mt-4 lg:mt-0">
+                    <button id="adminBtn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all">
+                        <i class="fas fa-user-shield mr-2"></i>এডমিন প্যানেল
+                    </button>
+                    <div id="googleSignIn"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Customer Interface -->
+        <div id="customerInterface">
+            
+            <!-- Order Form -->
+            <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                <!-- Customer Information -->
+                <div class="card">
+                    <div class="card-header p-6">
+                        <h2 class="text-xl font-semibold flex items-center">
+                            <i class="fas fa-user mr-3"></i>গ্রাহকের তথ্য
+                        </h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user text-gray-400 mr-2"></i>নাম *
+                            </label>
+                            <input id="customerName" type="text" placeholder="আপনার সম্পূর্ণ নাম লিখুন" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-phone text-gray-400 mr-2"></i>ফোন নম্বর *
+                            </label>
+                            <input id="customerPhone" type="tel" placeholder="01XXXXXXXXX" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>সম্পূর্ণ ঠিকানা *
+                            </label>
+                            <textarea id="customerAddress" rows="3" placeholder="আপনার সম্পূর্ণ ঠিকানা লিখুন (এলাকা, থানা, জেলা)"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Selection -->
+                <div class="card">
+                    <div class="card-header p-6">
+                        <h2 class="text-xl font-semibold flex items-center">
+                            <i class="fas fa-shopping-basket mr-3"></i>পণ্য নির্বাচন
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <!-- ঘরোয়া প্রয়োজনীয় পণ্য মডাল ওপেন করার বাটন -->
+                        <div class="mb-4">
+                            <button onclick="openProductModal()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all w-full">
+                                <i class="fas fa-box-open mr-2"></i>ঘরোয়া প্রয়োজনীয় পণ্য
+                            </button>
+                        </div>
+
+                        <!-- পণ্য যোগ ফর্ম -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+                            <input id="productName" type="text" placeholder="পণ্যের নাম" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input id="productQty" type="number" min="1" value="1" placeholder="পরিমাণ"
+                                   class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input id="productPrice" type="number" min="0" step="0.01" placeholder="দাম (৳)"
+                                   class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <button id="addProductBtn" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">
+                                <i class="fas fa-plus mr-2"></i>যোগ করুন
+                            </button>
+                        </div>
+
+                        <!-- Product List -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full table-auto">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-sm font-medium text-gray-700">পণ্য</th>
+                                        <th class="px-3 py-2 text-center text-sm font-medium text-gray-700">পরিমাণ</th>
+                                        <th class="px-3 py-2 text-right text-sm font-medium text-gray-700">দাম</th>
+                                        <th class="px-3 py-2 text-right text-sm font-medium text-gray-700">মোট</th>
+                                        <th class="px-3 py-2 text-center text-sm font-medium text-gray-700">অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productList" class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="5" class="px-3 py-6 text-center text-gray-500">
+                                            <i class="fas fa-shopping-basket text-3xl mb-2 block"></i>
+                                            এখনো কোনো পণ্য যোগ করা হয়নি
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Charges -->
+                        <div class="grid grid-cols-2 gap-4 mt-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">ডেলিভারি চার্জ (৳)</label>
+                                <input id="deliveryCharge" type="number" min="0" value="60" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">সার্ভিস চার্জ (%)</label>
+                                <input id="serviceCharge" type="number" min="0" value="12" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoice Preview -->
+            <div class="card mb-6">
+                <div class="card-header p-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold flex items-center">
+                            <i class="fas fa-file-invoice mr-3"></i>ইনভয়েস প্রিভিউ
+                        </h2>
+                        <div class="space-x-3">
+                            <button id="calculateBtn" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all">
+                                <i class="fas fa-calculator mr-2"></i>হিসাব করুন
+                            </button>
+                            <button id="proceedPaymentBtn" class="btn-success text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all" disabled>
+                                <i class="fas fa-credit-card mr-2"></i>পেমেন্ট করুন
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="invoicePreview" class="p-6">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-file-invoice text-4xl mb-4 block"></i>
+                        <p>ইনভয়েস দেখতে হিসাব করুন বোতামে ক্লিক করুন</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="admin-panel">
+            <!-- Admin Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div class="stat-card">
+                    <i class="fas fa-shopping-cart text-3xl mb-2"></i>
+                    <div class="text-2xl font-bold" id="totalOrders">0</div>
+                    <div class="text-sm opacity-90">মোট অর্ডার</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock text-3xl mb-2"></i>
+                    <div class="text-2xl font-bold" id="pendingOrders">0</div>
+                    <div class="text-sm opacity-90">পেন্ডিং অর্ডার</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-money-bill-wave text-3xl mb-2"></i>
+                    <div class="text-2xl font-bold" id="totalRevenue">৳0</div>
+                    <div class="text-sm opacity-90">মোট আয়</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-day text-3xl mb-2"></i>
+                    <div class="text-2xl font-bold" id="todayOrders">0</div>
+                    <div class="text-sm opacity-90">আজকের অর্ডার</div>
+                </div>
+            </div>
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header p-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold flex items-center">
+                            <i class="fas fa-list mr-3"></i>সাম্প্রতিক অর্ডারসমূহ
+                        </h2>
+                        <button id="refreshOrdersBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all">
+                            <i class="fas fa-sync-alt mr-2"></i>রিফ্রেশ
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">অর্ডার ID</th>
+                                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">গ্রাহক</th>
+                                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">ফোন</th>
+                                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-700">মোট</th>
+                                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">স্ট্যাটাস</th>
+                                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">পেমেন্ট</th>
+                                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">তারিখ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody" class="divide-y divide-gray-200">
+                                <tr>
+                                    <td colspan="7" class="px-4 py-6 text-center text-gray-500">
+                                        <div class="loading mr-2"></div>
+                                        অর্ডার লোড হচ্ছে...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ঘরোয়া প্রয়োজনীয় পণ্য মডাল -->
+    <div id="productModal" class="modal">
+        <div class="modal-content lg">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-semibold text-gray-800">
+                    <i class="fas fa-box-open mr-3 text-blue-600"></i>ঘরোয়া প্রয়োজনীয় পণ্য
+                </h3>
+                <button onclick="closeProductModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div class="flex flex-wrap gap-2">
+                    <button class="category-btn active" onclick="filterCategory('all')">সব পণ্য</button>
+                    <button class="category-btn" onclick="filterCategory('খাদ্য')">খাদ্য</button>
+                    <button class="category-btn" onclick="filterCategory('তেল')">তেল</button>
+                    <button class="category-btn" onclick="filterCategory('মসলা')">মসলা</button>
+                    <button class="category-btn" onclick="filterCategory('পরিষ্কার')">পরিষ্কার</button>
+                    <button class="category-btn" onclick="filterCategory('সবজি')">সবজি</button>
+                    <button class="category-btn" onclick="filterCategory('ফল')">ফল</button>
+                    <button class="category-btn" onclick="filterCategory('পোষা')">পোষা প্রাণীর খাবার</button>
+                </div>
+                <div id="productGrid" class="product-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-semibold text-gray-800">
+                    <i class="fas fa-credit-card mr-3 text-blue-600"></i>পেমেন্ট করুন
+                </h3>
+                <button id="closePaymentModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <!-- Payment Summary -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div class="flex items-center justify-between">
+                    <span class="text-lg font-medium text-gray-700">মোট পেমেন্ট:</span>
+                    <span class="text-2xl font-bold text-blue-600" id="paymentAmount">৳0</span>
+                </div>
+            </div>
+            <!-- Payment Methods -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="payment-method" onclick="selectPaymentMethod('bkash')">
+                    <div class="text-3xl mb-2">📱</div>
+                    <div class="font-semibold text-lg">বিকাশ</div>
+                    <div class="text-sm text-gray-600" id="bkashNumber">01679773718</div>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod('nagad')">
+                    <div class="text-3xl mb-2">💳</div>
+                    <div class="font-semibold text-lg">নগদ</div>
+                    <div class="text-sm text-gray-600" id="nagadNumber">01679773718</div>
+                </div>
+            </div>
+            <!-- Payment Form -->
+            <div id="paymentForm" style="display: none;">
+                <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-4 mb-6">
+                    <h4 class="font-semibold text-gray-800 mb-2" id="paymentInstructions"></h4>
+                    <p class="text-sm text-gray-700">পেমেন্ট করার পর নিচের তথ্য পূরণ করুন:</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ট্রানজেকশন আইডি (TrxID) *</label>
+                        <input id="transactionId" type="text" placeholder="আপনার TrxID এখানে লিখুন"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">আপনার পেমেন্ট নাম্বার *</label>
+                        <input id="senderNumber" type="tel" placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <button id="confirmPaymentBtn" class="w-full btn-success text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+                        <i class="fas fa-check-circle mr-2"></i>পেমেন্ট কনফার্ম করুন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content sm">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-semibold text-gray-800">
+                    <i class="fas fa-user-shield mr-3 text-purple-600"></i>এডমিন লগইন
+                </h3>
+                <button id="closeAdminLoginModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ইউজারনেম *</label>
+                    <input id="adminUsername" type="text" placeholder="ইউজারনেম দিন"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">পাসওয়ার্ড *</label>
+                    <input id="adminPassword" type="password" placeholder="পাসওয়ার্ড দিন"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                <button id="adminLoginBtn" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+                    <i class="fas fa-sign-in-alt mr-2"></i>লগইন করুন
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <div id="notificationMessage"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // ==================== CONFIGURATION ====================
+        const CONFIG = {
+            CLIENT_ID: 'আপনার_গুগল_ক্লায়েন্ট_আইডি.apps.googleusercontent.com',
+            API_KEY: 'AIzaSyBkSuA41aLJdFvY68OKksblkbKnWVimu2s',
+            SHEET_ID: 'আপনার_গুগল_শীট_আইডি',
+            BUSINESS: {
+                name: 'কিছু লাগবে?',
+                phone: '01679773718',
+                bkash: '01679773718',
+                nagad: '01679773718',
+                address: 'ঢাকা, বাংলাদেশ',
+                email: 'sayemapon1213@gmail.com'
+            },
+            ADMIN: {
+                username: 'sagor1234',
+                password: '@ABcd1234'
+            }
+        };
+
+        // ==================== ঘরোয়া প্রয়োজনীয় পণ্যের তালিকা ====================
+        const HOUSEHOLD_PRODUCTS = [
+            { name: "চাল", category: "খাদ্য" },
+            { name: "ডাল", category: "খাদ্য" },
+            { name: "আটা", category: "খাদ্য" },
+            { name: "ময়দা", category: "খাদ্য" },
+            { name: "মুড়ি", category: "খাদ্য" },
+            { name: "মুড়কি", category: "খাদ্য" },
+            { name: "খিচুড়ি", category: "খাদ্য" },
+            { name: "সুজি", category: "খাদ্য" },
+            { name: "চিনি", category: "খাদ্য" },
+            { name: "গুড়", category: "খাদ্য" },
+            { name: "লবণ", category: "খাদ্য" },
+            { name: "বেসন", category: "খাদ্য" },
+            { name: "রাইস ফ্লেকস", category: "খাদ্য" },
+            { name: "ক্র্যাকার্স", category: "খাদ্য" },
+            { name: "বিস্কুট", category: "খাদ্য" },
+            { name: "চা", category: "খাদ্য" },
+            { name: "কফি", category: "খাদ্য" },
+            { name: "দুধ", category: "খাদ্য" },
+            { name: "ঘি", category: "খাদ্য" },
+            { name: "মাখন", category: "খাদ্য" },
+            { name: "পনির", category: "খাদ্য" },
+            { name: "ডিম", category: "খাদ্য" },
+            { name: "মাছ", category: "খাদ্য" },
+            { name: "মাংস", category: "খাদ্য" },
+            { name: "মুরগি", category: "খাদ্য" },
+            { name: "তেল", category: "তেল" },
+            { name: "সয়াবিন তেল", category: "তেল" },
+            { name: "সরিষা তেল", category: "তেল" },
+            { name: "নারিকেল তেল", category: "তেল" },
+            { name: "জিরা তেল", category: "তেল" },
+            { name: "মরিচ তেল", category: "তেল" },
+            { name: "সূর্যমুখী তেল", category: "তেল" },
+            { name: "মসলা সেট", category: "মসলা" },
+            { name: "গোলমরিচ", category: "মসলা" },
+            { name: "জিরা", category: "মসলা" },
+            { name: "মেথি", category: "মসলা" },
+            { name: "ধনে", category: "মসলা" },
+            { name: "মরিচ", category: "মসলা" },
+            { name: "হলুদ", category: "মসলা" },
+            { name: "মৌরি", category: "মসলা" },
+            { name: "দারুচিনি", category: "মসলা" },
+            { name: "এলাচ", category: "মসলা" },
+            { name: "জায়ফল", category: "মসলা" },
+            { name: "জাম্বুরা", category: "মসলা" },
+            { name: "তেজপাতা", category: "মসলা" },
+            { name: "ডালচিনি", category: "মসলা" },
+            { name: "লবঙ্গ", category: "মসলা" },
+            { name: "কাঁচা মরিচ", category: "মসলা" },
+            { name: "পেঁয়াজ", category: "সবজি" },
+            { name: "আলু", category: "সবজি" },
+            { name: "টমেটো", category: "সবজি" },
+            { name: "শালগম", category: "সবজি" },
+            { name: "গাজর", category: "সবজি" },
+            { name: "বাঁধাকপি", category: "সবজি" },
+            { name: "ফুলকপি", category: "সবজি" },
+            { name: "লাউ", category: "সবজি" },
+            { name: "কাঁচা কাঁঠাল", category: "সবজি" },
+            { name: "মিষ্টি কুমড়া", category: "সবজি" },
+            { name: "কাঁকরোল", category: "সবজি" },
+            { name: "পাকড়া", category: "সবজি" },
+            { name: "শসা", category: "সবজি" },
+            { name: "কাঁচা আম", category: "সবজি" },
+            { name: "বেগুন", category: "সবজি" },
+            { name: "ডাব", category: "সবজি" },
+            { name: "মাল্টা", category: "ফল" },
+            { name: "কমলা", category: "ফল" },
+            { name: "কলা", category: "ফল" },
+            { name: "আম", category: "ফল" },
+            { name: "জাম", category: "ফল" },
+            { name: "কাঠাল", category: "ফল" },
+            { name: "লিচু", category: "ফল" },
+            { name: "আঙ্গুর", category: "ফল" },
+            { name: "তরমুজ", category: "ফল" },
+            { name: "কাঁঠাল", category: "ফল" },
+            { name: "জামরুল", category: "ফল" },
+            { name: "গোলাপ জাম", category: "ফল" },
+            { name: "পেঁপে", category: "ফল" },
+            { name: "তাল", category: "ফল" },
+            { name: "ডিটারজেন্ট পাউডার", category: "পরিষ্কার" },
+            { name: "ওয়াশিং পাউডার", category: "পরিষ্কার" },
+            { name: "সাবান", category: "পরিষ্কার" },
+            { name: "লিকুইড সাবান", category: "পরিষ্কার" },
+            { name: "শ্যাম্পু", category: "পরিষ্কার" },
+            { name: "টুথপেস্ট", category: "পরিষ্কার" },
+            { name: "টুথব্রাশ", category: "পরিষ্কার" },
+            { name: "টয়লেট পেপার", category: "পরিষ্কার" },
+            { name: "ক্লিনার", category: "পরিষ্কার" },
+            { name: "মোমবাতি", category: "পরিষ্কার" },
+            { name: "মাচ", category: "পরিষ্কার" },
+            { name: "মশা কাটার", category: "পরিষ্কার" },
+            { name: "মশা কয়েল", category: "পরিষ্কার" },
+            { name: "মশা মারণ স্প্রে", category: "পরিষ্কার" },
+            { name: "পোষা প্রাণীর খাবার", category: "পোষা" },
+            { name: "বিড়ালের খাবার", category: "পোষা" },
+            { name: "কুকুরের খাবার", category: "পোষা" },
+            { name: "মুরগির খাবার", category: "পোষা" },
+            { name: "হাঁসের খাবার", category: "পোষা" },
+            { name: "মাছ খাবার", category: "পোষা" },
+            { name: "গরুর খাবার", category: "পোষা" },
+            { name: "ছাগলের খাবার", category: "পোষা" },
+            { name: "খরগোশের খাবার", category: "পোষা" },
+            { name: "পাখির খাবার", category: "পোষা" }
+        ];
+
+        // ==================== GLOBAL VARIABLES ====================
+        let products = [];
+        let currentOrder = null;
+        let orders = [];
+        let accessToken = null;
+        let tokenClient;
+        let gapi;
+        let isAdminLoggedIn = false;
+        let currentCategory = 'all';
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            messageEl.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'exclamation-triangle'} mr-2"></i>
+                ${message}
+            `;
+            notification.className = `notification show ${type}`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        function formatCurrency(amount) {
+            return `৳${parseFloat(amount || 0).toFixed(2)}`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('bn-BD', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function generateOrderId() {
+            return 'ORD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+        }
+
+        // ==================== পণ্য মডাল ফাংশন ====================
+        function openProductModal() {
+            document.getElementById('productModal').classList.add('active');
+            renderProductGrid();
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            renderProductGrid();
+        }
+
+        function renderProductGrid() {
+            const container = document.getElementById('productGrid');
+            let filteredProducts = currentCategory === 'all' ? HOUSEHOLD_PRODUCTS : HOUSEHOLD_PRODUCTS.filter(p => p.category === currentCategory);
+            container.innerHTML = filteredProducts.map(p => `
+                <div class="product-item" onclick="selectProduct('${p.name}')">
+                    ${p.name}
+                </div>
+            `).join('');
+        }
+
+        function selectProduct(name) {
+            document.getElementById('productName').value = name;
+            document.getElementById('productQty').focus();
+            showNotification(`${name} পণ্যটি সেট করা হয়েছে`, 'success');
+            closeProductModal();
+        }
+
+        // ==================== PRODUCT MANAGEMENT ====================
+        function addProduct() {
+            const name = document.getElementById('productName').value.trim();
+            const qty = parseInt(document.getElementById('productQty').value) || 1;
+            const price = parseFloat(document.getElementById('productPrice').value) || 0;
+            if (!name) {
+                showNotification('পণ্যের নাম দিন', 'error');
+                return;
+            }
+            if (price <= 0) {
+                showNotification('সঠিক দাম দিন', 'error');
+                return;
+            }
+            const product = {
+                id: Date.now(),
+                name,
+                qty,
+                price,
+                total: qty * price
+            };
+            products.push(product);
+            updateProductTable();
+            clearProductForm();
+            showNotification('পণ্য যোগ করা হয়েছে');
+        }
+
+        function removeProduct(id) {
+            products = products.filter(p => p.id !== id);
+            updateProductTable();
+            showNotification('পণ্য সরানো হয়েছে');
+        }
+
+        function updateProductTable() {
+            const tbody = document.getElementById('productList');
+            if (products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-3 py-6 text-center text-gray-500">
+                            <i class="fas fa-shopping-basket text-3xl mb-2 block"></i>
+                            এখনো কোনো পণ্য যোগ করা হয়নি
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            tbody.innerHTML = products.map(product => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-3 py-3 text-sm text-gray-900">${product.name}</td>
+                    <td class="px-3 py-3 text-sm text-gray-900 text-center">${product.qty}</td>
+                    <td class="px-3 py-3 text-sm text-gray-900 text-right">${formatCurrency(product.price)}</td>
+                    <td class="px-3 py-3 text-sm font-medium text-gray-900 text-right">${formatCurrency(product.total)}</td>
+                    <td class="px-3 py-3 text-sm text-center">
+                        <button onclick="removeProduct(${product.id})" class="btn-danger text-white px-3 py-1 rounded text-xs hover:shadow-md transition-all">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function clearProductForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productQty').value = '1';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productName').focus();
+        }
+
+        // ==================== ORDER MANAGEMENT ====================
+        function calculateOrder() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const customerAddress = document.getElementById('customerAddress').value.trim();
+            if (!customerName || !customerPhone || !customerAddress) {
+                showNotification('গ্রাহকের সকল তথ্য পূরণ করুন', 'error');
+                return;
+            }
+            if (products.length === 0) {
+                showNotification('কমপক্ষে একটি পণ্য যোগ করুন', 'error');
+                return;
+            }
+            const subtotal = products.reduce((sum, product) => sum + product.total, 0);
+            const deliveryCharge = parseFloat(document.getElementById('deliveryCharge').value) || 0;
+            const serviceChargePercent = parseFloat(document.getElementById('serviceCharge').value) || 0;
+            const serviceChargeAmount = (subtotal * serviceChargePercent) / 100;
+            const grandTotal = subtotal + deliveryCharge + serviceChargeAmount;
+            currentOrder = {
+                id: generateOrderId(),
+                timestamp: new Date().toISOString(),
+                customer: {
+                    name: customerName,
+                    phone: customerPhone,
+                    address: customerAddress
+                },
+                products: [...products],
+                charges: {
+                    subtotal,
+                    deliveryCharge,
+                    serviceChargePercent,
+                    serviceChargeAmount,
+                    grandTotal
+                },
+                status: 'Pending',
+                paymentStatus: 'Unpaid'
+            };
+            showInvoicePreview();
+            document.getElementById('proceedPaymentBtn').disabled = false;
+            showNotification('অর্ডার প্রস্তুত! এখন পেমেন্ট করুন');
+        }
+
+        function showInvoicePreview() {
+            if (!currentOrder) return;
+            const { customer, products, charges } = currentOrder;
+            document.getElementById('invoicePreview').innerHTML = `
+                <div class="invoice-section">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">${CONFIG.BUSINESS.name}</h3>
+                        <p class="text-sm text-gray-600">${CONFIG.BUSINESS.address}</p>
+                        <p class="text-sm text-gray-600">ফোন: ${CONFIG.BUSINESS.phone} | ইমেইল: ${CONFIG.BUSINESS.email}</p>
+                        <div class="mt-2 text-sm">
+                            <strong>অর্ডার ID:</strong> ${currentOrder.id} | 
+                            <strong>তারিখ:</strong> ${formatDate(currentOrder.timestamp)}
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">গ্রাহকের তথ্য:</h4>
+                            <div class="text-sm text-gray-600 space-y-1">
+                                <div><strong>নাম:</strong> ${customer.name}</div>
+                                <div><strong>ফোন:</strong> ${customer.phone}</div>
+                                <div><strong>ঠিকানা:</strong> ${customer.address}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-600">${formatCurrency(charges.grandTotal)}</div>
+                                <div class="text-sm text-gray-600">সর্বমোট</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto mb-6">
+                        <table class="w-full table-auto border border-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="border px-3 py-2 text-left">পণ্যের নাম</th>
+                                    <th class="border px-3 py-2 text-center">পরিমাণ</th>
+                                    <th class="border px-3 py-2 text-right">দাম</th>
+                                    <th class="border px-3 py-2 text-right">মোট</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${products.map(product => `
+                                    <tr>
+                                        <td class="border px-3 py-2">${product.name}</td>
+                                        <td class="border px-3 py-2 text-center">${product.qty}</td>
+                                        <td class="border px-3 py-2 text-right">${formatCurrency(product.price)}</td>
+                                        <td class="border px-3 py-2 text-right font-medium">${formatCurrency(product.total)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex justify-end">
+                        <div class="w-full md:w-80 space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span>সাবটোটাল:</span>
+                                <span>${formatCurrency(charges.subtotal)}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>সার্ভিস চার্জ (${charges.serviceChargePercent}%):</span>
+                                <span>${formatCurrency(charges.serviceChargeAmount)}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>ডেলিভারি চার্জ:</span>
+                                <span>${formatCurrency(charges.deliveryCharge)}</span>
+                            </div>
+                            <div class="border-t pt-2">
+                                <div class="flex justify-between text-lg font-bold">
+                                    <span>সর্বমোট:</span>
+                                    <span class="text-blue-600">${formatCurrency(charges.grandTotal)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== PAYMENT PROCESSING ====================
+        function proceedToPayment() {
+            if (!currentOrder) {
+                showNotification('প্রথমে অর্ডার হিসাব করুন', 'error');
+                return;
+            }
+            document.getElementById('paymentAmount').innerHTML = formatCurrency(currentOrder.charges.grandTotal);
+            document.getElementById('bkashNumber').textContent = CONFIG.BUSINESS.bkash;
+            document.getElementById('nagadNumber').textContent = CONFIG.BUSINESS.nagad;
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function selectPaymentMethod(method) {
+            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            const methodName = method === 'bkash' ? 'বিকাশ' : 'নগদ';
+            const number = CONFIG.BUSINESS[method];
+            document.getElementById('paymentInstructions').innerHTML = `
+                ${methodName} সেন্ড মানি করুন: <strong>${number}</strong><br>
+                পরিমাণ: <strong>${formatCurrency(currentOrder.charges.grandTotal)}</strong>
+            `;
+            document.getElementById('paymentForm').style.display = 'block';
+        }
+
+        function confirmPayment() {
+            const transactionId = document.getElementById('transactionId').value.trim();
+            const senderNumber = document.getElementById('senderNumber').value.trim();
+            if (!transactionId || !senderNumber) {
+                showNotification('সব তথ্য পূরণ করুন', 'error');
+                return;
+            }
+            currentOrder.paymentStatus = 'Paid';
+            currentOrder.payment = {
+                transactionId,
+                senderNumber,
+                method: document.querySelector('.payment-method.selected') ? 
+                       document.querySelector('.payment-method.selected').textContent.includes('বিকাশ') ? 'bkash' : 'nagad' : 'unknown',
+                timestamp: new Date().toISOString()
+            };
+            saveOrderToSheet(currentOrder);
+            closePaymentModal();
+            resetOrderForm();
+            showNotification('অর্ডার সফলভাবে সম্পন্ন হয়েছে! আমরা শীঘ্রই যোগাযোগ করবো।', 'success');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            document.getElementById('paymentForm').style.display = 'none';
+            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+            document.getElementById('transactionId').value = '';
+            document.getElementById('senderNumber').value = '';
+        }
+
+        function resetOrderForm() {
+            products = [];
+            currentOrder = null;
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerAddress').value = '';
+            document.getElementById('deliveryCharge').value = '60';
+            document.getElementById('serviceCharge').value = '12';
+            document.getElementById('proceedPaymentBtn').disabled = true;
+            updateProductTable();
+            document.getElementById('invoicePreview').innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <i class="fas fa-file-invoice text-4xl mb-4 block"></i>
+                    <p>ইনভয়েস দেখতে হিসাব করুন বোতামে ক্লিক করুন</p>
+                </div>
+            `;
+        }
+
+        // ==================== GOOGLE SHEETS INTEGRATION ====================
+        async function initializeGoogleAPI() {
+            try {
+                await gapi.load('client', async () => {
+                    await gapi.client.init({
+                        apiKey: CONFIG.API_KEY,
+                        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
+                    });
+                });
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: CONFIG.CLIENT_ID,
+                    scope: 'https://www.googleapis.com/auth/spreadsheets',
+                    callback: (tokenResponse) => {
+                        if (tokenResponse.error) {
+                            showNotification('Google সাইন ইন ব্যর্থ হয়েছে', 'error');
+                            return;
+                        }
+                        accessToken = tokenResponse.access_token;
+                        // টোকেন স্টোর করুন (একবার লগইন করলে আর লগইন করতে হবে না)
+                        localStorage.setItem('gapi_access_token', accessToken);
+                        showNotification('Google Sheets এর সাথে সংযুক্ত হয়েছে', 'success');
+                        if (document.getElementById('adminPanel').classList.contains('active')) {
+                            loadOrders();
+                        }
+                    }
+                });
+                google.accounts.id.initialize({
+                    client_id: CONFIG.CLIENT_ID,
+                    callback: () => tokenClient.requestAccessToken()
+                });
+                google.accounts.id.renderButton(document.getElementById('googleSignIn'), {
+                    theme: 'outline',
+                    size: 'medium',
+                    text: 'signin_with',
+                    logo_alignment: 'left'
+                });
+
+                // পূর্বের টোকেন আছে কিনা চেক করুন
+                const savedToken = localStorage.getItem('gapi_access_token');
+                if (savedToken) {
+                    accessToken = savedToken;
+                    showNotification('স্বয়ংক্রিয়ভাবে Google সাইন ইন হয়েছে', 'success');
+                    if (document.getElementById('adminPanel').classList.contains('active')) {
+                        loadOrders();
+                    }
+                }
+            } catch (error) {
+                console.error('Google API initialization failed:', error);
+                showNotification('Google API সংযোগে সমস্যা', 'error');
+            }
+        }
+
+        async function saveOrderToSheet(order) {
+            if (!accessToken) {
+                showNotification('Google সাইন ইন প্রয়োজন', 'warning');
+                tokenClient.requestAccessToken();
+                return;
+            }
+            try {
+                const values = [[
+                    order.id,
+                    order.timestamp,
+                    order.customer.name,
+                    order.customer.phone,
+                    order.customer.address,
+                    order.charges.subtotal,
+                    order.charges.deliveryCharge,
+                    order.charges.serviceChargeAmount,
+                    order.charges.grandTotal,
+                    order.status,
+                    order.paymentStatus,
+                    JSON.stringify(order.products),
+                    order.payment ? order.payment.transactionId : '',
+                    order.payment ? order.payment.senderNumber : '',
+                    order.payment ? order.payment.method : ''
+                ]];
+                await gapi.client.sheets.spreadsheets.values.append({
+                    spreadsheetId: CONFIG.SHEET_ID,
+                    range: 'Orders!A:O',
+                    valueInputOption: 'USER_ENTERED',
+                    resource: { values }
+                });
+                orders.unshift(order);
+                showNotification('অর্ডার Google Sheets এ সেভ হয়েছে', 'success');
+            } catch (error) {
+                console.error('Sheet save error:', error);
+                showNotification('Google Sheets এ সেভ করতে সমস্যা হয়েছে', 'error');
+            }
+        }
+
+        async function loadOrders() {
+            if (!accessToken) return;
+            try {
+                const response = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: CONFIG.SHEET_ID,
+                    range: 'Orders!A:O'
+                });
+                const rows = response.result.values || [];
+                if (rows.length <= 1) {
+                    orders = [];
+                } else {
+                    orders = rows.slice(1).map(row => ({
+                        id: row[0],
+                        timestamp: row[1],
+                        customer: {
+                            name: row[2],
+                            phone: row[3],
+                            address: row[4]
+                        },
+                        charges: {
+                            subtotal: parseFloat(row[5] || 0),
+                            deliveryCharge: parseFloat(row[6] || 0),
+                            serviceChargeAmount: parseFloat(row[7] || 0),
+                            grandTotal: parseFloat(row[8] || 0)
+                        },
+                        status: row[9] || 'Pending',
+                        paymentStatus: row[10] || 'Unpaid',
+                        products: JSON.parse(row[11] || '[]'),
+                        payment: row[12] ? {
+                            transactionId: row[12],
+                            senderNumber: row[13],
+                            method: row[14]
+                        } : null
+                    })).reverse();
+                }
+                updateAdminStats();
+                updateOrdersTable();
+            } catch (error) {
+                console.error('Load orders error:', error);
+                showNotification('অর্ডার লোড করতে সমস্যা', 'error');
+            }
+        }
+
+        // ==================== ADMIN PANEL ====================
+        function toggleAdminPanel() {
+            const customerInterface = document.getElementById('customerInterface');
+            const adminPanel = document.getElementById('adminPanel');
+            if (adminPanel.classList.contains('active')) {
+                adminPanel.classList.remove('active');
+                customerInterface.style.display = 'block';
+                isAdminLoggedIn = false;
+                showNotification('এডমিন প্যানেল থেকে বের হয়েছেন', 'warning');
+            } else {
+                if (isAdminLoggedIn) {
+                    showAdminView();
+                } else {
+                    document.getElementById('adminLoginModal').classList.add('active');
+                }
+            }
+        }
+
+        function handleAdminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            if (username === CONFIG.ADMIN.username && password === CONFIG.ADMIN.password) {
+                isAdminLoggedIn = true;
+                closeAdminLoginModal();
+                showNotification('লগইন সফল হয়েছে!', 'success');
+                showAdminView();
+            } else {
+                showNotification('ভুল ইউজারনেম বা পাসওয়ার্ড!', 'error');
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        function showAdminView() {
+            document.getElementById('customerInterface').style.display = 'none';
+            document.getElementById('adminPanel').classList.add('active');
+            if (accessToken) {
+                loadOrders();
+            } else {
+                showNotification('ডেটা দেখতে Google এ সাইন ইন করুন', 'warning');
+            }
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById('adminLoginModal').classList.remove('active');
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function updateAdminStats() {
+            const totalOrders = orders.length;
+            const pendingOrders = orders.filter(o => o.status === 'Pending').length;
+            const totalRevenue = orders.filter(o => o.paymentStatus === 'Paid').reduce((sum, o) => sum + o.charges.grandTotal, 0);
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(o => new Date(o.timestamp).toDateString() === today).length;
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('pendingOrders').textContent = pendingOrders;
+            document.getElementById('totalRevenue').innerHTML = formatCurrency(totalRevenue);
+            document.getElementById('todayOrders').textContent = todayOrders;
+        }
+
+        function updateOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-4 py-6 text-center text-gray-500">
+                            <i class="fas fa-inbox text-3xl mb-2 block"></i>
+                            কোন অর্ডার পাওয়া যায়নি
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            tbody.innerHTML = orders.slice(0, 20).map(order => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 text-sm font-medium text-blue-600">${order.id}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${order.customer.name}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${order.customer.phone}</td>
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900 text-right">${formatCurrency(order.charges.grandTotal)}</td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${
+                            order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
+                            order.status === 'Processing' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                        }">${order.status}</span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${
+                            order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }">${order.paymentStatus}</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${formatDate(order.timestamp)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function setupEventListeners() {
+            document.getElementById('addProductBtn').addEventListener('click', addProduct);
+            document.getElementById('productName').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addProduct();
+            });
+            document.getElementById('calculateBtn').addEventListener('click', calculateOrder);
+            document.getElementById('proceedPaymentBtn').addEventListener('click', proceedToPayment);
+            document.getElementById('closePaymentModal').addEventListener('click', closePaymentModal);
+            document.getElementById('confirmPaymentBtn').addEventListener('click', confirmPayment);
+            document.getElementById('adminBtn').addEventListener('click', toggleAdminPanel);
+            document.getElementById('refreshOrdersBtn').addEventListener('click', loadOrders);
+            document.getElementById('adminLoginBtn').addEventListener('click', handleAdminLogin);
+            document.getElementById('closeAdminLoginModal').addEventListener('click', closeAdminLoginModal);
+            document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleAdminLogin();
+            });
+            document.getElementById('paymentModal').addEventListener('click', (e) => {
+                if (e.target.id === 'paymentModal') closePaymentModal();
+            });
+            document.getElementById('adminLoginModal').addEventListener('click', (e) => {
+                if (e.target.id === 'adminLoginModal') closeAdminLoginModal();
+            });
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleString('bn-BD', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // ==================== INITIALIZATION ====================
+        function initialize() {
+            setupEventListeners();
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 60000);
+            document.getElementById('businessName').innerHTML = CONFIG.BUSINESS.name;
+            document.getElementById('businessPhone').innerHTML = CONFIG.BUSINESS.phone;
+            showNotification('সিস্টেম প্রস্তুত! অর্ডার করা শুরু করুন', 'success');
+        }
+
+        function gapiLoaded() {
+            gapi.load('client', initializeGoogleAPI);
+        }
+
+        function gisLoaded() {}
+
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body>
+</html>

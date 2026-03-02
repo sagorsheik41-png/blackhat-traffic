@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Hat AI Trading Bot - Premium System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #2d1b69 50%, #1e3a8a 75%, #0c4a6e 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .signal-card {
+            transition: all 0.3s ease;
+        }
+        
+        .signal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .stats-card {
+            transition: all 0.3s ease;
+        }
+         .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .chart-container {
+            height: 200px !important;
+            width: 100% !important;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .trading-pair {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 6px;
+            min-height: 50px;
+        }
+        
+        .price-up { color: #10b981; }
+        .price-down { color: #ef4444; }
+        .loading { animation: spin 1s linear infinite; }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .market-data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .subscription-plans-container {
+            display: none;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        .subscription-plans-container.show {
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .premium-plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .premium-plan-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .premium-plan-card:hover {
+            transform: scale(1.05);
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+        }
+        
+        .premium-plan-card.popular::before {
+            content: "MOST POPULAR";
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .premium-plan-card.recommended::before {
+            content: "RECOMMENDED";
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .plan-price {
+            font-size: 24px;
+            font-weight: 900;
+            margin: 8px 0;
+        }
+        
+        .plan-price .currency-hint {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: normal;
+        }
+        
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+            text-align: left;
+        }
+        
+        .plan-features li {
+            font-size: 11px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .plan-features li i {
+            color: #10b981;
+            margin-right: 6px;
+            width: 12px;
+        }
+        
+        .premium-buy-btn {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .premium-buy-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .premium-buy-btn.basic {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .premium-buy-btn.pro {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+        
+        .premium-buy-btn.vip {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .platform-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .platform-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .platform-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .platform-btn.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .pair-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .pair-btn {
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .pair-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .pair-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-color: #3b82f6;
+        }
+        
+        .duration-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .duration-btn {
+            padding: 4px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .duration-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .duration-btn.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-color: #f59e0b;
+        }
+        
+        .signal-display {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .premium-signal-display {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            animation: premiumGlow 2s infinite;
+        }
+        
+        .signal-direction-box {
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.6), rgba(30, 64, 175, 0.8));
+            border-radius: 8px;
+            padding: 14px 20px;
+            margin: 12px 0;
+            text-align: center;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .signal-direction-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .signal-metadata {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .signal-metadata-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .confidence-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .premium-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        
+        .signal-timestamp {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        @keyframes premiumGlow {
+            0%, 100% { 
+                border-color: rgba(139, 92, 246, 0.5);
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            }
+            50% { 
+                border-color: rgba(236, 72, 153, 0.5);
+                box-shadow: 0 0 30px rgba(236, 72, 153, 0.4);
+            }
+        }
+        
+        .signal-strength {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .strength-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 0 8px;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .technical-indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .indicator {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+        
+        .indicator-name {
+            font-size: 9px;
+            color: #9ca3af;
+            margin-bottom: 2px;
+        }
+        
+        .indicator-value {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .market-analysis {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .analysis-item {
+            text-align: center;
+            padding: 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .analysis-title {
+            font-size: 9px;
+            color: #9ca3af;
+            margin-bottom: 2px;
+        }
+        
+        .analysis-value {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .signal-timer-display {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        
+        .signal-timer-display.active {
+            border-color: #10b981;
+            animation: pulse-border 2s infinite;
+        }
+        
+        @keyframes pulse-border {
+            0%, 100% { border-color: #10b981; }
+            50% { border-color: #059669; }
+        }
+        
+        .timer-text {
+            font-size: 24px;
+            font-weight: 900;
+            font-family: 'Courier New', monospace;
+            color: #10b981;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        
+        .profit-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0;
+            animation: profitPulse 2s ease-out;
+        }
+        
+        @keyframes profitPulse {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        .live-price-ticker {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .price-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .price-change {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .price-change.price-up {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .price-change.price-down {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .currency-hint {
+            font-size: 10px;
+            color: #9ca3af;
+            margin-left: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .market-data-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .platform-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pair-selector {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .duration-selector {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .premium-plans-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .glass {
+                background: white !important;
+                border: 1px solid #ccc !important;
+            }
+            .notification, .modal {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Live Status Badge -->
+    <div class="fixed top-4 right-4 bg-green-500 px-4 py-2 rounded-full font-bold text-sm z-50 flex items-center">
+        <div class="w-2 h-2 bg-white rounded-full mr-2 pulse-dot"></div>
+        LIVE TRADING
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Header -->
+    <header class="glass mx-4 lg:mx-6 mt-6 p-4 lg:p-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+            <div>
+                <h1 class="text-2xl lg:text-4xl font-black gradient-text">Black Hat AI Trading Bot</h1>
+                <p class="text-gray-300 mt-2 text-sm lg:text-base">Advanced AI Signals • 97.2% Win Rate • Automated Trading • Premium Access</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="userInfo" class="hidden">
+                    <span class="text-sm text-gray-300">Welcome, <span id="userName"></span></span>
+                    <button onclick="logout()" class="ml-4 bg-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+                <button id="loginBtn" onclick="openModal('auth')" class="bg-blue-600 px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold hover:bg-blue-700 transition text-sm lg:text-base">
+                    <i class="fas fa-user mr-2"></i>Login / Register
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mx-4 lg:mx-6 mt-6 space-y-6 pb-6">
+        <!-- Landing Section -->
+        <section id="landingSection" class="glass p-6 lg:p-8">
+            <div class="admin-grid mb-8">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 p-4 lg:p-6 rounded-xl text-center">
+                    <div class="text-2xl lg:text-3xl font-bold" id="activeUsers">26,471</div>
+                    <div class="text-xs lg:text-sm opacity-80">Active Users</div>
+                </div>
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4 lg:p-6 rounded-xl text-center">
+                    <div class="text-2xl lg:text-3xl font-bold" id="totalProfit">$5,238,647</div>
+                    <div class="text-xs lg:text-sm opacity-80">Total Profit</div>
+                </div>
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-4 lg:p-6 rounded-xl text-center">
+                    <div class="text-2xl lg:text-3xl font-bold" id="successRate">97.2%</div>
+                    <div class="text-xs lg:text-sm opacity-80">Success Rate</div>
+                </div>
+                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 lg:p-6 rounded-xl text-center">
+                    <div class="text-2xl lg:text-3xl font-bold">24/7</div>
+                    <div class="text-xs lg:text-sm opacity-80">AI Active</div>
+                </div>
+            </div>
+
+            <!-- Live Market Data -->
+            <div class="glass p-6 mb-8">
+                <h3 class="text-xl font-bold mb-4">Live Market Prices</h3>
+                <div id="marketData" class="market-data-grid"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="openModal('auth')" class="bg-gradient-to-r from-green-500 to-blue-600 px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-bold text-lg hover:scale-105 transform transition">
+                    <i class="fas fa-rocket mr-2"></i>Start Trading Now
+                </button>
+            </div>
+        </section>
+
+        <!-- User Dashboard -->
+        <section id="userDashboard" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Left Column -->
+                <div class="flex flex-col gap-6">
+                    <!-- Trading Stats Card -->
+                    <div class="glass p-6 stats-card">
+                        <h3 class="text-xl font-bold mb-4"><i class="fas fa-chart-line mr-2"></i>Trading Stats</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span>Total Trades:</span>
+                                <span id="userTotalTrades" class="font-bold">94</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Win Rate:</span>
+                                <span id="userWinRate" class="font-bold text-green-400">93%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Total Profit:</span>
+                                <span id="userTotalProfit" class="font-bold text-green-400">$9,127.43<span class="currency-hint">(≈৳12,42,000 TK)</span></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Today's Profit:</span>
+                                <span id="todayProfit" class="font-bold text-green-400">+$423.18<span class="currency-hint">(≈৳57,600 TK)</span></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Current Plan:</span>
+                                <span id="userPlan" class="font-bold text-blue-400">Free</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Subscription:</span>
+                                <span id="userStatus" class="font-bold">Inactive</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Performance Chart Card -->
+                    <div class="glass p-6 stats-card">
+                        <h3 class="text-xl font-bold mb-4"><i class="fas fa-chart-area mr-2"></i>Performance</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="flex flex-col gap-6">
+                    <!-- Advanced AI Signal System Card -->
+                    <div class="glass p-6 signal-card">
+                        <h3 class="text-xl font-bold mb-4"><i class="fas fa-brain mr-2"></i>Advanced AI Signal System</h3>
+                        
+                        <!-- Platform Selection -->
+                        <div class="platform-selector">
+                            <button class="platform-btn active" data-platform="binance">
+                                <i class="fab fa-bitcoin mr-1"></i>Binance
+                            </button>
+                            <button class="platform-btn" data-platform="quotex">
+                                <i class="fas fa-chart-bar mr-1"></i>Quotex
+                            </button>
+                            <button class="platform-btn" data-platform="pocketoption">
+                                <i class="fas fa-mobile-alt mr-1"></i>Pocket Option
+                            </button>
+                            <button class="platform-btn" data-platform="roboforex">
+                                <i class="fas fa-robot mr-1"></i>RoboForex
+                            </button>
+                        </div>
+
+                        <!-- Trading Pair Selection -->
+                        <div class="pair-selector">
+                            <button class="pair-btn active" data-pair="BTC/USD">BTC/USD</button>
+                            <button class="pair-btn" data-pair="ETH/USD">ETH/USD</button>
+                            <button class="pair-btn" data-pair="BNB/USD">BNB/USD</button>
+                            <button class="pair-btn" data-pair="ADA/USD">ADA/USD</button>
+                            <button class="pair-btn" data-pair="XRP/USD">XRP/USD</button>
+                            <button class="pair-btn" data-pair="DOT/USD">DOT/USD</button>
+                            <button class="pair-btn" data-pair="EUR/USD" style="display: none;">EUR/USD</button>
+                            <button class="pair-btn" data-pair="GBP/USD" style="display: none;">GBP/USD</button>
+                            <button class="pair-btn" data-pair="USD/JPY" style="display: none;">USD/JPY</button>
+                            <button class="pair-btn" data-pair="XAU/USD" style="display: none;">XAU/USD</button>
+                        </div>
+
+                        <!-- Duration Selection -->
+                        <div class="mb-3">
+                            <div class="text-xs text-gray-400 mb-2">Signal Duration:</div>
+                            <div class="duration-selector">
+                                <button class="duration-btn" data-duration="30">30s</button>
+                                <button class="duration-btn active" data-duration="60">1m</button>
+                                <button class="duration-btn" data-duration="120">2m</button>
+                                <button class="duration-btn" data-duration="180">3m</button>
+                                <button class="duration-btn" data-duration="300">5m</button>
+                                <button class="duration-btn" data-duration="600">10m</button>
+                                <button class="duration-btn" data-duration="900">15m</button>
+                                <button class="duration-btn" data-duration="1800">30m</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Premium Subscription Plans Container -->
+                        <div id="subscriptionPlansContainer" class="subscription-plans-container">
+                        </div>
+                        
+                        <!-- Signal Display & Generation Area -->
+                        <div id="signalDisplayAndGeneration">
+                            <!-- Signal Timer Display -->
+                            <div class="signal-timer-display" id="signalTimerContainer">
+                                <div class="text-xs text-gray-400 mb-2">Next Signal In:</div>
+                                <div class="timer-text" id="signalTimer">0:43</div>
+                                <div class="text-xs text-gray-400" id="signalStatus">Ready to Generate</div>
+                            </div>
+
+                            <!-- Signal Display -->
+                            <div class="signal-display premium-signal-display" id="signalDisplayContainer">
+                            </div>
+
+                            <!-- Generate Signal Button Enhanced -->
+                            <button onclick="generateAdvancedSignal()" id="generateBtn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                                <i class="fas fa-brain mr-2"></i>Generate Advanced AI Signal
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Live Market Chart Card -->
+                    <div class="glass p-6">
+                        <h3 class="text-xl font-bold mb-4"><i class="fas fa-satellite-dish mr-2"></i> Live Market Stream</h3>
+                        <div id="tradingview-widget-container" style="height: 400px; width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Trades Table (Full Width) -->
+            <div class="glass p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4"><i class="fas fa-history mr-2"></i>Recent Trades</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-800">
+                            <tr class="border-b border-gray-600">
+                                <th class="text-left p-2">Time</th>
+                                <th class="text-left p-2">Pair</th>
+                                <th class="text-left p-2">Platform</th>
+                                <th class="text-left p-2">Direction</th>
+                                <th class="text-left p-2">Duration</th>
+                                <th class="text-left p-2">Result</th>
+                                <th class="text-left p-2">Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tradesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Panel -->
+        <section id="adminPanel" class="hidden">
+            <div class="admin-grid mb-6">
+                <div class="glass p-4 lg:p-6 text-center">
+                    <div class="text-2xl lg:text-3xl font-bold text-blue-400" id="adminTotalUsers">0</div>
+                    <div class="text-xs lg:text-sm text-gray-300">Total Users</div>
+                </div>
+                <div class="glass p-4 lg:p-6 text-center">
+                    <div class="text-2xl lg:text-3xl font-bold text-green-400" id="adminActiveUsers">0</div>
+                    <div class="text-xs lg:text-sm text-gray-300">Active Premium</div>
+                </div>
+                <div class="glass p-4 lg:p-6 text-center">
+                    <div class="text-2xl lg:text-3xl font-bold text-yellow-400" id="adminPendingUsers">0</div>
+                    <div class="text-xs lg:text-sm text-gray-300">Pending Approvals</div>
+                </div>
+                <div class="glass p-4 lg:p-6 text-center">
+                    <div class="text-2xl lg:text-3xl font-bold text-purple-400" id="adminTotalRevenue">$0</div>
+                    <div class="text-xs lg:text-sm text-gray-300">Total Revenue</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- User Management -->
+                <div class="glass p-6">
+                    <h3 class="text-xl font-bold mb-4"><i class="fas fa-users mr-2"></i>User Management</h3>
+                    <div id="usersList" class="space-y-3"></div>
+                </div>
+
+                <!-- Premium Subscription Management -->
+                <div class="glass p-6">
+                    <h3 class="text-xl font-bold mb-4"><i class="fas fa-crown mr-2"></i>Premium Subscriptions</h3>
+                    <div id="premiumSubscribersList" class="space-y-3"></div>
+                </div>
+
+                <!-- Pending Registrations -->
+                <div class="glass p-6">
+                    <h3 class="text-xl font-bold mb-4"><i class="fas fa-clock mr-2"></i>Pending Registrations</h3>
+                    <div id="pendingList" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- Revenue Chart -->
+            <div class="glass p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4"><i class="fas fa-chart-bar mr-2"></i>Revenue Analytics</h3>
+                <div style="height: 300px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricingSection" class="glass p-6 lg:p-8">
+            <h2 class="text-2xl lg:text-3xl font-bold text-center mb-8">Choose Your Trading Plan</h2>
+            <div class="pricing-grid">
+                <div class="glass p-6 text-center hover:scale-105 transform transition">
+                    <h3 class="text-2xl font-bold mb-4">Basic</h3>
+                    <div class="text-4xl font-bold text-green-400 mb-4">$29<span class="text-lg">/month</span><div class="currency-hint">(3,950 TK)</div></div>
+                    <ul class="space-y-2 mb-6 text-left text-sm">
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>15 signals per day</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Basic market analysis</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Email support</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Mobile alerts</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>30s-5m durations</li>
+                    </ul>
+                    <button onclick="selectPlan('basic', 29)" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                        Get Started
+                    </button>
+                </div>
+
+                <div class="glass p-6 text-center relative border-2 border-green-400 hover:scale-105 transform transition">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-400 text-black px-4 py-1 rounded-full text-sm font-bold">
+                        POPULAR
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Pro</h3>
+                    <div class="text-4xl font-bold text-green-400 mb-4">$79<span class="text-lg">/month</span><div class="currency-hint">(10,750 TK)</div></div>
+                    <ul class="space-y-2 mb-6 text-left text-sm">
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Unlimited signals</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Advanced AI analysis</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Priority support</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Auto-trading API</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>All signal durations</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Risk management tools</li>
+                    </ul>
+                    <button onclick="selectPlan('pro', 79)" class="w-full bg-gradient-to-r from-green-500 to-green-600 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                        Choose Pro
+                    </button>
+                </div>
+
+                <div class="glass p-6 text-center hover:scale-105 transform transition">
+                    <h3 class="text-2xl font-bold mb-4">Premium</h3>
+                    <div class="text-4xl font-bold text-green-400 mb-4">$199<span class="text-lg">/month</span><div class="currency-hint">(27,100 TK)</div></div>
+                    <ul class="space-y-2 mb-6 text-left text-sm">
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>VIP signals & insights</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Personal account manager</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Custom strategies</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Institutional access</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>White-label options</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Advanced market analysis</li>
+                    </ul>
+                    <button onclick="selectPlan('premium', 199)" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                        Go Premium
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="glass p-8 max-w-md w-full mx-4">
+            <h2 id="authTitle" class="text-2xl font-bold text-center mb-6">Welcome Back</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <input type="email" id="loginEmail" placeholder="Email Address" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="password" id="loginPassword" placeholder="Password" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-6 focus:border-blue-500 outline-none">
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                </button>
+                <p class="text-center mt-4">
+                    <span class="text-gray-400">Don't have an account? </span>
+                    <span onclick="toggleAuthForm()" class="text-blue-400 cursor-pointer hover:underline">Register here</span>
+                </p>
+            </form>
+            
+            <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+                <input type="text" id="registerName" placeholder="Full Name" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="email" id="registerEmail" placeholder="Email Address" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="password" id="registerPassword" placeholder="Password" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="tel" id="registerPhone" placeholder="Phone Number" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-6 focus:border-blue-500 outline-none">
+                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-600 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                    <i class="fas fa-user-plus mr-2"></i>Register
+                </button>
+                <p class="text-center mt-4">
+                    <span class="text-gray-400">Already have an account? </span>
+                    <span onclick="toggleAuthForm()" class="text-blue-400 cursor-pointer hover:underline">Login here</span>
+                </p>
+            </form>
+            <button onclick="closeModal('auth')" class="w-full mt-4 bg-gray-600 py-2 rounded-lg hover:bg-gray-700 transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="glass p-8 max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold text-center mb-6">Complete Payment</h2>
+            <div class="text-center mb-6">
+                <div class="text-lg">Selected Plan: <span id="selectedPlan" class="font-bold text-green-400"></span></div>
+                <div class="text-3xl font-bold">$<span id="selectedPrice">0</span>/month<div class="currency-hint text-center mt-1" id="selectedPriceTK"></div></div>
+            </div>
+            <form onsubmit="handlePayment(event)">
+                <input type="text" placeholder="Full Name" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="email" placeholder="Email Address" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="tel" placeholder="Phone Number" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <select required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                    <option value="">Select Payment Method</option>
+                    <option value="bkash">bKash</option>
+                    <option value="nagad">Nagad</option>
+                    <option value="payoneer">Payoneer</option>
+                </select>
+                <input type="text" placeholder="Transaction ID" name="transactionId" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-6 focus:border-blue-500 outline-none">
+                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-600 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                    <i class="fas fa-credit-card mr-2"></i>Complete Payment
+                </button>
+            </form>
+            <button onclick="closeModal('payment')" class="w-full mt-4 bg-gray-600 py-2 rounded-lg hover:bg-gray-700 transition">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Premium Payment Modal -->
+    <div id="premiumPaymentModal" class="modal">
+        <div class="glass p-8 max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold text-center mb-6">🔒 Premium Subscription</h2>
+            <div class="text-center mb-6">
+                <div class="text-lg">Selected Plan: <span id="selectedPremiumPlan" class="font-bold text-purple-400"></span></div>
+                <div class="text-3xl font-bold">$<span id="selectedPremiumPrice">0</span>/month<div class="currency-hint text-center mt-1" id="selectedPremiumPriceTK"></div></div>
+                <div class="text-xs text-gray-400 mt-2">Get instant access to premium AI signals</div>
+            </div>
+            
+            <!-- Payment Methods Section -->
+            <div class="mb-6">
+                <h3 class="font-bold text-center mb-3">Premium Payment Methods</h3>
+                
+                <!-- bKash Payment Method -->
+                <div class="bg-gray-800 bg-opacity-40 border border-gray-700 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-center mb-2">
+                        <i class="fas fa-mobile-alt text-pink-500 mr-2"></i>
+                        <h4 class="font-bold">bKash</h4>
+                    </div>
+                    <div class="text-center text-green-400 font-mono font-bold mb-1">01896138082</div>
+                    <div class="text-xs text-center text-gray-400">Recommended for BD</div>
+                </div>
+                
+                <!-- Nagad Payment Method -->
+                <div class="bg-gray-800 bg-opacity-40 border border-gray-700 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-center mb-2">
+                        <i class="fas fa-money-bill-wave text-yellow-500 mr-2"></i>
+                        <h4 class="font-bold">Nagad</h4>
+                    </div>
+                    <div class="text-center text-green-400 font-mono font-bold mb-1">01679773718</div>
+                    <div class="text-xs text-center text-gray-400">Fast & Secure</div>
+                </div>
+                
+                <!-- Payoneer Payment Method -->
+                <div class="bg-gray-800 bg-opacity-40 border border-gray-700 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-center mb-2">
+                        <i class="fas fa-globe text-blue-500 mr-2"></i>
+                        <h4 class="font-bold">Payoneer</h4>
+                    </div>
+                    <div class="text-center text-green-400 font-mono font-bold mb-1">sayemapon1213@gmail.com</div>
+                    <div class="text-xs text-center text-gray-400">International</div>
+                </div>
+            </div>
+            
+            <form onsubmit="handlePremiumPayment(event)">
+                <input type="text" placeholder="Full Name" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="email" placeholder="Email Address" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <input type="tel" placeholder="Phone Number" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                <select required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:border-blue-500 outline-none">
+                    <option value="">Select Payment Method</option>
+                    <option value="bkash">bKash (Recommended for BD users)</option>
+                    <option value="nagad">Nagad</option>
+                    <option value="payoneer">Payoneer</option>
+                </select>
+                <input type="text" placeholder="Transaction ID" name="transactionId" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 mb-6 focus:border-blue-500 outline-none">
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 py-3 rounded-lg font-semibold hover:scale-105 transform transition">
+                    <i class="fas fa-crown mr-2"></i>Activate Premium Access
+                </button>
+            </form>
+            <button onclick="closeModal('premiumPayment')" class="w-full mt-4 bg-gray-600 py-2 rounded-lg hover:bg-gray-700 transition">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Profit Animation Container -->
+    <div id="profitAnimation" class="profit-animation"></div>
+
+    <script>
+        // Enhanced Global Variables
+        let currentUser = null;
+        let users = {};
+        let pendingRegistrations = {};
+        let activeSignal = null;
+        let signalTimer = null;
+        let marketDataInterval = null;
+        let performanceChart = null;
+        let revenueChart = null;
+        let selectedPlatform = 'binance';
+        let selectedPair = 'BTC/USD';
+        let selectedDuration = 60;
+        let showingSubscriptionPlans = false;
+
+        // USD to BDT conversion rate (approximate)
+        const USD_TO_BDT_RATE = 136;
+
+        // Demo transaction IDs for testing
+        const demoTransactionIds = [
+            'TXN001234567890', 'BKASH123456789', 'NAGAD987654321', 
+            'PAYONEER123456', 'PREMIUM001', 'PREMIUM002', 'PREMIUM003'
+        ];
+
+        // Enhanced trading pairs with more realistic data
+        const tradingPairs = {
+            'BTC/USD': { price: 46847.25, change: 1.89, volume: '2.8B', marketCap: '921.4B', support: 46120, resistance: 47890 },
+            'ETH/USD': { price: 3247.80, change: -0.73, volume: '1.9B', marketCap: '390.2B', support: 3180, resistance: 3320 },
+            'BNB/USD': { price: 327.45, change: 2.14, volume: '720M', marketCap: '49.8B', support: 318, resistance: 342 },
+            'ADA/USD': { price: 1.34, change: 4.12, volume: '480M', marketCap: '44.7B', support: 1.28, resistance: 1.42 },
+            'XRP/USD': { price: 0.92, change: -1.34, volume: '420M', marketCap: '52.1B', support: 0.88, resistance: 0.97 },
+            'DOT/USD': { price: 31.23, change: 0.67, volume: '340M', marketCap: '34.8B', support: 29.8, resistance: 33.1 },
+            'EUR/USD': { price: 1.0850, change: 0.15, volume: 'N/A', marketCap: 'N/A', support: 1.0800, resistance: 1.0900 },
+            'GBP/USD': { price: 1.2720, change: -0.20, volume: 'N/A', marketCap: 'N/A', support: 1.2680, resistance: 1.2780 },
+            'USD/JPY': { price: 157.25, change: 0.30, volume: 'N/A', marketCap: 'N/A', support: 156.80, resistance: 157.90 },
+            'XAU/USD': { price: 2350.50, change: 0.55, volume: 'N/A', marketCap: 'N/A', support: 2330, resistance: 2370 }
+        };
+
+        // Enhanced platform configurations with more realistic pairs
+        const platformConfigs = {
+            binance: { name: 'Binance', color: '#f0b90b', pairs: ['BTC/USD', 'ETH/USD', 'BNB/USD', 'ADA/USD', 'XRP/USD', 'DOT/USD'], winRate: 0.95 },
+            quotex: { name: 'Quotex', color: '#00d4aa', pairs: ['EUR/USD', 'GBP/USD', 'BTC/USD', 'ETH/USD', 'USD/JPY'], winRate: 0.92 },
+            pocketoption: { name: 'Pocket Option', color: '#ff6b35', pairs: ['BTC/USD', 'ETH/USD', 'XRP/USD', 'EUR/USD', 'GBP/USD'], winRate: 0.89 },
+            roboforex: { name: 'RoboForex', color: '#4a90e2', pairs: ['EUR/USD', 'GBP/USD', 'USD/JPY', 'XAU/USD'], winRate: 0.93 }
+        };
+
+        // Premium plan configurations
+        const premiumPlans = {
+            basic: { price: 29, accuracy: '85-90%', signals: '50/day', features: ['Basic analysis', 'Email support', '30s-10m duration'] },
+            pro: { price: 79, accuracy: '92-96%', signals: 'Unlimited', features: ['Advanced AI analysis', 'Priority support', 'All durations', 'Risk management'] },
+            vip: { price: 199, accuracy: '96-99%', signals: 'VIP signals', features: ['AI + Expert analysis', 'Personal manager', 'Custom strategies', 'White-label access'] }
+        };
+
+        // Utility function to convert USD to BDT
+        function usdToBdt(usdAmount) {
+            return Math.round(usdAmount * USD_TO_BDT_RATE);
+        }
+
+        // Utility function to format currency with TK hint
+        function formatCurrencyWithTK(usdAmount) {
+            const bdtAmount = usdToBdt(usdAmount);
+            return `$${usdAmount.toFixed(2)}<span class="currency-hint">(≈৳${bdtAmount.toLocaleString()} TK)</span>`;
+        }
+
+        // Initialize Application
+        function initApp() {
+            loadStoredData();
+            setupDemoAccounts();
+            setupEventListeners();
+            updateMarketData();
+            renderCurrentView();
+            marketDataInterval = setInterval(updateMarketData, 5000);
+        }
+
+        // TradingView Widget Integration
+        function loadTradingViewWidget(platform, pair) {
+            const container = document.getElementById('tradingview-widget-container');
+            if (!container || typeof TradingView === 'undefined') {
+                if (container) container.innerHTML = '<p class="text-center text-gray-400">TradingView Chart could not be loaded. Please refresh.</p>';
+                return;
+            }
+            container.innerHTML = '';
+
+            const forexKeywords = ['EUR/', 'GBP/', 'USD/', 'AUD/', 'XAU/'];
+            const isForex = forexKeywords.some(p => pair.startsWith(p));
+            
+            let exchange = 'BINANCE';
+            if (isForex) {
+                exchange = 'FX_IDC';
+            } else {
+                const cryptoExchangeMap = {
+                    'binance': 'BINANCE',
+                    'quotex': 'COINBASE',
+                    'pocketoption': 'KRAKEN'
+                };
+                exchange = cryptoExchangeMap[platform] || 'BINANCE';
+            }
+            
+            const symbol = pair.replace('/', '');
+
+            new TradingView.widget({
+                "container_id": "tradingview-widget-container",
+                "autosize": true,
+                "symbol": `${exchange}:${symbol}`,
+                "interval": "5",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_top_toolbar": true,
+                "hide_side_toolbar": true,
+                "withdateranges": false,
+                "save_image": false,
+                "details": true,
+                "studies": [ "Volume@tv-basicstudies" ]
+            });
+        }
+
+        // Enhanced event listeners
+        function setupEventListeners() {
+            // Platform selection
+            document.querySelectorAll('.platform-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedPlatform = this.dataset.platform;
+                    updatePairSelector();
+                    updateSignalDisplay();
+                    loadTradingViewWidget(selectedPlatform, selectedPair);
+                });
+            });
+
+            // Pair selection
+            document.querySelectorAll('.pair-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.style.display === 'none') return;
+                    document.querySelectorAll('.pair-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedPair = this.dataset.pair;
+                    updateSignalDisplay();
+                    loadTradingViewWidget(selectedPlatform, selectedPair);
+                });
+            });
+
+            // Duration selection
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedDuration = parseInt(this.dataset.duration);
+                    updateSignalDisplay();
+                });
+            });
+        }
+
+        // Update pair selector based on platform
+        function updatePairSelector() {
+            const config = platformConfigs[selectedPlatform];
+            let firstVisiblePair = null;
+
+            document.querySelectorAll('.pair-btn').forEach(btn => {
+                const pair = btn.dataset.pair;
+                if (config.pairs.includes(pair)) {
+                    btn.style.display = 'block';
+                    if (!firstVisiblePair) firstVisiblePair = pair;
+                } else {
+                    btn.style.display = 'none';
+                }
+            });
+
+            if (!config.pairs.includes(selectedPair)) {
+                selectedPair = firstVisiblePair || config.pairs[0];
+            }
+
+            document.querySelectorAll('.pair-btn').forEach(btn => {
+                 btn.classList.toggle('active', btn.dataset.pair === selectedPair);
+            });
+        }
+        
+        // Signal generation with premium subscription check
+        function generateAdvancedSignal() {
+            if (!currentUser) {
+                showNotification('Please login first', 'error');
+                openModal('auth');
+                return;
+            }
+
+            if (!currentUser.premiumSubscription || currentUser.premiumSubscription.status !== 'active') {
+                showSubscriptionPlans();
+                showNotification('Premium subscription required for advanced signals', 'warning');
+                return;
+            }
+
+            if (activeSignal) {
+                showNotification('Signal already active', 'warning');
+                return;
+            }
+            generatePremiumSignal();
+        }
+
+        function showSubscriptionPlans() {
+            const container = document.getElementById('subscriptionPlansContainer');
+            if (showingSubscriptionPlans) return;
+            container.innerHTML = `
+                <div class="text-center mb-3">
+                    <h4 class="text-lg font-bold text-purple-300">🔒 Premium Signal Access Required</h4>
+                    <p class="text-xs text-gray-300 mt-1">Upgrade to access high-confidence AI signals</p>
+                </div>
+                <div class="premium-plans-grid">
+                    <div class="premium-plan-card">
+                        <h5 class="text-sm font-bold text-blue-300">Basic Premium</h5>
+                        <div class="plan-price text-blue-400">$29<span class="text-xs">/mo</span><div class="currency-hint">(≈৳${usdToBdt(29).toLocaleString()} TK)</div></div>
+                        <ul class="plan-features"><li><i class="fas fa-check"></i>50 signals/day</li><li><i class="fas fa-check"></i>85-90% accuracy</li><li><i class="fas fa-check"></i>Basic analysis</li></ul>
+                        <button class="premium-buy-btn basic" onclick="selectPremiumPlan('basic', 29)">Subscribe</button>
+                    </div>
+                    <div class="premium-plan-card popular">
+                        <h5 class="text-sm font-bold text-purple-300">Pro Premium</h5>
+                        <div class="plan-price text-purple-400">$79<span class="text-xs">/mo</span><div class="currency-hint">(≈৳${usdToBdt(79).toLocaleString()} TK)</div></div>
+                        <ul class="plan-features"><li><i class="fas fa-check"></i>Unlimited signals</li><li><i class="fas fa-check"></i>92-96% accuracy</li><li><i class="fas fa-check"></i>Advanced AI analysis</li></ul>
+                        <button class="premium-buy-btn pro" onclick="selectPremiumPlan('pro', 79)">Get Pro</button>
+                    </div>
+                    <div class="premium-plan-card recommended">
+                        <h5 class="text-sm font-bold text-yellow-300">VIP Premium</h5>
+                        <div class="plan-price text-yellow-400">$199<span class="text-xs">/mo</span><div class="currency-hint">(≈৳${usdToBdt(199).toLocaleString()} TK)</div></div>
+                        <ul class="plan-features"><li><i class="fas fa-check"></i>VIP signals</li><li><i class="fas fa-check"></i>96-99% accuracy</li><li><i class="fas fa-check"></i>AI + Expert analysis</li></ul>
+                        <button class="premium-buy-btn vip" onclick="selectPremiumPlan('vip', 199)">Go VIP</button>
+                    </div>
+                </div>
+            `;
+            container.classList.add('show');
+            showingSubscriptionPlans = true;
+            container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function hideSubscriptionPlans() {
+            const container = document.getElementById('subscriptionPlansContainer');
+            container.classList.remove('show');
+            container.innerHTML = '';
+            showingSubscriptionPlans = false;
+        }
+
+        // Generate premium signal for subscribed users
+        function generatePremiumSignal() {
+            const directions = ['CALL', 'PUT'];
+            const userPlan = currentUser.premiumSubscription.plan;
+
+            let confidence = 85 + Math.random() * 13;
+            if (userPlan === 'pro') confidence = Math.max(confidence, 92);
+            if (userPlan === 'vip') confidence = Math.max(confidence, 96);
+
+            confidence = Math.min(99, Math.max(85, confidence));
+            const direction = directions[Math.floor(Math.random() * directions.length)];
+
+            activeSignal = {
+                direction,
+                pair: selectedPair,
+                platform: selectedPlatform,
+                confidence: Math.floor(confidence),
+                duration: selectedDuration,
+                startTime: Date.now(),
+                endTime: Date.now() + (selectedDuration * 1000),
+                isPremium: true
+            };
+
+            updateSignalDisplay();
+            startAdvancedSignalTimer();
+            showNotification(`🔒 Premium ${direction} signal generated for ${selectedPair}`, 'success');
+
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').innerHTML = '<i class="fas fa-crown mr-2"></i>Premium Signal Active...';
+            hideSubscriptionPlans();
+        }
+
+        // Signal display update
+        function updateSignalDisplay() {
+            const signalContainer = document.getElementById('signalDisplayContainer');
+            if (!signalContainer) return;
+
+            if (!activeSignal) {
+                signalContainer.innerHTML = `
+                    <div class="text-center text-gray-400 p-4">
+                        <i class="fas fa-cogs fa-2x mb-2"></i>
+                        <p>Generate a signal to see details here.</p>
+                    </div>
+                `;
+                signalContainer.classList.remove('premium-signal-display');
+                return;
+            }
+
+            const durationText = activeSignal.duration >= 60 ? 
+                `${Math.floor(activeSignal.duration / 60)}m${activeSignal.duration % 60 ? ' ' + (activeSignal.duration % 60) + 's' : ''}` : 
+                `${activeSignal.duration}s`;
+
+            signalContainer.innerHTML = `
+                <div class="signal-strength">
+                    <span class="text-xs confidence-label">AI Confidence:</span>
+                    <div class="strength-bar"><div class="strength-fill" style="width: ${activeSignal.confidence}%"></div></div>
+                    <span class="text-xs font-bold">${activeSignal.confidence}%</span>
+                </div>
+                <div class="signal-direction-box">
+                    <div class="signal-direction-text">${activeSignal.direction} ${activeSignal.pair}</div>
+                    <div class="signal-metadata">
+                        <div class="signal-metadata-item">Confidence: ${activeSignal.confidence}%</div>
+                        <div class="signal-metadata-item">Quadrant: #${Math.floor(30000 + Math.random() * 10000)}</div>
+                        ${activeSignal.isPremium ? '<div class="signal-metadata-item"><span class="premium-badge">PREMIUM</span></div>' : ''}
+                    </div>
+                    <div class="signal-timestamp">${new Date().toLocaleDateString()}</div>
+                </div>
+                <div class="text-xs text-gray-400 mt-2">Duration: ${durationText}</div>
+            `;
+            if (activeSignal.isPremium) {
+                signalContainer.classList.add('premium-signal-display');
+            }
+        }
+
+        // Signal timer
+        function startAdvancedSignalTimer() {
+            const timerContainer = document.getElementById('signalTimerContainer');
+            timerContainer.classList.add('active');
+
+            signalTimer = setInterval(() => {
+                const timeLeft = Math.max(0, activeSignal.endTime - Date.now());
+                const totalSeconds = Math.floor(timeLeft / 1000);
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                document.getElementById('signalTimer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(signalTimer);
+                    timerContainer.classList.remove('active');
+                    processAdvancedSignalResult();
+                }
+            }, 1000);
+        }
+
+        // Signal result processing
+        function processAdvancedSignalResult() {
+            if (!activeSignal) return;
+            const platformConfig = platformConfigs[activeSignal.platform];
+            let winRate = platformConfig.winRate;
+
+            if (activeSignal.isPremium) {
+                const planConfig = premiumPlans[currentUser.premiumSubscription.plan];
+                winRate = Math.max(winRate, 0.87);
+                if (currentUser.premiumSubscription.plan === 'pro') winRate = Math.max(winRate, 0.92);
+                if (currentUser.premiumSubscription.plan === 'vip') winRate = Math.max(winRate, 0.96);
+            }
+            const adjustedWinRate = winRate + (activeSignal.confidence - 90) * 0.01;
+            const isWin = Math.random() < adjustedWinRate;
+
+            let baseProfit = 50 + Math.random() * 200;
+            if (activeSignal.duration >= 300) baseProfit *= 1.5;
+            if (activeSignal.isPremium) baseProfit *= 1.3;
+
+            const profit = isWin ? baseProfit : -baseProfit * 0.8;
+            const trade = {
+                time: new Date().toISOString(),
+                pair: activeSignal.pair,
+                platform: activeSignal.platform,
+                direction: activeSignal.direction,
+                duration: activeSignal.duration,
+                result: isWin ? 'WIN' : 'LOSS',
+                profit: profit,
+                isPremium: activeSignal.isPremium
+            };
+
+            currentUser.totalTrades++;
+            if (isWin) currentUser.winningTrades++;
+            currentUser.totalProfit += profit;
+            if (!currentUser.trades) currentUser.trades = [];
+            currentUser.trades.unshift(trade);
+            currentUser.trades = currentUser.trades.slice(0, 50);
+            users[currentUser.email] = currentUser;
+            saveData();
+            showProfitAnimation(isWin, Math.abs(profit));
+            
+            const wasPremiumSignal = activeSignal.isPremium;
+            activeSignal = null;
+
+            document.getElementById('signalStatus').textContent = 'Ready to Generate';
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('generateBtn').innerHTML = '<i class="fas fa-brain mr-2"></i>Generate Advanced AI Signal';
+            updateSignalDisplay();
+
+            showNotification(
+                isWin ? `✅ ${wasPremiumSignal ? '🔒 ' : ''}Trade Won! +$${profit.toFixed(2)}` : `❌ ${wasPremiumSignal ? '🔒 ' : ''}Trade Lost! -$${Math.abs(profit).toFixed(2)}`,
+                isWin ? 'success' : 'error'
+            );
+            renderUserDashboard();
+        }
+
+        // Premium plan selection
+        function selectPremiumPlan(plan, price) {
+            if (!currentUser) { openModal('auth'); return; }
+            document.getElementById('selectedPremiumPlan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+            document.getElementById('selectedPremiumPrice').textContent = price;
+            document.getElementById('selectedPremiumPriceTK').innerHTML = `(≈৳${usdToBdt(price).toLocaleString()} TK)`;
+            openModal('premiumPayment');
+        }
+
+        // Handle premium payment
+        function handlePremiumPayment(event) {
+            event.preventDefault();
+            const transactionId = event.target.elements['transactionId'].value;
+            if (!demoTransactionIds.includes(transactionId)) {
+                showNotification('Invalid Transaction ID. Use demo IDs.', 'error'); return;
+            }
+            const plan = document.getElementById('selectedPremiumPlan').textContent.toLowerCase();
+            const price = parseInt(document.getElementById('selectedPremiumPrice').textContent);
+            currentUser.premiumSubscription = {
+                plan: plan, price: price, status: 'active',
+                startDate: new Date().toISOString(),
+                endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                transactionId: transactionId
+            };
+            users[currentUser.email] = currentUser;
+            saveData();
+            closeModal('premiumPayment');
+            hideSubscriptionPlans();
+            showNotification(`🔒 ${plan.charAt(0).toUpperCase() + plan.slice(1)} Premium activated!`, 'success');
+            renderCurrentView();
+        }
+
+        // Profit animation display
+        function showProfitAnimation(isWin, amount) {
+            const animation = document.getElementById('profitAnimation');
+            animation.innerHTML = isWin ? `+$${amount.toFixed(2)} 💰` : `-$${amount.toFixed(2)} 📉`;
+            animation.className = `profit-animation ${isWin ? 'text-green-400' : 'text-red-400'}`;
+            animation.style.animation = 'none';
+            setTimeout(() => { animation.style.animation = 'profitPulse 2s ease-out'; }, 10);
+        }
+
+        // Load/Save Data
+        function loadStoredData() {
+            users = JSON.parse(localStorage.getItem('blackhat_users') || '{}');
+            pendingRegistrations = JSON.parse(localStorage.getItem('blackhat_pending') || '{}');
+            currentUser = JSON.parse(localStorage.getItem('blackhat_session') || 'null');
+        }
+
+        function saveData() {
+            localStorage.setItem('blackhat_users', JSON.stringify(users));
+            localStorage.setItem('blackhat_pending', JSON.stringify(pendingRegistrations));
+            localStorage.setItem('blackhat_session', JSON.stringify(currentUser));
+        }
+
+        // Setup demo accounts
+        function setupDemoAccounts() {
+            if (!users['admin@demo.com']) {
+                users['admin@demo.com'] = { name: 'Administrator', email: 'admin@demo.com', password: 'admin123', role: 'admin', plan: 'Premium', subscriptionStatus: 'active', totalTrades: 312, winningTrades: 298, totalProfit: 34520.75, premiumSubscription: { plan: 'vip', price: 199, status: 'active' } };
+                users['user@demo.com'] = { name: 'Demo User', email: 'user@demo.com', password: 'user123', role: 'user', plan: 'Free', subscriptionStatus: 'inactive', totalTrades: 94, winningTrades: 87, totalProfit: 9127.43, trades: generateAdvancedDemoTrades() };
+                saveData();
+            }
+        }
+        function generateAdvancedDemoTrades() {
+            const trades = [];
+            const allPairs = Object.keys(tradingPairs);
+            for (let i = 0; i < 20; i++) {
+                const isWin = Math.random() > 0.12;
+                trades.push({
+                    time: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    pair: allPairs[Math.floor(Math.random() * allPairs.length)],
+                    platform: Object.keys(platformConfigs)[Math.floor(Math.random() * 4)],
+                    direction: Math.random() > 0.5 ? 'CALL' : 'PUT', duration: 60,
+                    result: isWin ? 'WIN' : 'LOSS', profit: isWin ? (50 + Math.random() * 250) : -(40 + Math.random() * 200),
+                    isPremium: Math.random() > 0.7
+                });
+            }
+            return trades.sort((a, b) => new Date(b.time) - new Date(a.time));
+        }
+
+        // Authentication Functions
+        function toggleAuthForm() {
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('registerForm').classList.toggle('hidden');
+            document.getElementById('authTitle').textContent = document.getElementById('loginForm').classList.contains('hidden') ? 'Create Account' : 'Welcome Back';
+        }
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            if (pendingRegistrations[email]) { showNotification('Registration pending admin approval', 'warning'); return; }
+            if (!users[email] || users[email].password !== password) { showNotification('Invalid credentials', 'error'); return; }
+            currentUser = users[email];
+            saveData();
+            closeModal('auth');
+            renderCurrentView();
+            showNotification(`Welcome back, ${currentUser.name}!`, 'success');
+        }
+        function handleRegister(event) {
+            event.preventDefault();
+            const email = document.getElementById('registerEmail').value.trim();
+            if (users[email] || pendingRegistrations[email]) { showNotification('Email already exists', 'error'); return; }
+            pendingRegistrations[email] = {
+                name: document.getElementById('registerName').value.trim(), email, password: document.getElementById('registerPassword').value,
+                phone: document.getElementById('registerPhone').value.trim(), role: 'user', plan: 'Free', subscriptionStatus: 'inactive',
+                totalTrades: 0, winningTrades: 0, totalProfit: 0, trades: []
+            };
+            saveData();
+            closeModal('auth');
+            showNotification('Registration submitted. Waiting for admin approval.', 'info');
+            renderAdminPanel();
+        }
+        function logout() {
+            currentUser = null; activeSignal = null; if (signalTimer) clearInterval(signalTimer); hideSubscriptionPlans();
+            saveData(); renderCurrentView(); showNotification('Logged out successfully', 'info');
+        }
+
+        // Plan Selection & Payment
+        function selectPlan(plan, price) {
+            if (!currentUser) { openModal('auth'); return; }
+            document.getElementById('selectedPlan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+            document.getElementById('selectedPrice').textContent = price;
+            document.getElementById('selectedPriceTK').innerHTML = `(≈৳${usdToBdt(price).toLocaleString()} TK)`;
+            openModal('payment');
+        }
+        function handlePayment(event) {
+            event.preventDefault();
+            const transactionId = event.target.elements['transactionId'].value;
+            if (!demoTransactionIds.includes(transactionId)) { showNotification('Invalid Transaction ID.', 'error'); return; }
+            const plan = document.getElementById('selectedPlan').textContent;
+            currentUser.plan = plan; currentUser.subscriptionStatus = 'active';
+            users[currentUser.email] = currentUser; saveData(); closeModal('payment');
+            showNotification(`${plan} plan activated!`, 'success'); renderCurrentView();
+        }
+
+        // Admin Functions
+        function approveUser(email) { if (pendingRegistrations[email]) { users[email] = pendingRegistrations[email]; delete pendingRegistrations[email]; saveData(); showNotification('User approved', 'success'); renderAdminPanel(); } }
+        function rejectUser(email) { if (pendingRegistrations[email]) { delete pendingRegistrations[email]; saveData(); showNotification('User rejected', 'info'); renderAdminPanel(); } }
+        function deleteUser(email) { if (users[email] && users[email].role !== 'admin') { delete users[email]; saveData(); showNotification('User deleted', 'info'); renderAdminPanel(); } }
+        function revokePremiumAccess(email) { if (users[email] && users[email].premiumSubscription) { users[email].premiumSubscription.status = 'inactive'; users[email] = users[email]; saveData(); showNotification(`Premium access revoked for ${users[email].name}`, 'info'); renderAdminPanel(); } }
+
+        // Market Data Updates
+        function updateMarketData() {
+            Object.keys(tradingPairs).forEach(pair => {
+                const data = tradingPairs[pair];
+                const volatility = 0.0005 + Math.random() * 0.001;
+                const direction = Math.random() > 0.5 ? 1 : -1;
+                const change = direction * volatility * data.price;
+                data.price += change;
+                data.change = ((change / data.price) * 100).toFixed(2);
+            });
+            renderMarketData();
+            updateLandingStats();
+        }
+        function renderMarketData() {
+            const container = document.getElementById('marketData'); if (!container) return;
+            container.innerHTML = Object.entries(tradingPairs).slice(0, 8).map(([pair, data]) => `
+                <div class="trading-pair">
+                    <div><div class="font-semibold text-sm">${pair}</div><div class="text-xs text-gray-400">Price</div></div>
+                    <div class="text-right">
+                        <div class="font-bold text-sm">$${data.price.toFixed(pair.includes('/') ? 4 : 2)}</div>
+                        <div class="text-xs ${parseFloat(data.change) >= 0 ? 'price-up' : 'price-down'}">${parseFloat(data.change) >= 0 ? '+' : ''}${data.change}%</div>
+                    </div>
+                </div>`).join('');
+        }
+        function updateLandingStats() {
+            document.getElementById('activeUsers').textContent = (Object.keys(users).length + 26471).toLocaleString();
+            document.getElementById('totalProfit').textContent = `$${(5238647 + Math.random() * 1000).toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+        }
+
+        // Render Functions
+        function renderCurrentView() {
+            const isUser = currentUser && currentUser.role !== 'admin';
+            const isAdmin = currentUser && currentUser.role === 'admin';
+            document.getElementById('landingSection').style.display = !currentUser ? 'block' : 'none';
+            document.getElementById('userDashboard').classList.toggle('hidden', !isUser);
+            document.getElementById('adminPanel').classList.toggle('hidden', !isAdmin);
+            document.getElementById('pricingSection').style.display = !currentUser ? 'block' : 'none';
+            document.getElementById('userInfo').classList.toggle('hidden', !currentUser);
+            document.getElementById('loginBtn').style.display = currentUser ? 'none' : 'block';
+
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name;
+                if (isAdmin) renderAdminPanel();
+                if (isUser) renderUserDashboard();
+            }
+        }
+
+        function renderUserDashboard() {
+            if (!currentUser || currentUser.role === 'admin') return;
+
+            document.getElementById('userTotalTrades').textContent = currentUser.totalTrades;
+            document.getElementById('userWinRate').textContent = currentUser.totalTrades > 0 ? `${Math.round((currentUser.winningTrades / currentUser.totalTrades) * 100)}%` : '0%';
+            document.getElementById('userTotalProfit').innerHTML = formatCurrencyWithTK(currentUser.totalProfit);
+
+            const todayProfit = (currentUser.trades || []).filter(t => new Date(t.time).toDateString() === new Date().toDateString()).reduce((sum, t) => sum + t.profit, 0);
+            document.getElementById('todayProfit').innerHTML = `${todayProfit >= 0 ? '+' : ''}${formatCurrencyWithTK(Math.abs(todayProfit))}`;
+            document.getElementById('todayProfit').className = `font-bold ${todayProfit >= 0 ? 'text-green-400' : 'text-red-400'}`;
+
+            if (currentUser.premiumSubscription && currentUser.premiumSubscription.status === 'active') {
+                document.getElementById('userPlan').textContent = `Premium (${currentUser.premiumSubscription.plan.toUpperCase()})`;
+                document.getElementById('userStatus').textContent = 'Premium Active';
+                document.getElementById('userStatus').className = 'font-bold text-purple-400';
+            } else {
+                document.getElementById('userPlan').textContent = currentUser.plan;
+                document.getElementById('userStatus').textContent = currentUser.subscriptionStatus.charAt(0).toUpperCase() + currentUser.subscriptionStatus.slice(1);
+                document.getElementById('userStatus').className = 'font-bold';
+            }
+            renderRecentTrades();
+            updateSignalDisplay();
+            loadTradingViewWidget(selectedPlatform, selectedPair);
+            setTimeout(() => { initPerformanceChart(); }, 100);
+        }
+
+        function renderRecentTrades() {
+            const tbody = document.getElementById('tradesTableBody'); if (!tbody || !currentUser.trades) return;
+            tbody.innerHTML = currentUser.trades.slice(0, 15).map(trade => `
+                <tr class="border-b border-gray-700">
+                    <td class="p-2 text-xs">${new Date(trade.time).toLocaleString()}</td>
+                    <td class="p-2 text-sm">${trade.pair}</td>
+                    <td class="p-2 text-xs">${platformConfigs[trade.platform].name}</td>
+                    <td class="p-2 text-sm">${trade.direction}${trade.isPremium ? ' 🔒' : ''}</td>
+                    <td class="p-2 text-xs">${trade.duration}s</td>
+                    <td class="p-2"><span class="text-xs ${trade.result === 'WIN' ? 'text-green-400' : 'text-red-400'}">${trade.result}</span></td>
+                    <td class="p-2 text-sm ${trade.profit >= 0 ? 'text-green-400' : 'text-red-400'}">${trade.profit >= 0 ? '+' : ''}$${trade.profit.toFixed(2)}</td>
+                </tr>`).join('');
+        }
+
+        function renderAdminPanel() {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            const totalUsers = Object.keys(users).length;
+            const premiumUsers = Object.values(users).filter(u => u.premiumSubscription && u.premiumSubscription.status === 'active').length;
+            const pendingUsers = Object.keys(pendingRegistrations).length;
+            const totalRevenue = Object.values(users).reduce((sum, u) => sum + (u.premiumSubscription && u.premiumSubscription.status === 'active' ? u.premiumSubscription.price : 0), 0);
+            document.getElementById('adminTotalUsers').textContent = totalUsers;
+            document.getElementById('adminActiveUsers').textContent = premiumUsers;
+            document.getElementById('adminPendingUsers').textContent = pendingUsers;
+            document.getElementById('adminTotalRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
+            renderUsersList(); renderPremiumSubscribersList(); renderPendingList();
+            setTimeout(() => { initRevenueChart(); }, 100);
+        }
+
+        function renderUsersList() {
+            const container = document.getElementById('usersList'); if (!container) return;
+            container.innerHTML = Object.entries(users).filter(([e, u]) => u.role !== 'admin').map(([email, user]) => `
+                <div class="bg-gray-800 p-3 rounded-lg flex justify-between items-center">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-sm truncate">${user.name}</div><div class="text-xs text-gray-400 truncate">${email}</div>
+                    </div><button onclick="deleteUser('${email}')" class="bg-red-600 px-2 py-1 rounded text-xs">Delete</button>
+                </div>`).join('') || '<p class="text-gray-400 text-center">No users found.</p>';
+        }
+        function renderPremiumSubscribersList() {
+            const container = document.getElementById('premiumSubscribersList'); if (!container) return;
+            container.innerHTML = Object.entries(users).filter(([e, u]) => u.premiumSubscription && u.premiumSubscription.status === 'active').map(([email, user]) => `
+                <div class="bg-gradient-to-r from-purple-900 to-pink-900 p-3 rounded-lg flex justify-between items-center">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-sm truncate text-purple-200">${user.name}</div>
+                        <div class="text-xs text-gray-300"><span class="font-bold">${user.premiumSubscription.plan.toUpperCase()}</span> - $${user.premiumSubscription.price}/mo</div>
+                    </div><button onclick="revokePremiumAccess('${email}')" class="bg-red-600 px-2 py-1 rounded text-xs">Revoke</button>
+                </div>`).join('') || '<p class="text-gray-400 text-center">No premium users.</p>';
+        }
+        function renderPendingList() {
+            const container = document.getElementById('pendingList'); if (!container) return;
+            container.innerHTML = Object.entries(pendingRegistrations).map(([email, user]) => `
+                <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="mb-2"><div class="font-semibold text-sm truncate">${user.name}</div><div class="text-xs text-gray-400 truncate">${email}</div></div>
+                    <div class="flex space-x-2">
+                        <button onclick="approveUser('${email}')" class="flex-1 bg-green-600 px-2 py-1 rounded text-xs">Approve</button>
+                        <button onclick="rejectUser('${email}')" class="flex-1 bg-red-600 px-2 py-1 rounded text-xs">Reject</button>
+                    </div>
+                </div>`).join('') || '<p class="text-gray-400 text-center">No pending registrations.</p>';
+        }
+
+        // Chart Initialization
+        function initPerformanceChart() {
+            const ctx = document.getElementById('performanceChart'); if (!ctx || !currentUser) return;
+            if (performanceChart) performanceChart.destroy();
+            const profits = (currentUser.trades || []).slice(0, 15).reverse().map(t => t.profit);
+            const cumulativeProfit = profits.reduce((acc, p) => [...acc, (acc.length > 0 ? acc[acc.length - 1] : 0) + p], []);
+            performanceChart = new Chart(ctx, {
+                type: 'line', data: { labels: Array(cumulativeProfit.length).fill(''), datasets: [{ label: 'Profit Growth ($)', data: cumulativeProfit, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.4, fill: true }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { display: false }, grid: { display: false } }, y: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { color: 'rgba(156, 163, 175, 0.2)' } } } }
+            });
+        }
+        function initRevenueChart() {
+            const ctx = document.getElementById('revenueChart'); if (!ctx) return;
+            if (revenueChart) revenueChart.destroy();
+            const planCounts = { 'Premium Basic': 0, 'Premium Pro': 0, 'Premium VIP': 0 };
+            Object.values(users).forEach(u => { if (u.premiumSubscription && u.premiumSubscription.status === 'active') { const p = `Premium ${u.premiumSubscription.plan.charAt(0).toUpperCase() + u.premiumSubscription.plan.slice(1)}`; if(planCounts.hasOwnProperty(p)) planCounts[p]++; } });
+            revenueChart = new Chart(ctx, {
+                type: 'doughnut', data: { labels: Object.keys(planCounts), datasets: [{ data: Object.values(planCounts), backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
+            });
+        }
+
+        // Utility Functions
+        function openModal(modalId) { document.getElementById(modalId + 'Modal').classList.add('active'); }
+        function closeModal(modalId) { document.getElementById(modalId + 'Modal').classList.remove('active'); }
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.innerHTML = message;
+            notification.className = `notification show ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'}`;
+            setTimeout(() => { notification.classList.remove('show'); }, 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+        window.addEventListener('beforeunload', () => { if (signalTimer) clearInterval(signalTimer); if (marketDataInterval) clearInterval(marketDataInterval); });
+    </script>
+</body>
+</html>

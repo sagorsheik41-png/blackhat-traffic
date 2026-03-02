@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Shortlink Generator - For You</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 0.18);
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .copy-success {
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Header -->
+    <header class="text-white p-6">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-link text-3xl"></i>
+                    <h1 class="text-2xl font-bold">Direct Shortlink Generator</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 pb-12">
+        <!-- URL Input Section -->
+        <div class="glass-effect rounded-2xl p-8 mb-8 slide-in">
+            <div class="text-center mb-6">
+                <i class="fas fa-magic text-4xl text-white mb-4"></i>
+                <h2 class="text-2xl font-bold text-white mb-2">Shorten Your Link</h2>
+                <p class="text-gray-200">Transform your long URL into a simple and direct shortlink</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <input 
+                        type="url" 
+                        id="originalUrl" 
+                        placeholder="Paste your original link here (https://example.com)"
+                        class="flex-1 px-6 py-4 rounded-xl border-0 focus:ring-4 focus:ring-blue-300 text-lg"
+                    />
+                    <button 
+                        onclick="generateShortLink()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all hover-scale"
+                    >
+                        <i class="fas fa-bolt mr-2"></i>Create Shortlink
+                    </button>
+                </div>
+                
+                <!-- Advanced Options -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-white mb-2">Custom Name (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="customAlias" 
+                            placeholder="my-link"
+                            class="w-full px-4 py-2 rounded-lg border-0"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2">Expiry Date (Optional)</label>
+                        <input 
+                            type="date" 
+                            id="expiryDate" 
+                            class="w-full px-4 py-2 rounded-lg border-0"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden glass-effect rounded-2xl p-8 mb-8 slide-in">
+            <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                <i class="fas fa-check-circle text-green-400 mr-3"></i>
+                Your shortlink has been created!
+            </h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Generated Link Card -->
+                <div id="shortLinkCardContainer">
+                    <!-- The generated link card will be injected here -->
+                </div>
+                
+                <!-- QR Code & Preview -->
+                <div>
+                    <!-- QR Code -->
+                    <div class="bg-white rounded-xl p-4 text-center mb-6">
+                         <h4 class="text-lg font-semibold text-gray-800 mb-2">QR Code</h4>
+                        <div id="qrCodeContainer" class="flex justify-center">
+                            <!-- QR code will appear here -->
+                        </div>
+                        <button onclick="downloadQR()" class="mt-4 text-sm bg-blue-600 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-download mr-1"></i>Download
+                        </button>
+                    </div>
+                    
+                    <!-- Link Preview -->
+                    <div class="bg-white rounded-xl p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2">Link Preview</h4>
+                        <div id="linkPreview">
+                            <!-- Link preview will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global variable to hold the single generated link data
+        let generatedLink = null;
+        
+        // **Important:** For implementation, you must use your own domain here.
+        const MY_DOMAIN = "https://short.ly"; // This is an example. Use your own domain.
+
+        // Generate a single, direct short link
+        function generateShortLink() {
+            const originalUrl = document.getElementById('originalUrl').value.trim();
+            const customAlias = document.getElementById('customAlias').value.trim();
+            const expiryDate = document.getElementById('expiryDate').value;
+
+            if (!isValidUrl(originalUrl)) {
+                showNotification('❌ Please enter a valid URL', 'error');
+                return;
+            }
+
+            const shortCode = customAlias || generateShortCode();
+            const shortUrl = `${MY_DOMAIN}/${shortCode}`;
+            
+            generatedLink = {
+                shortUrl: shortUrl,
+                originalUrl: originalUrl,
+                created: new Date(),
+                expiryDate: expiryDate,
+                clicks: 0
+            };
+            
+            displayResult();
+            showNotification('✅ Shortlink created successfully!', 'success');
+        }
+
+        // Display the generated result
+        function displayResult() {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.classList.remove('hidden');
+
+            // 1. Create and display the link card
+            const shortLinkCardContainer = document.getElementById('shortLinkCardContainer');
+            shortLinkCardContainer.innerHTML = createLinkCard(generatedLink);
+            
+            // 2. Generate and display QR code
+            generateQRCode(generatedLink.shortUrl);
+            
+            // 3. Show link preview
+            showLinkPreview(generatedLink.originalUrl);
+        }
+
+        // Create the main link card
+        function createLinkCard(link) {
+            return `
+                <div class="bg-white rounded-xl p-6 shadow-lg h-full flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                             <h4 class="font-semibold text-xl text-gray-800">Your Shortlink</h4>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-500">Clicks</div>
+                                <div id="click-counter" class="text-2xl font-bold text-blue-600">${link.clicks}</div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-sm text-gray-600 mb-2">Original Link:</p>
+                        <p class="text-xs text-gray-500 bg-gray-100 p-2 rounded break-all mb-4">${link.originalUrl}</p>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <label class="text-sm text-gray-600">Short Link:</label>
+                            <div class="flex items-center justify-between mt-1">
+                                <input 
+                                    type="text" 
+                                    value="${link.shortUrl}" 
+                                    readonly 
+                                    id="shortUrlInput"
+                                    class="bg-transparent flex-1 text-gray-900 font-mono text-lg"
+                                />
+                                <button 
+                                    onclick="copyToClipboard('shortUrlInput')" 
+                                    class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mt-4">
+                        <a href="${link.originalUrl}" target="_blank" onclick="trackClick()" class="w-full text-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-external-link-alt mr-2"></i>Test the Link
+                        </a>
+                    </div>
+                    
+                    ${link.expiryDate ? `<div class="mt-3 text-xs text-center text-orange-600"><i class="fas fa-clock mr-1"></i>Expires on: ${new Date(link.expiryDate).toLocaleDateString('en-US')}</div>` : ''}
+                </div>
+            `;
+        }
+        
+        // Function to track clicks
+        function trackClick() {
+            if (generatedLink) {
+                generatedLink.clicks++;
+                document.getElementById('click-counter').textContent = generatedLink.clicks;
+            }
+        }
+
+        // Generate a single QR code
+        function generateQRCode(url) {
+            const qrContainer = document.getElementById('qrCodeContainer');
+            qrContainer.innerHTML = ''; // Clear previous QR code
+            
+            const canvas = document.createElement('canvas');
+            canvas.id = 'qrCanvas';
+            qrContainer.appendChild(canvas);
+
+            QRCode.toCanvas(canvas, url, {
+                width: 150,
+                height: 150,
+                color: {
+                    dark: '#1f2937',
+                    light: '#ffffff'
+                }
+            });
+        }
+
+        // Show link preview
+        function showLinkPreview(url) {
+            const linkPreview = document.getElementById('linkPreview');
+            linkPreview.innerHTML = `
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-globe text-gray-500 text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-600 text-sm break-all">${url}</p>
+                        <p class="text-xs text-gray-500 mt-1">This link will take the user directly here.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Utility functions
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            element.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            showNotification('📋 Link copied!', 'success');
+        }
+        
+        function downloadQR() {
+            const canvas = document.getElementById('qrCanvas');
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            showNotification('📥 Downloading QR Code...', 'success');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `copy-success ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => { notification.remove(); }, 3000);
+        }
+
+        function generateShortCode() {
+            return Math.random().toString(36).substring(2, 8);
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return string.startsWith('http://') || string.startsWith('https://');
+            } catch (_) {
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>

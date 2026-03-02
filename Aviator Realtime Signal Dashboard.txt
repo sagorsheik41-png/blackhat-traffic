@@ -1,0 +1,285 @@
+<p>&nbsp;</p<!doctype html>
+
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aviator Realtime Signal Dashboard</title>
+  <style>
+    :root{--bg:#0f1720;--card:#111827;--accent:#10b981;--muted:#94a3b8;--glass:rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',sans-serif;background:linear-gradient(180deg,#041025 0%, #07121a 100%);color:#e6eef6}
+    .app{max-width:980px;margin:18px auto;padding:18px}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    h1{font-size:18px;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    input[type=text], input[type=url]{background:var(--card);border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:8px;color:inherit;width:280px}
+    button{background:var(--accent);border:none;color:#022;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .layout{display:grid;grid-template-columns:1fr 380px;gap:14px;margin-top:18px}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.03)}
+    .big-area{height:420px;display:flex;flex-direction:column}
+    .chart-mock{flex:1;border-radius:10px;background:repeating-linear-gradient(135deg, rgba(255,255,255,0.01) 0 2px, transparent 2px 6px);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+    .signal-list{margin-top:12px;max-height:210px;overflow:auto}
+    .signal{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px;margin-bottom:8px;background:var(--glass);border:1px solid rgba(255,255,255,0.02)}
+    .sig-left{display:flex;gap:10px;align-items:center}
+    .badge{padding:6px 8px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.02);font-weight:600}
+    .sig-meta{color:var(--muted);font-size:12px}
+    .side{display:flex;flex-direction:column;gap:12px}
+    .config{display:flex;flex-direction:column;gap:8px}
+    .big-copy{background:linear-gradient(90deg,#34d399,#10b981);color:#022;padding:12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .status{font-size:13px;color:var(--muted)}
+    .recent{max-height:200px;overflow:auto}
+    footer{margin-top:12px;color:var(--muted);font-size:13px}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);font-weight:600}
+    .connected{color:#a7f3d0}
+    @media(max-width:900px){.layout{grid-template-columns:1fr;}.controls input{width:160px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Aviator Signal Dashboard — রিয়েলটাইম (ডেমো)</h1>
+      <div class="controls">
+        <div class="pill" id="balance">Balance: -- BDT</div>
+      </div>
+    </header><div class="layout">
+  <div class="panel big-area">
+    <div class="chart-mock" id="chart">⟸ শুধু ভিজুয়াল প্লেসহোল্ডার — লাইভ ডেটা নীচে আসবে ⟹</div>
+
+    <div class="signal-list" id="signals"></div>
+
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="clear">Clear</button>
+        <button id="pause" class="ghost">Pause</button>
+        <div class="status" id="connStatus">Status: Disconnected</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="copyLatest" class="big-copy">Copy Latest Signal</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="panel config">
+      <label><strong>WebSocket / API URL</strong></label>
+      <input id="wsUrl" type="url" placeholder="wss://example.com/signals or https://api.example.com/signals" />
+      <label><strong>Auth token (optional)</strong></label>
+      <input id="token" type="text" placeholder="Bearer token or API key" />
+      <div style="display:flex;gap:8px">
+        <button id="connect">Connect</button>
+        <button id="disconnect" class="ghost">Disconnect</button>
+      </div>
+      <small class="status">সংকেতের ফরম্যাট: JSON recommended — e.g. {"type":"signal","side":"cashout","value":2.57,"ts":1690000000}</small>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin:0 0 8px 0">Recent / Log</h3>
+      <div class="recent" id="log"></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin:0 0 8px 0">Quick presets</h3>
+      <div style="display:flex;gap:8px">
+        <button class="ghost" data-url="wss://demo.signals.example/ws">Demo WS</button>
+        <button class="ghost" data-url="https://demo.signals.example/api/latest">Demo HTTP</button>
+      </div>
+      <footer>
+        <div>এই ফাইলটি কপি করে <code>dashboard.html</code> নামে সেভ করে ব্রাউজারে খুলুন।</div>
+      </footer>
+    </div>
+  </aside>
+</div>
+
+  </div>  <script>
+    // Simple single-file realtime signal dashboard.
+    // CONFIG: If you have a real websocket or HTTP endpoint, paste it in the WebSocket / API URL field.
+
+    const wsUrlEl = document.getElementById('wsUrl');
+    const tokenEl = document.getElementById('token');
+    const connectBtn = document.getElementById('connect');
+    const disconnectBtn = document.getElementById('disconnect');
+    const connStatus = document.getElementById('connStatus');
+    const signalsEl = document.getElementById('signals');
+    const logEl = document.getElementById('log');
+    const copyBtn = document.getElementById('copyLatest');
+    const balanceEl = document.getElementById('balance');
+    const pauseBtn = document.getElementById('pause');
+    const clearBtn = document.getElementById('clear');
+
+    let ws = null;
+    let paused = false;
+    let latestSignalText = '';
+
+    function addLog(text){
+      const d = new Date().toLocaleTimeString();
+      logEl.innerHTML = `<div style="padding:6px 8px;border-bottom:1px dashed rgba(255,255,255,0.02)"><strong>[${d}]</strong> ${escapeHtml(text)}</div>` + logEl.innerHTML;
+    }
+
+    function escapeHtml(s){return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));}
+
+    function setStatus(s,connected=false){
+      connStatus.textContent = 'Status: ' + s;
+      connStatus.className = connected? 'connected' : '';
+    }
+
+    function renderSignal(sig){
+      // sig: {type:'signal',side:'cashout'|'stop',value:float,ts:int, note:string}
+      const el = document.createElement('div');
+      el.className = 'signal';
+      const time = new Date((sig.ts||Date.now())*1000);
+      const left = document.createElement('div'); left.className='sig-left';
+      const badge = document.createElement('div'); badge.className='badge'; badge.textContent = sig.side?.toUpperCase() || (sig.type||'SIG');
+      const text = document.createElement('div');
+      text.innerHTML = `<div style="font-weight:700">${sig.note || (sig.side? sig.side + ' @ ' + (sig.value||'—'):'Signal')}</div><div class="sig-meta">${time.toLocaleTimeString()} • ${sig.source||'remote'}</div>`;
+      left.appendChild(badge); left.appendChild(text);
+      const right = document.createElement('div');
+      right.style.display='flex'; right.style.flexDirection='column'; right.style.alignItems='flex-end';
+      const copySmall = document.createElement('button'); copySmall.className='ghost'; copySmall.textContent='Copy';
+      copySmall.onclick = ()=>{ navigator.clipboard.writeText(formatCopy(sig)); addLog('Copied signal to clipboard'); };
+      right.appendChild(copySmall);
+      el.appendChild(left); el.appendChild(right);
+      signalsEl.prepend(el);
+      // keep only last 60
+      while(signalsEl.children.length>60) signalsEl.removeChild(signalsEl.lastChild);
+    }
+
+    function formatCopy(sig){
+      // Single-line paste-friendly string
+      const v = sig.value? (typeof sig.value==='number'? sig.value.toFixed(2): sig.value) : '';
+      const t = sig.side? sig.side.toUpperCase() : (sig.type||'SIGNAL');
+      const note = sig.note? ' — ' + sig.note : '';
+      return `${t} ${v}${note}`;
+    }
+
+    copyBtn.addEventListener('click', ()=>{
+      if(!latestSignalText){ addLog('No signal to copy'); return; }
+      navigator.clipboard.writeText(latestSignalText).then(()=> addLog('Latest signal copied'));
+    });
+
+    pauseBtn.addEventListener('click', ()=>{
+      paused = !paused; pauseBtn.textContent = paused? 'Resume' : 'Pause'; addLog(paused? 'Paused' : 'Resumed');
+    });
+
+    clearBtn.addEventListener('click', ()=>{signalsEl.innerHTML=''; addLog('Cleared signals');});
+
+    connectBtn.addEventListener('click', ()=>{
+      const url = wsUrlEl.value.trim();
+      if(!url){alert('WebSocket/HTTP URL দিন (wss:// or https://)'); return;}
+      // If WebSocket URL
+      if(url.startsWith('ws')){
+        connectWS(url);
+      } else {
+        // fallback: poll HTTP for new signals every 3s
+        connectHTTPPoll(url);
+      }
+    });
+
+    disconnectBtn.addEventListener('click', ()=>{ closeConnection(); addLog('Manual disconnect'); setStatus('Disconnected'); });
+
+    // --- WebSocket connection ---
+    function connectWS(url){
+      closeConnection();
+      try{
+        const headersToken = tokenEl.value.trim();
+        addLog('Connecting to ' + url);
+        setStatus('Connecting...');
+        // Native WebSocket can't set custom headers in browser; include token as query param if needed
+        let finalUrl = url;
+        if(headersToken){
+          const sep = url.includes('?')? '&' : '?';
+          finalUrl = url + sep + 'token=' + encodeURIComponent(headersToken);
+        }
+        ws = new WebSocket(finalUrl);
+        ws.onopen = ()=>{ setStatus('Connected', true); addLog('WebSocket open'); }
+        ws.onmessage = (ev)=>{ handleIncoming(ev.data); }
+        ws.onclose = ()=>{ setStatus('Disconnected'); addLog('WebSocket closed'); ws=null; }
+        ws.onerror = (e)=>{ addLog('WebSocket error'); }
+      } catch(err){ addLog('WS connect error: '+err.message); setStatus('Error'); }
+    }
+
+    // --- HTTP polling fallback ---
+    let pollTimer = null;
+    function connectHTTPPoll(url){
+      closeConnection();
+      addLog('Starting HTTP poll: ' + url);
+      setStatus('Polling...');
+      pollTimer = setInterval(async ()=>{
+        try{
+          const headers = {};
+          if(tokenEl.value.trim()) headers['Authorization'] = tokenEl.value.trim();
+          const r = await fetch(url, {headers});
+          if(!r.ok){ addLog('HTTP error ' + r.status); return; }
+          const data = await r.json();
+          // Expect either array of signals or single signal
+          if(Array.isArray(data)) data.forEach(d=>handleIncoming(JSON.stringify(d)));
+          else handleIncoming(JSON.stringify(data));
+        }catch(e){ addLog('Poll error: '+e.message); }
+      },3000);
+    }
+
+    function closeConnection(){
+      if(ws){ ws.close(); ws=null; }
+      if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
+      setStatus('Disconnected');
+    }
+
+    function handleIncoming(raw){
+      if(paused) return;
+      addLog('Raw: '+ (typeof raw==='string'? raw : '[binary]'));
+      let obj = null;
+      try{ obj = typeof raw==='string'? JSON.parse(raw) : raw; } catch(e){
+        // If incoming is plain text like "SIGNAL:2.5", parse lightly
+        const t = String(raw).trim();
+        const m = t.match(/([A-Za-z]+)[:@ ]\s*([0-9.]+)?/);
+        if(m) obj = {type:'signal', side:m[1], value: m[2]? parseFloat(m[2]): undefined, note: t, ts: Math.floor(Date.now()/1000)};
+        else obj = {type:'raw', note: String(raw), ts: Math.floor(Date.now()/1000)};
+      }
+
+      // Normalize common shapes
+      const sig = normalizeSignal(obj);
+      latestSignalText = formatCopy(sig);
+      renderSignal(sig);
+      updateBalance(sig);
+      // small animation on chart placeholder
+      flashChart(sig);
+    }
+
+    function normalizeSignal(obj){
+      const out = {type:obj.type||'signal', side: obj.side || obj.action || obj.signal || (obj.type==='loss'?'STOP':'') , value: obj.value || obj.multiplier || obj.rate || obj.cashout, ts: obj.ts || Math.floor((Date.now())/1000), note: obj.note || obj.msg || obj.message || undefined, source: obj.source || 'remote'};
+      return out;
+    }
+
+    function updateBalance(sig){
+      // Demo: if signal carries balance field, show it
+      if(sig && sig.balance){ balanceEl.textContent = 'Balance: ' + sig.balance + ' BDT'; }
+    }
+
+    function flashChart(sig){
+      const chart = document.getElementById('chart');
+      chart.textContent = sig.side? `${sig.side.toUpperCase()} @ ${sig.value||'—'}` : (sig.note||'Signal');
+      chart.style.transition = 'transform 140ms ease';
+      chart.style.transform = 'scale(1.02)';
+      setTimeout(()=>{ chart.style.transform = 'scale(1)'; },150);
+    }
+
+    // Quick demo generator when no connection
+    setTimeout(()=>{
+      addLog('Tip: খুলে "WebSocket / API URL" ফিল্ড-এ আপনার endpoint দিন অথবা "Demo WS" একটিতে ক্লিক করুন।');
+    },600);
+
+    // Demo preset buttons
+    document.querySelectorAll('button[data-url]').forEach(b=>b.addEventListener('click', ()=>{ wsUrlEl.value = b.dataset.url; addLog('Preset applied: ' + b.dataset.url); }));
+
+    // Make the system produce demo signals if no connection for demoing
+    let demoInterval = setInterval(()=>{
+      if(ws || pollTimer) return;
+      const sides = ['cashout','auto','stop','win'];
+      const s = sides[Math.floor(Math.random()*sides.length)];
+      const v = (Math.random()*15+1).toFixed(2);
+      const obj = {type:'signal', side:s, value: parseFloat(v), ts: Math.floor(Date.now()/1000), note:'demo signal'};
+      handleIncoming(JSON.stringify(obj));
+    }, 9000);
+
+  </script></body>
+</html>

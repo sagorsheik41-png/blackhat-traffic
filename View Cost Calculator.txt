@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>View Cost Calculator</title>
+  <!-- Using Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Using Inter font for modern readability -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 
+    *** IMPORTANT FIXES FOR BLOGGER EMBEDDING ***
+    1. Removed aggressive global background/height/centering styles (html, body) 
+       as they conflict with the host site's layout.
+    2. Ensured max-width and margin: 0 auto for perfect centering within the blog post container.
+    */
+    
+    html, body {
+      /* Keep basic font and crucial resets */
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: 'Inter', sans-serif !important;
+      background: none !important; /* Ensure no unwanted global background */
+      height: auto !important; /* Allow the height to adjust to content */
+      overflow-x: hidden !important; /* Critical fix for horizontal scrolling */
+      box-sizing: border-box !important;
+    }
+    
+    * {
+      box-sizing: border-box !important;
+    }
+    
+    .outer-wrapper {
+      width: 100% !important;
+      display: block !important; /* Use block for better fluid centering */
+      margin: 0 !important;
+      padding: 0 !important;
+      text-align: center !important;
+      /* Optional: Use a light background here if the blogger background is too dark */
+      /* background-color: #f4f4f4; */ 
+    }
+    
+    .wrapper {
+      /* Tool Container Styling */
+      width: 95% !important; /* Use 95% width to be safe from clipping */
+      max-width: 450px !important; 
+      background: white !important;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15) !important;
+      border-radius: 1.5rem !important;
+      padding: 2rem !important;
+      /* Crucial Centering Fix: */
+      margin: 1rem auto !important; 
+      position: relative !important;
+      left: auto !important;
+      right: auto !important;
+      max-height: 100% !important;
+      overflow-y: visible !important;
+    }
+    
+    @media (min-width: 640px) {
+      .wrapper {
+        max-width: 550px !important;
+        padding: 2.5rem !important;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Input/Select Styling */
+    input, select {
+      transition: all 0.3s ease !important;
+      border: 2px solid #e5e7eb !important;
+      background-color: #ffffff !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      text-align: right !important; /* Align numbers right for typical calculation format */
+    }
+    input:focus, select:focus {
+      border-color: #6d28d9 !important;
+      box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.2) !important;
+    }
+    
+    /* Button Styling */
+    button {
+      transition: all 0.3s ease !important;
+      background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%) !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    button:hover {
+      transform: translateY(-1px) !important;
+      box-shadow: 0 8px 15px rgba(109, 40, 217, 0.4) !important;
+    }
+    
+    /* Result Section Styling */
+    .result-item {
+      background: #f7f3ff !important;
+      border-left: 5px solid #8b5cf6 !important;
+      padding: 1.25rem 1rem !important;
+      margin: 0.75rem 0 !important;
+      border-radius: 0.5rem !important;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05) !important;
+      text-align: left !important;
+    }
+    .result-item p {
+      margin: 0 !important;
+      font-size: 1rem !important;
+      font-weight: 600 !important;
+      color: #4b5563 !important;
+    }
+    .theme-harmony {
+      color: #4b5563 !important;
+      font-weight: 600 !important;
+      text-align: left !important; /* Ensure labels are left-aligned */
+    }
+  </style>
+</head>
+<body>
+  <div class="outer-wrapper">
+    <div class="wrapper">
+      <h1 class="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-purple-700 to-indigo-900 bg-clip-text text-transparent sm:text-3xl md:text-4xl">
+        View Cost Calculator
+      </h1>
+      
+      <div class="space-y-6">
+        
+        <!-- Input 1: Cost per View -->
+        <div>
+          <label for="costPerView" class="block text-gray-700 font-semibold mb-2 theme-harmony">Cost per View (rubles)</label>
+          <input id="costPerView" type="number" value="0.05" step="0.001" min="0" class="rounded-xl p-3 focus:ring-4 focus:ring-purple-600 focus:outline-none" />
+        </div>
+        
+        <!-- Input 2: Number of Views -->
+        <div>
+          <label for="views" class="block text-gray-700 font-semibold mb-2 theme-harmony">Number of Views</label>
+          <input id="views" type="number" value="1000" min="1" class="rounded-xl p-3 focus:ring-4 focus:ring-purple-600 focus:outline-none" />
+        </div>
+        
+        <!-- Input 3: Viewing Time -->
+        <div>
+          <label for="timePerView" class="block text-gray-700 font-semibold mb-2 theme-harmony">Viewing Time (seconds)</label>
+          <select id="timePerView" class="rounded-xl p-3 focus:ring-4 focus:ring-purple-600 focus:outline-none text-left">
+            <option value="15">15 seconds</option>
+            <option value="20">20 seconds</option>
+            <option value="25">25 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="35">35 seconds</option>
+            <option value="40">40 seconds</option>
+            <option value="45">45 seconds</option>
+            <option value="50" selected>50 seconds</option>
+            <option value="55">55 seconds</option>
+            <option value="60">60 seconds</option>
+          </select>
+        </div>
+        
+        <!-- Input 4: Conversion Rate -->
+        <div>
+          <label for="rateBDT" class="block text-gray-700 font-semibold mb-2 theme-harmony">1 Ruble = BDT (Conversion Rate)</label>
+          <input id="rateBDT" type="number" value="1.50" step="0.01" min="0" class="rounded-xl p-3 focus:ring-4 focus:ring-purple-600 focus:outline-none" />
+          <p class="text-sm text-gray-500 mt-1 theme-harmony">Conversion rate to Bangladeshi Taka (৳)</p>
+        </div>
+        
+        <button onclick="calculate()" class="text-white font-bold py-3 rounded-xl shadow-lg mt-6">Calculate Total Cost</button>
+      </div>
+      
+      <!-- Result Section -->
+      <div id="result" class="mt-8 hidden">
+        <h2 class="text-xl font-bold text-purple-700 mb-4 text-center border-b pb-2 border-purple-200">
+          Calculation Results
+        </h2>
+        <div class="space-y-3">
+          <div class="result-item">
+            <p id="rublesResult"></p>
+          </div>
+          <div class="result-item">
+            <p id="bdtResult"></p>
+          </div>
+          <div class="result-item">
+            <p id="totalTime"></p>
+          </div>
+          <div class="result-item">
+            <p id="costPerMinute"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const costPerView = parseFloat(document.getElementById('costPerView').value);
+      const views = parseInt(document.getElementById('views').value);
+      const timePerView = parseInt(document.getElementById('timePerView').value);
+      const rateBDT = parseFloat(document.getElementById('rateBDT').value);
+
+      if (isNaN(costPerView) || isNaN(views) || isNaN(timePerView) || isNaN(rateBDT) || views < 1 || costPerView < 0 || rateBDT < 0) {
+        document.getElementById('rublesResult').textContent = `Invalid input. Please check the numbers.`;
+        document.getElementById('bdtResult').textContent = ``;
+        document.getElementById('totalTime').textContent = ``;
+        document.getElementById('costPerMinute').textContent = ``;
+        document.getElementById('result').classList.remove('hidden');
+        return;
+      }
+
+      const totalRubles = costPerView * views;
+      const totalBDT = totalRubles * rateBDT;
+      const totalSeconds = timePerView * views;
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const totalMinutes = totalSeconds / 60;
+      const costPerMinute = totalMinutes > 0 ? totalRubles / totalMinutes : 0; 
+
+      // Display Results with comma formatting
+      document.getElementById('rublesResult').innerHTML = `<span class="text-purple-700">Total Cost:</span> ${totalRubles.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} rubles.`;
+      document.getElementById('bdtResult').innerHTML = `<span class="text-purple-700">Equivalent:</span> ${totalBDT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ৳ (BDT).`;
+      document.getElementById('totalTime').innerHTML = `<span class="text-purple-700">Total Viewing Time:</span> ${hours} hours ${minutes} minutes ${seconds} seconds.`;
+      document.getElementById('costPerMinute').innerHTML = `<span class="text-purple-700">Avg. Cost per Minute:</span> ${costPerMinute.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })} rubles.`;
+
+      document.getElementById('result').classList.remove('hidden');
+      
+      // Scroll to the result section on mobile after calculation
+      if (window.innerWidth < 640) {
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // --- UX Enhancements ---
+    // 1. Auto-calculate on input change
+    document.querySelectorAll('input, select').forEach(input => {
+      input.addEventListener('input', calculate);
+    });
+
+    // 2. Run calculation once on page load to show default results instantly
+    window.addEventListener('load', calculate);
+  </script>
+</body>
+</html>

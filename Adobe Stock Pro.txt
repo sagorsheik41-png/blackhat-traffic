@@ -1,0 +1,1252 @@
+
+<!DOCTYPE html>
+<html lang="bn" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adobe Stock Pro Dashboard - Complete Contributor Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0066CC;
+            --secondary-color: #00A0FF;
+            --accent-color: #FF6B35;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --dark-color: #1F2937;
+            --light-color: #F9FAFB;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,102,204,0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field {
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .input-field:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+        
+        .color-swatch {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .tag {
+            background: var(--light-color);
+            color: var(--dark-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-block;
+            margin: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tag:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+            transition: width 0.5s ease;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .section-header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .tool-section {
+            margin-bottom: 32px;
+        }
+        
+        .copy-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #059669;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: var(--success-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #E5E7EB;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media print {
+            body {
+                background: white !important;
+            }
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #E5E7EB !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header Section -->
+        <div class="section-header">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-camera text-blue-600 mr-3"></i>
+                Adobe Stock Pro Dashboard
+            </h1>
+            <p class="text-lg text-gray-600">আপনার Adobe Stock Contributor যাত্রার জন্য সম্পূর্ণ টুলকিট</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid mb-8">
+            <div class="stat-card">
+                <div class="text-3xl font-bold text-blue-600" id="total-projects">0</div>
+                <div class="text-gray-600">মোট প্রজেক্ট</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-3xl font-bold text-green-600" id="completed-today">0</div>
+                <div class="text-gray-600">আজ সম্পন্ন</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-3xl font-bold text-orange-600" id="keywords-generated">0</div>
+                <div class="text-gray-600">কীওয়ার্ড তৈরি</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-3xl font-bold text-purple-600" id="palettes-created">0</div>
+                <div class="text-gray-600">কালার প্যালেট</div>
+            </div>
+        </div>
+
+        <!-- Main Tools Tabs -->
+        <div class="card p-6">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('creative-brief')">
+                    <i class="fas fa-lightbulb mr-2"></i>Creative Brief
+                </div>
+                <div class="tab" onclick="switchTab('keyword-research')">
+                    <i class="fas fa-search mr-2"></i>Keyword Research
+                </div>
+                <div class="tab" onclick="switchTab('title-optimizer')">
+                    <i class="fas fa-edit mr-2"></i>Title Optimizer
+                </div>
+                <div class="tab" onclick="switchTab('color-palette')">
+                    <i class="fas fa-palette mr-2"></i>Color Palette
+                </div>
+                <div class="tab" onclick="switchTab('analytics')">
+                    <i class="fas fa-chart-line mr-2"></i>Analytics
+                </div>
+            </div>
+
+            <!-- Creative Brief Generator -->
+            <div id="creative-brief" class="tab-content active">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-rocket text-orange-500 mr-2"></i>
+                    Creative Brief Generator
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Topic/Category</label>
+                        <select id="brief-category" class="input-field">
+                            <option value="">Select a category...</option>
+                            <option value="technology">Technology</option>
+                            <option value="business">Business</option>
+                            <option value="lifestyle">Lifestyle</option>
+                            <option value="health">Health & Wellness</option>
+                            <option value="education">Education</option>
+                            <option value="travel">Travel</option>
+                            <option value="food">Food & Drink</option>
+                            <option value="fashion">Fashion</option>
+                            <option value="nature">Nature</option>
+                            <option value="abstract">Abstract</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Style Preference</label>
+                        <select id="brief-style" class="input-field">
+                            <option value="">Select style...</option>
+                            <option value="minimalist">Minimalist</option>
+                            <option value="modern">Modern</option>
+                            <option value="vintage">Vintage</option>
+                            <option value="abstract">Abstract</option>
+                            <option value="realistic">Realistic</option>
+                            <option value="flat">Flat Design</option>
+                            <option value="3d">3D Render</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button onclick="generateCreativeBrief()" class="btn-primary">
+                        <i class="fas fa-magic mr-2"></i>Generate Creative Brief
+                    </button>
+                </div>
+                
+                <div id="brief-output" class="mt-6 hidden">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Title Suggestions</label>
+                                <textarea id="brief-titles" class="input-field h-24" readonly></textarea>
+                                <button onclick="copyToClipboard('brief-titles')" class="copy-btn mt-2">Copy</button>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                                <textarea id="brief-description" class="input-field h-32" readonly></textarea>
+                                <button onclick="copyToClipboard('brief-description')" class="copy-btn mt-2">Copy</button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Keywords</label>
+                                <textarea id="brief-keywords" class="input-field h-24" readonly></textarea>
+                                <button onclick="copyToClipboard('brief-keywords')" class="copy-btn mt-2">Copy</button>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Category & Tips</label>
+                                <textarea id="brief-tips" class="input-field h-32" readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keyword Research Tool -->
+            <div id="keyword-research" class="tab-content">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-search text-blue-500 mr-2"></i>
+                    Keyword Research & Optimization
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Base Keyword</label>
+                        <input type="text" id="base-keyword" class="input-field" placeholder="e.g., business meeting">
+                        
+                        <label class="block text-sm font-medium text-gray-700 mb-2 mt-4">Target Audience</label>
+                        <select id="target-audience" class="input-field">
+                            <option value="general">General</option>
+                            <option value="business">Business Professional</option>
+                            <option value="creative">Creative Industry</option>
+                            <option value="marketing">Marketing Teams</option>
+                            <option value="startup">Startups</option>
+                            <option value="corporate">Corporate</option>
+                        </select>
+                        
+                        <button onclick="generateKeywords()" class="btn-primary mt-4 w-full">
+                            <i class="fas fa-cogs mr-2"></i>Generate Keywords
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Generated Keywords</label>
+                        <div id="keyword-output" class="border-2 border-gray-200 rounded-lg p-4 h-64 overflow-y-auto">
+                            <p class="text-gray-500 text-center">Keywords will appear here...</p>
+                        </div>
+                        <button onclick="copyAllKeywords()" class="copy-btn mt-2">Copy All Keywords</button>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Trending Topics</label>
+                    <div id="trending-topics" class="flex flex-wrap gap-2">
+                        <!-- Trending topics will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Title Optimizer -->
+            <div id="title-optimizer" class="tab-content">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-edit text-green-500 mr-2"></i>
+                    Title Optimizer
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Your Title</label>
+                        <textarea id="original-title" class="input-field h-24" placeholder="Enter your title here..."></textarea>
+                        
+                        <label class="block text-sm font-medium text-gray-700 mb-2 mt-4">Optimization Goals</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="seo-optimize" class="mr-2"> SEO Optimization
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="trending-words" class="mr-2"> Include Trending Words
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="emotional-appeal" class="mr-2"> Emotional Appeal
+                            </label>
+                        </div>
+                        
+                        <button onclick="optimizeTitle()" class="btn-primary mt-4 w-full">
+                            <i class="fas fa-magic mr-2"></i>Optimize Title
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Optimized Suggestions</label>
+                        <div id="title-suggestions" class="space-y-3 h-64 overflow-y-auto">
+                            <p class="text-gray-500 text-center">Optimized titles will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Title Analysis</label>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600" id="title-score">0</div>
+                            <div class="text-sm text-gray-600">SEO Score</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600" id="title-length">0</div>
+                            <div class="text-sm text-gray-600">Characters</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-orange-600" id="title-words">0</div>
+                            <div class="text-sm text-gray-600">Words</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Palette Generator -->
+            <div id="color-palette" class="tab-content">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-palette text-purple-500 mr-2"></i>
+                    Color Palette Generator
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Color Theme</label>
+                        <select id="color-theme" class="input-field">
+                            <option value="modern">Modern & Professional</option>
+                            <option value="vibrant">Vibrant & Energetic</option>
+                            <option value="calm">Calm & Peaceful</option>
+                            <option value="warm">Warm & Inviting</option>
+                            <option value="cool">Cool & Fresh</option>
+                            <option value="monochrome">Monochromatic</option>
+                            <option value="retro">Retro & Vintage</option>
+                        </select>
+                        
+                        <label class="block text-sm font-medium text-gray-700 mb-2 mt-4">Base Color (Optional)</label>
+                        <input type="color" id="base-color" class="w-full h-12 border-2 border-gray-200 rounded-lg">
+                        
+                        <button onclick="generateColorPalette()" class="btn-primary mt-4 w-full">
+                            <i class="fas fa-magic mr-2"></i>Generate Palette
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Generated Palette</label>
+                        <div id="color-palette-output" class="grid grid-cols-5 gap-3 mb-4">
+                            <!-- Color swatches will be generated here -->
+                        </div>
+                        <div id="color-codes" class="space-y-2 text-sm">
+                            <!-- Color codes will appear here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Saved Palettes</label>
+                    <div id="saved-palettes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Saved palettes will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Dashboard -->
+            <div id="analytics" class="tab-content">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-chart-line text-indigo-500 mr-2"></i>
+                    Performance Analytics
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3">Daily Progress</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Projects Completed</span>
+                                    <span id="daily-progress-text">0/5</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="daily-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Keywords Generated</span>
+                                    <span id="keyword-progress-text">0/50</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="keyword-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Titles Optimized</span>
+                                    <span id="title-progress-text">0/10</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="title-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3">Quick Actions</h4>
+                        <div class="space-y-3">
+                            <button onclick="resetDailyStats()" class="btn-secondary w-full">
+                                <i class="fas fa-redo mr-2"></i>Reset Daily Progress
+                            </button>
+                            <button onclick="exportData()" class="btn-secondary w-full">
+                                <i class="fas fa-download mr-2"></i>Export Data
+                            </button>
+                            <button onclick="importData()" class="btn-secondary w-full">
+                                <i class="fas fa-upload mr-2"></i>Import Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h4 class="font-semibold text-gray-800 mb-3">Recent Activity</h4>
+                    <div id="recent-activity" class="card p-4 max-h-64 overflow-y-auto">
+                        <p class="text-gray-500 text-center">No recent activity</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Tools Section -->
+        <div class="tool-section">
+            <h2 class="text-2xl font-bold text-white mb-6 text-center">
+                <i class="fas fa-tools mr-2"></i>Quick Tools
+            </h2>
+            
+            <div class="dashboard-grid">
+                <!-- File Naming Helper -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-file-signature text-blue-500 mr-2"></i>
+                        File Naming Helper
+                    </h3>
+                    <input type="text" id="file-description" class="input-field mb-3" placeholder="Describe your file...">
+                    <select id="file-type" class="input-field mb-3">
+                        <option value="vector">Vector</option>
+                        <option value="photo">Photo</option>
+                        <option value="illustration">Illustration</option>
+                        <option value="template">Template</option>
+                    </select>
+                    <button onclick="generateFileName()" class="btn-primary w-full">Generate Name</button>
+                    <div id="file-name-output" class="mt-3 p-3 bg-gray-100 rounded hidden">
+                        <span id="generated-file-name"></span>
+                        <button onclick="copyToClipboard('generated-file-name')" class="copy-btn ml-2">Copy</button>
+                    </div>
+                </div>
+
+                <!-- Category Selector -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-sitemap text-green-500 mr-2"></i>
+                        Adobe Stock Categories
+                    </h3>
+                    <div id="categories-list" class="max-h-48 overflow-y-auto space-y-2">
+                        <!-- Categories will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Upload Checklist -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-check-circle text-orange-500 mr-2"></i>
+                        Upload Checklist
+                    </h3>
+                    <div class="space-y-2" id="upload-checklist">
+                        <!-- Checklist items will be populated here -->
+                    </div>
+                    <button onclick="resetChecklist()" class="btn-secondary w-full mt-4">Reset Checklist</button>
+                </div>
+
+                <!-- Trending Keywords -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-fire text-red-500 mr-2"></i>
+                        Trending Keywords
+                    </h3>
+                    <div id="trending-keywords-list" class="space-y-2 max-h-48 overflow-y-auto">
+                        <!-- Trending keywords will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-text"></span>
+    </div>
+
+    <script>
+        // Global variables
+        let stats = {
+            totalProjects: 0,
+            completedToday: 0,
+            keywordsGenerated: 0,
+            palettesCreated: 0,
+            titlesOptimized: 0
+        };
+
+        let savedPalettes = [];
+        let recentActivity = [];
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            initializeCategories();
+            initializeUploadChecklist();
+            initializeTrendingKeywords();
+            updateProgressBars();
+        });
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Creative Brief Generator
+        function generateCreativeBrief() {
+            const category = document.getElementById('brief-category').value;
+            const style = document.getElementById('brief-style').value;
+            
+            if (!category) {
+                showNotification('Please select a category first!', 'warning');
+                return;
+            }
+
+            const briefData = generateBriefData(category, style);
+            
+            document.getElementById('brief-titles').value = briefData.titles.join('\n');
+            document.getElementById('brief-description').value = briefData.description;
+            document.getElementById('brief-keywords').value = briefData.keywords.join(', ');
+            document.getElementById('brief-tips').value = `Category: ${briefData.category}\n\nTips:\n${briefData.tips.join('\n')}`;
+            
+            document.getElementById('brief-output').classList.remove('hidden');
+            
+            stats.totalProjects++;
+            stats.completedToday++;
+            updateStats();
+            addActivity('Generated creative brief for ' + category);
+            showNotification('Creative brief generated successfully!');
+        }
+
+        function generateBriefData(category, style) {
+            const briefTemplates = {
+                technology: {
+                    titles: [
+                        'Modern Tech Innovation Vector Pack',
+                        'Digital Technology Icon Set Collection',
+                        'Futuristic Tech Concept Illustrations'
+                    ],
+                    description: 'A comprehensive collection of technology-themed vectors perfect for modern digital presentations, websites, and tech-related projects. Features clean, minimalist design with professional appeal.',
+                    keywords: ['technology', 'digital', 'innovation', 'modern', 'vector', 'icon', 'tech', 'futuristic', 'business', 'startup'],
+                    category: 'Technology > Computers',
+                    tips: [
+                        'Use clean lines and geometric shapes',
+                        'Stick to a blue and white color scheme',
+                        'Ensure scalability for different sizes'
+                    ]
+                },
+                business: {
+                    titles: [
+                        'Professional Business Meeting Vector Set',
+                        'Corporate Success Icons Collection',
+                        'Business Growth Illustration Pack'
+                    ],
+                    description: 'Professional business-themed illustrations ideal for corporate presentations, annual reports, and business websites. Designed with corporate aesthetics in mind.',
+                    keywords: ['business', 'corporate', 'professional', 'meeting', 'success', 'growth', 'teamwork', 'strategy', 'finance', 'office'],
+                    category: 'Business > Concepts',
+                    tips: [
+                        'Use professional color palette',
+                        'Include diverse representation',
+                        'Focus on positive business concepts'
+                    ]
+                },
+                lifestyle: {
+                    titles: [
+                        'Modern Lifestyle Vector Collection',
+                        'Daily Life Activity Icons',
+                        'Wellness and Lifestyle Illustrations'
+                    ],
+                    description: 'Beautiful lifestyle illustrations capturing modern daily activities, wellness concepts, and contemporary living. Perfect for lifestyle blogs and wellness apps.',
+                    keywords: ['lifestyle', 'wellness', 'daily life', 'modern', 'health', 'fitness', 'home', 'family', 'happiness', 'balance'],
+                    category: 'People > Lifestyle',
+                    tips: [
+                        'Use warm, inviting colors',
+                        'Show relatable scenarios',
+                        'Include wellness elements'
+                    ]
+                }
+            };
+
+            return briefTemplates[category] || briefTemplates.technology;
+        }
+
+        // Keyword Research
+        function generateKeywords() {
+            const baseKeyword = document.getElementById('base-keyword').value.trim();
+            const audience = document.getElementById('target-audience').value;
+            
+            if (!baseKeyword) {
+                showNotification('Please enter a base keyword!', 'warning');
+                return;
+            }
+
+            const keywords = generateKeywordVariations(baseKeyword, audience);
+            displayKeywords(keywords);
+            
+            stats.keywordsGenerated += keywords.length;
+            updateStats();
+            addActivity(`Generated ${keywords.length} keywords for "${baseKeyword}"`);
+            showNotification(`Generated ${keywords.length} keywords successfully!`);
+        }
+
+        function generateKeywordVariations(base, audience) {
+            const prefixes = ['modern', 'professional', 'creative', 'innovative', 'digital', 'contemporary'];
+            const suffixes = ['concept', 'design', 'illustration', 'vector', 'icon', 'graphic'];
+            const modifiers = ['team', 'group', 'people', 'abstract', 'minimalist', 'detailed'];
+            
+            const audienceKeywords = {
+                business: ['corporate', 'office', 'professional', 'executive'],
+                creative: ['artistic', 'design', 'creative', 'innovative'],
+                marketing: ['advertising', 'promotion', 'campaign', 'brand'],
+                startup: ['entrepreneur', 'startup', 'innovation', 'growth'],
+                corporate: ['enterprise', 'corporate', 'business', 'formal']
+            };
+
+            let keywords = [base];
+            
+            // Add prefix variations
+            prefixes.forEach(prefix => {
+                keywords.push(`${prefix} ${base}`);
+            });
+            
+            // Add suffix variations
+            suffixes.forEach(suffix => {
+                keywords.push(`${base} ${suffix}`);
+            });
+            
+            // Add modifier variations
+            modifiers.forEach(modifier => {
+                keywords.push(`${base} ${modifier}`);
+            });
+            
+            // Add audience-specific keywords
+            if (audienceKeywords[audience]) {
+                audienceKeywords[audience].forEach(audienceKw => {
+                    keywords.push(`${audienceKw} ${base}`);
+                    keywords.push(`${base} ${audienceKw}`);
+                });
+            }
+
+            return [...new Set(keywords)]; // Remove duplicates
+        }
+
+        function displayKeywords(keywords) {
+            const output = document.getElementById('keyword-output');
+            output.innerHTML = '';
+            
+            keywords.forEach(keyword => {
+                const keywordElement = document.createElement('span');
+                keywordElement.className = 'tag';
+                keywordElement.textContent = keyword;
+                keywordElement.onclick = () => copyToClipboard(keyword, null, true);
+                output.appendChild(keywordElement);
+            });
+        }
+
+        function copyAllKeywords() {
+            const keywords = Array.from(document.querySelectorAll('#keyword-output .tag'))
+                .map(tag => tag.textContent);
+            const keywordString = keywords.join(', ');
+            
+            navigator.clipboard.writeText(keywordString).then(() => {
+                showNotification('All keywords copied to clipboard!');
+            });
+        }
+
+        // Title Optimizer
+        function optimizeTitle() {
+            const originalTitle = document.getElementById('original-title').value.trim();
+            
+            if (!originalTitle) {
+                showNotification('Please enter a title to optimize!', 'warning');
+                return;
+            }
+
+            const suggestions = generateTitleSuggestions(originalTitle);
+            displayTitleSuggestions(suggestions);
+            analyzeTitleMetrics(originalTitle);
+            
+            stats.titlesOptimized++;
+            updateStats();
+            addActivity(`Optimized title: "${originalTitle}"`);
+            showNotification('Title optimized successfully!');
+        }
+
+        function generateTitleSuggestions(original) {
+            const powerWords = ['ultimate', 'complete', 'professional', 'premium', 'modern', 'creative', 'innovative', 'stunning'];
+            const actionWords = ['boost', 'enhance', 'transform', 'elevate', 'optimize', 'maximize'];
+            
+            const suggestions = [];
+            
+            // Original with power words
+            powerWords.forEach(word => {
+                suggestions.push(`${word.charAt(0).toUpperCase() + word.slice(1)} ${original}`);
+            });
+            
+            // Action word variations
+            actionWords.forEach(action => {
+                suggestions.push(`${original} to ${action.charAt(0).toUpperCase() + action.slice(1)} Your Design`);
+            });
+            
+            // SEO optimized versions
+            suggestions.push(`${original} - High Quality Vector Graphics`);
+            suggestions.push(`${original} Collection for Commercial Use`);
+            suggestions.push(`Premium ${original} Design Assets`);
+            
+            return suggestions.slice(0, 8); // Limit to 8 suggestions
+        }
+
+        function displayTitleSuggestions(suggestions) {
+            const container = document.getElementById('title-suggestions');
+            container.innerHTML = '';
+            
+            suggestions.forEach(suggestion => {
+                const suggestionDiv = document.createElement('div');
+                suggestionDiv.className = 'p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors';
+                suggestionDiv.innerHTML = `
+                    <div class="font-medium">${suggestion}</div>
+                    <div class="text-sm text-gray-600 mt-1">Characters: ${suggestion.length} | Words: ${suggestion.split(' ').length}</div>
+                `;
+                suggestionDiv.onclick = () => {
+                    document.getElementById('original-title').value = suggestion;
+                    analyzeTitleMetrics(suggestion);
+                    showNotification('Title selected!');
+                };
+                container.appendChild(suggestionDiv);
+            });
+        }
+
+        function analyzeTitleMetrics(title) {
+            const length = title.length;
+            const words = title.split(' ').length;
+            const score = Math.min(100, Math.max(0, 100 - Math.abs(60 - length) * 2)); // Optimal around 60 characters
+            
+            document.getElementById('title-score').textContent = score;
+            document.getElementById('title-length').textContent = length;
+            document.getElementById('title-words').textContent = words;
+        }
+
+        // Color Palette Generator
+        function generateColorPalette() {
+            const theme = document.getElementById('color-theme').value;
+            const baseColor = document.getElementById('base-color').value;
+            
+            const palette = generatePaletteColors(theme, baseColor);
+            displayColorPalette(palette);
+            
+            stats.palettesCreated++;
+            updateStats();
+            addActivity(`Generated ${theme} color palette`);
+            showNotification('Color palette generated successfully!');
+        }
+
+        function generatePaletteColors(theme, baseColor) {
+            const themes = {
+                modern: ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE'],
+                vibrant: ['#DC2626', '#EA580C', '#F59E0B', '#10B981', '#3B82F6'],
+                calm: ['#065F46', '#059669', '#10B981', '#6EE7B7', '#D1FAE5'],
+                warm: ['#DC2626', '#EA580C', '#F59E0B', '#FCD34D', '#FEF3C7'],
+                cool: ['#1E40AF', '#3B82F6', '#06B6D4', '#0891B2', '#155E75'],
+                monochrome: ['#111827', '#374151', '#6B7280', '#9CA3AF', '#E5E7EB'],
+                retro: ['#92400E', '#B45309', '#D97706', '#F59E0B', '#FCD34D']
+            };
+
+            return themes[theme] || themes.modern;
+        }
+
+        function displayColorPalette(colors) {
+            const paletteOutput = document.getElementById('color-palette-output');
+            const colorCodes = document.getElementById('color-codes');
+            
+            paletteOutput.innerHTML = '';
+            colorCodes.innerHTML = '';
+            
+            colors.forEach((color, index) => {
+                // Color swatch
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.backgroundColor = color;
+                swatch.onclick = () => copyToClipboard(color, null, true);
+                swatch.title = `Click to copy ${color}`;
+                paletteOutput.appendChild(swatch);
+                
+                // Color code
+                const codeDiv = document.createElement('div');
+                codeDiv.className = 'flex justify-between items-center p-2 bg-gray-50 rounded';
+                codeDiv.innerHTML = `
+                    <span class="font-mono text-sm">${color}</span>
+                    <button onclick="copyToClipboard('${color}', null, true)" class="text-xs text-blue-600 hover:text-blue-800">Copy</button>
+                `;
+                colorCodes.appendChild(codeDiv);
+            });
+        }
+
+        // Utility Functions
+        function copyToClipboard(text, element = null, isValue = false) {
+            let textToCopy;
+            
+            if (isValue) {
+                textToCopy = text;
+            } else if (typeof text === 'string' && !element) {
+                textToCopy = text;
+            } else {
+                const targetElement = typeof text === 'string' ? document.getElementById(text) : text;
+                textToCopy = targetElement.value || targetElement.textContent;
+            }
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showNotification('Copied to clipboard!');
+                if (element && !isValue) {
+                    element.textContent = 'Copied!';
+                    setTimeout(() => {
+                        element.textContent = 'Copy';
+                    }, 1500);
+                }
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showNotification('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            notificationText.textContent = message;
+            notification.className = `notification show ${type}`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateStats() {
+            document.getElementById('total-projects').textContent = stats.totalProjects;
+            document.getElementById('completed-today').textContent = stats.completedToday;
+            document.getElementById('keywords-generated').textContent = stats.keywordsGenerated;
+            document.getElementById('palettes-created').textContent = stats.palettesCreated;
+            
+            updateProgressBars();
+            saveStats();
+        }
+
+        function updateProgressBars() {
+            // Daily progress (out of 5)
+            const dailyProgress = Math.min(100, (stats.completedToday / 5) * 100);
+            document.getElementById('daily-progress').style.width = dailyProgress + '%';
+            document.getElementById('daily-progress-text').textContent = `${stats.completedToday}/5`;
+            
+            // Keyword progress (out of 50)
+            const keywordProgress = Math.min(100, (stats.keywordsGenerated / 50) * 100);
+            document.getElementById('keyword-progress').style.width = keywordProgress + '%';
+            document.getElementById('keyword-progress-text').textContent = `${stats.keywordsGenerated}/50`;
+            
+            // Title progress (out of 10)
+            const titleProgress = Math.min(100, (stats.titlesOptimized / 10) * 100);
+            document.getElementById('title-progress').style.width = titleProgress + '%';
+            document.getElementById('title-progress-text').textContent = `${stats.titlesOptimized}/10`;
+        }
+
+        function addActivity(activity) {
+            const timestamp = new Date().toLocaleString();
+            recentActivity.unshift(`${timestamp}: ${activity}`);
+            
+            // Keep only last 10 activities
+            if (recentActivity.length > 10) {
+                recentActivity = recentActivity.slice(0, 10);
+            }
+            
+            updateRecentActivity();
+        }
+
+        function updateRecentActivity() {
+            const container = document.getElementById('recent-activity');
+            
+            if (recentActivity.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">No recent activity</p>';
+                return;
+            }
+            
+            container.innerHTML = recentActivity
+                .map(activity => `<div class="py-2 border-b border-gray-200 last:border-b-0">${activity}</div>`)
+                .join('');
+        }
+
+        // Quick Tools Functions
+        function generateFileName() {
+            const description = document.getElementById('file-description').value.trim();
+            const type = document.getElementById('file-type').value;
+            
+            if (!description) {
+                showNotification('Please enter a file description!', 'warning');
+                return;
+            }
+            
+            const cleanDescription = description.toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, '_');
+            
+            const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            const fileName = `${type}_${cleanDescription}_${timestamp}`;
+            
+            document.getElementById('generated-file-name').textContent = fileName;
+            document.getElementById('file-name-output').classList.remove('hidden');
+            
+            addActivity(`Generated file name: ${fileName}`);
+        }
+
+        function initializeCategories() {
+            const categories = [
+                'Animals', 'Architecture', 'Backgrounds', 'Beauty & Fashion',
+                'Business', 'Education', 'Food & Drink', 'Health & Medical',
+                'Illustrations', 'Nature', 'People', 'Sports & Recreation',
+                'Technology', 'Travel', 'Vectors', 'Abstract'
+            ];
+            
+            const container = document.getElementById('categories-list');
+            container.innerHTML = categories
+                .map(category => `
+                    <div class="tag cursor-pointer" onclick="copyToClipboard('${category}', null, true)">
+                        ${category}
+                    </div>
+                `)
+                .join('');
+        }
+
+        function initializeUploadChecklist() {
+            const checklistItems = [
+                'High resolution (minimum 4MP)',
+                'Proper file naming convention',
+                'Relevant keywords (minimum 7)',
+                'Appropriate category selected',
+                'No copyright issues',
+                'Good composition and quality',
+                'Proper metadata included'
+            ];
+            
+            const container = document.getElementById('upload-checklist');
+            container.innerHTML = checklistItems
+                .map((item, index) => `
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="checklist-${index}" class="rounded">
+                        <span class="text-sm">${item}</span>
+                    </label>
+                `)
+                .join('');
+        }
+
+        function resetChecklist() {
+            const checkboxes = document.querySelectorAll('#upload-checklist input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            showNotification('Checklist reset!');
+        }
+
+        function initializeTrendingKeywords() {
+            const trendingKeywords = [
+                'remote work', 'sustainability', 'digital transformation', 'AI technology',
+                'wellness', 'minimalism', 'e-commerce', 'virtual reality', 'blockchain',
+                'mental health', 'clean energy', 'social media', 'mobile app', 'startup'
+            ];
+            
+            const container = document.getElementById('trending-keywords-list');
+            container.innerHTML = trendingKeywords
+                .map(keyword => `
+                    <div class="tag cursor-pointer" onclick="copyToClipboard('${keyword}', null, true)">
+                        🔥 ${keyword}
+                    </div>
+                `)
+                .join('');
+                
+            // Also populate trending topics in keyword research
+            const trendingTopics = document.getElementById('trending-topics');
+            trendingTopics.innerHTML = trendingKeywords
+                .map(keyword => `
+                    <div class="tag cursor-pointer" onclick="document.getElementById('base-keyword').value='${keyword}'">
+                        ${keyword}
+                    </div>
+                `)
+                .join('');
+        }
+
+        // Data Management
+        function saveStats() {
+            localStorage.setItem('adobeStockStats', JSON.stringify(stats));
+            localStorage.setItem('adobeStockActivity', JSON.stringify(recentActivity));
+        }
+
+        function loadStats() {
+            const savedStats = localStorage.getItem('adobeStockStats');
+            const savedActivity = localStorage.getItem('adobeStockActivity');
+            
+            if (savedStats) {
+                stats = JSON.parse(savedStats);
+                updateStats();
+            }
+            
+            if (savedActivity) {
+                recentActivity = JSON.parse(savedActivity);
+                updateRecentActivity();
+            }
+        }
+
+        function resetDailyStats() {
+            stats.completedToday = 0;
+            stats.keywordsGenerated = 0;
+            stats.titlesOptimized = 0;
+            recentActivity = [];
+            updateStats();
+            updateRecentActivity();
+            showNotification('Daily stats reset!');
+        }
+
+        function exportData() {
+            const data = {
+                stats: stats,
+                activity: recentActivity,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `adobe_stock_data_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully!');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            if (data.stats) {
+                                stats = data.stats;
+                                updateStats();
+                            }
+                            if (data.activity) {
+                                recentActivity = data.activity;
+                                updateRecentActivity();
+                            }
+                            showNotification('Data imported successfully!');
+                        } catch (error) {
+                            showNotification('Error importing data!', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Listen for title input changes to update metrics
+        document.getElementById('original-title').addEventListener('input', function() {
+            const title = this.value;
+            if (title) {
+                analyzeTitleMetrics(title);
+            }
+        });
+    </script>
+</body>
+</html>

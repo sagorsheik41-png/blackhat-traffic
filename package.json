@@ -1,0 +1,57 @@
+{
+    "name": "blackhat-traffic-saas",
+    "version": "1.0.0",
+    "description": "Unified SaaS Platform — All-in-one digital marketing, trading, and content creation suite",
+    "main": "server.js",
+    "scripts": {
+        "dev": "nodemon server.js",
+        "start": "node server.js",
+        "build": "npm run css:build",
+        "css:build": "npx tailwindcss -i ./src/input.css -o ./public/css/styles.css",
+        "css:watch": "npx tailwindcss -i ./src/input.css -o ./public/css/styles.css --watch",
+        "lint": "eslint .",
+        "test": "jest",
+        "deploy": "vercel --prod",
+        "deploy:preview": "vercel"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.98.0",
+        "axios": "^1.13.5",
+        "bcryptjs": "^2.4.3",
+        "connect-flash": "^0.1.1",
+        "connect-mongo": "^5.1.0",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "ejs": "^3.1.9",
+        "express": "^4.18.2",
+        "express-ejs-layouts": "^2.5.1",
+        "express-rate-limit": "^7.5.1",
+        "express-session": "^1.17.3",
+        "express-validator": "^7.0.1",
+        "firebase": "^10.7.0",
+        "firebase-admin": "^12.0.0",
+        "helmet": "^7.1.0",
+        "jsonwebtoken": "^9.0.2",
+        "mongodb-memory-server": "^11.0.1",
+        "mongoose": "^7.6.3",
+        "morgan": "^1.10.0",
+        "multer": "^1.4.5-lts.1",
+        "ws": "^8.16.0"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.2",
+        "tailwindcss": "^3.4.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "keywords": [
+        "saas",
+        "traffic",
+        "trading",
+        "adobe-stock",
+        "content-generator"
+    ],
+    "license": "ISC"
+}

@@ -1,0 +1,480 @@
+<div class="px-4 py-8 max-w-[1600px] mx-auto min-h-screen relative overflow-hidden">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1
+                class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500 mb-2">
+                <i class="fas fa-camera text-blue-500 mr-2"></i> Adobe Stock Suite
+            </h1>
+            <p class="text-gray-400">Complete AI Contributor Toolkit: Metadata, Keyword Research, Batch Optimization</p>
+        </div>
+        <div class="flex gap-3">
+            <button id="asTourBtn"
+                class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-lg text-sm border border-gray-700 transition-colors">
+                <i class="fas fa-info-circle mr-2"></i> Quick Guide
+            </button>
+            <div
+                class="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-lg text-sm flex items-center">
+                <i class="fas fa-check-circle mr-2"></i> Ready
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats & Analytics Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div
+            class="glass-panel border border-white/10 p-4 rounded-xl flex items-center justify-between group hover:border-blue-500/50 transition-colors">
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Total Uploads</p>
+                <h3 class="text-2xl font-bold text-white font-mono" id="asTotalUploads">0</h3>
+            </div>
+            <div
+                class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+        </div>
+        <div
+            class="glass-panel border border-white/10 p-4 rounded-xl flex items-center justify-between group hover:border-emerald-500/50 transition-colors">
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Keywords Gen</p>
+                <h3 class="text-2xl font-bold text-white font-mono" id="asKeywordsGen">0</h3>
+            </div>
+            <div
+                class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                <i class="fas fa-tags"></i>
+            </div>
+        </div>
+        <div
+            class="glass-panel border border-white/10 p-4 rounded-xl flex items-center justify-between group hover:border-purple-500/50 transition-colors">
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Palettes</p>
+                <h3 class="text-2xl font-bold text-white font-mono" id="asPalettesGen">0</h3>
+            </div>
+            <div
+                class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                <i class="fas fa-palette"></i>
+            </div>
+        </div>
+        <div class="glass-panel border border-white/10 p-4 rounded-xl flex flex-col justify-center">
+            <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Market Pulse</p>
+            <!-- Chart initialized by JS -->
+            <div class="h-10 w-full relative"><canvas id="asMarketPulseChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Navigation / Tabs -->
+        <div class="lg:col-span-3 space-y-4">
+
+            <div class="glass-panel border border-white/10 rounded-2xl p-4 sticky top-6">
+                <h3 class="text-sm font-bold text-gray-300 uppercase tracking-widest mb-4 px-2">Workspace Tools</h3>
+
+                <nav class="space-y-2 flex flex-col" id="asTabNav">
+                    <button class="as-tab-btn active" data-target="asTabBrief">
+                        <i class="fas fa-lightbulb w-6"></i> Creative Brief
+                    </button>
+                    <button class="as-tab-btn" data-target="asTabKeywords">
+                        <i class="fas fa-search w-6"></i> Keyword Research
+                    </button>
+                    <button class="as-tab-btn" data-target="asTabTitle">
+                        <i class="fas fa-edit w-6"></i> Title Optimizer
+                    </button>
+                    <button class="as-tab-btn" data-target="asTabPalette">
+                        <i class="fas fa-paint-brush w-6"></i> Color Palette
+                    </button>
+                    <button class="as-tab-btn" data-target="asTabBatch">
+                        <i class="fas fa-layer-group w-6"></i> Batch Meta/ZIP
+                    </button>
+                </nav>
+
+                <hr class="border-white/5 my-6">
+
+                <h3 class="text-sm font-bold text-gray-300 uppercase tracking-widest mb-4 px-2">Trend Links</h3>
+                <div class="space-y-3 px-2 text-sm">
+                    <a href="https://trends.google.com" target="_blank"
+                        class="flex items-center text-gray-400 hover:text-white transition-colors"><i
+                            class="fab fa-google w-6"></i> Google Trends</a>
+                    <a href="https://www.shutterstock.com/trends" target="_blank"
+                        class="flex items-center text-gray-400 hover:text-white transition-colors"><i
+                            class="fas fa-image w-6"></i> Shutterstock Trends</a>
+                    <a href="https://www.facebook.com/ads/library/" target="_blank"
+                        class="flex items-center text-gray-400 hover:text-white transition-colors"><i
+                            class="fab fa-facebook w-6"></i> FB Ads Library</a>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Right Column: Tab Content Container -->
+        <div class="lg:col-span-9 glass-panel border border-white/10 rounded-2xl p-6 min-h-[600px] relative">
+
+            <!-- Tab 1: Creative Brief -->
+            <div id="asTabBrief" class="as-tab-content block">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-yellow-500/20 text-yellow-500 flex items-center justify-center mr-3 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    AI Creative Brief Generator
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label
+                            class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Category</label>
+                        <select id="asBriefCat"
+                            class="glass-input w-full px-4 py-3 rounded-xl border border-white/10 text-white bg-gray-900/50">
+                            <option value="">Select a category...</option>
+                            <option value="business">Business & Corporate</option>
+                            <option value="technology">Technology & AI</option>
+                            <option value="lifestyle">Lifestyle & Wellness</option>
+                            <option value="abstract">Abstract Backgrounds</option>
+                            <option value="holiday">Holidays & Seasons</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Visual
+                            Style</label>
+                        <select id="asBriefStyle"
+                            class="glass-input w-full px-4 py-3 rounded-xl border border-white/10 text-white bg-gray-900/50">
+                            <option value="">Select style...</option>
+                            <option value="3d">3D Rendered</option>
+                            <option value="flat">Flat Illustration</option>
+                            <option value="photo">Cinematic Photography</option>
+                            <option value="minimal">Minimalist</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="asGenBriefBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all mb-8">
+                    Generate Creative Brief
+                </button>
+                <div id="asBriefOutput" class="hidden grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-400 mb-2">Title Suggestions</label>
+                            <textarea id="asBriefTitles"
+                                class="glass-input w-full h-24 p-3 rounded-lg border border-white/10 text-white text-sm bg-black/30"
+                                readonly></textarea>
+                            <button
+                                class="as-copy-btn mt-2 text-xs bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded border border-white/10 transition-colors"
+                                data-copy="asBriefTitles">Copy</button>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-400 mb-2">Description / Prompt
+                                Ideas</label>
+                            <textarea id="asBriefDesc"
+                                class="glass-input w-full h-32 p-3 rounded-lg border border-white/10 text-white text-sm bg-black/30"
+                                readonly></textarea>
+                            <button
+                                class="as-copy-btn mt-2 text-xs bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded border border-white/10 transition-colors"
+                                data-copy="asBriefDesc">Copy</button>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-400 mb-2">Target Keywords</label>
+                            <textarea id="asBriefKeywords"
+                                class="glass-input w-full h-24 p-3 rounded-lg border border-white/10 text-white text-sm bg-black/30"
+                                readonly></textarea>
+                            <button
+                                class="as-copy-btn mt-2 text-xs bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded border border-white/10 transition-colors"
+                                data-copy="asBriefKeywords">Copy</button>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-400 mb-2">Trending Variations</label>
+                            <textarea id="asBriefTips"
+                                class="glass-input w-full h-32 p-3 rounded-lg border border-white/10 text-white text-sm bg-black/30"
+                                readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Keyword Research -->
+            <div id="asTabKeywords" class="as-tab-content hidden">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-500 flex items-center justify-center mr-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    Advanced Keyword Research
+                </h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Base
+                                Subject/Keyword</label>
+                            <input type="text" id="asKwBase" placeholder="e.g. happy golden retriever"
+                                class="glass-input w-full px-4 py-3 rounded-xl border border-white/10 text-white bg-gray-900/50">
+                        </div>
+                        <div class="mb-6">
+                            <label
+                                class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Target
+                                Audience / Niche</label>
+                            <select id="asKwAudience"
+                                class="glass-input w-full px-4 py-3 rounded-xl border border-white/10 text-white bg-gray-900/50">
+                                <option value="general">General Commercial</option>
+                                <option value="business">Corporate/B2B</option>
+                                <option value="creative">Creative/Design</option>
+                                <option value="social">Social Media</option>
+                            </select>
+                        </div>
+                        <button id="asGenKwBtn"
+                            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all">
+                            Generate SEO Keywords
+                        </button>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-semibold text-gray-400 mb-2">Extracted Keywords (30-50
+                            recommended)</label>
+                        <div id="asKwOutput"
+                            class="flex-1 bg-black/30 border border-white/10 rounded-xl p-4 flex flex-wrap content-start gap-2 overflow-y-auto min-h-[200px]">
+                            <p class="text-gray-500 text-sm italic w-full text-center mt-8">Keywords will populate
+                                here...</p>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <button id="asKwCopyBtn"
+                                class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm border border-white/10 flex-1 transition-colors"><i
+                                    class="fas fa-copy mr-2"></i> Copy All Comma-Separated</button>
+                            <button id="asKwClearBtn"
+                                class="bg-red-900/30 hover:bg-red-900/50 text-red-400 px-4 py-2 rounded-lg text-sm border border-red-500/30 transition-colors"><i
+                                    class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Title Optimizer -->
+            <div id="asTabTitle" class="as-tab-content hidden">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center mr-3 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    SEO Title Optimizer
+                </h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Raw
+                                Asset Description</label>
+                            <textarea id="asTitleInput"
+                                class="glass-input w-full h-32 px-4 py-3 rounded-xl border border-white/10 text-white bg-gray-900/50"
+                                placeholder="Describe the image (e.g. a man sitting at a desk looking stressed at a laptop)"></textarea>
+                        </div>
+                        <div class="mb-6 space-y-3 bg-gray-900/30 p-4 rounded-xl border border-white/5">
+                            <label class="flex items-center text-sm text-gray-300">
+                                <input type="checkbox" id="asTitleOptSeo" checked
+                                    class="form-checkbox bg-gray-800 border-gray-600 text-indigo-500 rounded mr-3">
+                                Inject High-Volume SEO Terms
+                            </label>
+                            <label class="flex items-center text-sm text-gray-300">
+                                <input type="checkbox" id="asTitleOptEmotional"
+                                    class="form-checkbox bg-gray-800 border-gray-600 text-indigo-500 rounded mr-3"> Add
+                                Emotional Hooks (e.g. Beautiful, Stunning)
+                            </label>
+                        </div>
+                        <button id="asGenTitleBtn"
+                            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all">
+                            Optimize Title
+                        </button>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-semibold text-gray-400 mb-2">Optimized Selling Titles</label>
+                        <div id="asTitleOutput" class="flex-1 space-y-3 overflow-y-auto">
+                            <div class="text-gray-500 text-sm italic text-center mt-8">Optimized variations will appear
+                                here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Color Palette -->
+            <div id="asTabPalette" class="as-tab-content hidden">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center mr-3 shadow-[0_0_15px_rgba(217,70,239,0.2)]">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    Vector Color Palette Generator
+                </h2>
+                <div class="max-w-3xl mx-auto">
+                    <div class="flex gap-4 mb-8">
+                        <div class="flex-1">
+                            <label
+                                class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Theme
+                                Profile</label>
+                            <select id="asPaletteTheme"
+                                class="glass-input w-full px-4 py-3 rounded-xl border border-white/10 text-white bg-gray-900/50">
+                                <option value="modern">Modern & Clean</option>
+                                <option value="cyberpunk">Cyberpunk / Synthwave</option>
+                                <option value="pastel">Soft Pastels</option>
+                                <option value="corporate">Corporate Blue/Gray</option>
+                                <option value="sunset">Warm Sunset</option>
+                            </select>
+                        </div>
+                        <div class="w-32">
+                            <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Base
+                                Seed</label>
+                            <input type="color" id="asPaletteBase" value="#6366f1"
+                                class="w-full h-[50px] p-1 bg-gray-900/50 border border-white/10 rounded-xl cursor-pointer">
+                        </div>
+                    </div>
+                    <button id="asGenPaletteBtn"
+                        class="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-3 rounded-xl shadow-[0_0_20px_rgba(217,70,239,0.4)] transition-all mb-10">
+                        Generate Hex Palette
+                    </button>
+
+                    <div id="asPaletteContainer" class="hidden">
+                        <div class="relative w-full h-32 rounded-2xl overflow-hidden flex mb-4 shadow-2xl"
+                            id="asPaletteStrip">
+                            <!-- Visual strips appended here -->
+                        </div>
+                        <div class="grid grid-cols-5 gap-2 text-center" id="asPaletteHexes">
+                            <!-- Hex codes appended here -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab 5: Batch Metadata ZIP Tool -->
+            <div id="asTabBatch" class="as-tab-content hidden">
+                <h2 class="text-2xl font-bold text-white mb-2 flex items-center">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center mr-3 shadow-[0_0_15px_rgba(20,181,158,0.2)]">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    Smart Bulk Download & File Packager
+                </h2>
+                <p class="text-gray-400 text-sm mb-6 max-w-2xl">Drop image or vector files here. We will append SEO
+                    optimized names based on your input and package them into a single ZIP archive ready for Adobe Stock
+                    ingestion.</p>
+
+                <div class="grid md:grid-cols-5 gap-6">
+                    <div class="md:col-span-2 space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">Global
+                                Prefix/Description</label>
+                            <input type="text" id="asBatchPrefix" placeholder="e.g. 3d abstract background"
+                                class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white bg-gray-900/50">
+                        </div>
+                        <div class="bg-gray-900/40 p-4 rounded-xl border border-white/5 text-sm space-y-3">
+                            <div class="flex items-center justify-between text-gray-300">
+                                <span>Files Selected:</span>
+                                <span id="asBatchCount" class="font-bold text-white">0</span>
+                            </div>
+                            <div class="flex items-center justify-between text-gray-300">
+                                <span>Detected Types:</span>
+                                <span id="asBatchTypes" class="font-bold text-blue-400">-</span>
+                            </div>
+                            <button id="asBatchClearBtn"
+                                class="w-full text-xs text-red-400 hover:text-red-300 underline mt-2 block text-center disabled:opacity-50">Clear
+                                Queue</button>
+                        </div>
+                        <button id="asBatchZipBtn"
+                            class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-xl shadow-[0_0_20px_rgba(20,181,158,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            Generate ZIP Archive
+                        </button>
+                    </div>
+
+                    <div class="md:col-span-3">
+                        <div id="asDropZone"
+                            class="border-2 border-dashed border-gray-600 hover:border-teal-500 bg-gray-900/30 rounded-2xl p-8 text-center transition-colors cursor-pointer min-h-[250px] flex flex-col items-center justify-center">
+                            <i class="fas fa-cloud-upload-alt text-5xl text-gray-500 mb-4 pointer-events-none"></i>
+                            <h3 class="text-lg font-bold text-gray-300 pointer-events-none">Drag & Drop Files Here</h3>
+                            <p class="text-sm text-gray-500 mt-2 pointer-events-none">Supported: JPG, PNG, SVG, EPS, AI
+                            </p>
+                            <input type="file" id="asBatchFileInput" multiple class="hidden">
+                        </div>
+
+                        <div id="asBatchPreview" class="mt-4 space-y-2 max-h-[200px] overflow-y-auto">
+                            <!-- File previews injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Additional component scoping for Adobe Stock */
+    .as-tab-btn {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: transparent;
+        border: 1px solid transparent;
+        color: #9ca3af;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        text-align: left;
+    }
+
+    .as-tab-btn:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #e5e7eb;
+    }
+
+    .as-tab-btn.active {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+        color: #60a5fa;
+    }
+
+    .as-kw-badge {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #34d399;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .as-kw-badge:hover {
+        background: rgba(16, 185, 129, 0.2);
+        transform: scale(1.05);
+    }
+
+    .as-drop-active {
+        border-color: #14b8a6 !important;
+        background: rgba(20, 184, 166, 0.1) !important;
+    }
+
+    /* File Rename UI logic */
+    .as-file-list-item {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 8px 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        font-size: 0.8rem;
+    }
+
+    .as-file-ext {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+</style>
+
+<!-- Load vendor libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Note: If user wants ZIP generation, we need JSZip -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script src="/js/adobeStock.js"></script>

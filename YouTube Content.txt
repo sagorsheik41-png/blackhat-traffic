@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Mysteries USA - Ultimate YouTube Content Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #ff4444;
+      --primary-dark: #cc3333;
+      --dark-bg: #0a0a0a;
+      --card-bg: #151515;
+      --card-hover: #1e1e1e;
+      --text: #f0f0f0;
+      --text-muted: #aaaaaa;
+      --border: #333333;
+      --success: #4CAF50;
+      --accent: #9C27B0;
+      --warning: #FF9800;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--dark-bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 20% 30%, rgba(255, 68, 68, 0.05) 0%, transparent 20%),
+                        radial-gradient(circle at 80% 70%, rgba(156, 39, 176, 0.05) 0%, transparent 20%);
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-left: 4px solid var(--primary);
+    }
+    
+    h1 {
+      color: var(--primary);
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      text-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+      background: linear-gradient(45deg, #ff4444, #ff8888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+    }
+    
+    .generator-card {
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    h2 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .video-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .video-option {
+      padding: 10px 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+    
+    .video-option.active {
+      border-color: var(--primary);
+      background: rgba(255, 68, 68, 0.1);
+    }
+    
+    .video-option:hover {
+      background: rgba(255, 68, 68, 0.1);
+    }
+    
+    .history-box {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 25px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      position: relative;
+    }
+    
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .history-title {
+      font-size: 1.3rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .history-content {
+      color: var(--text);
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    
+    .history-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin: 25px 0;
+      position: relative;
+    }
+    
+    .step-indicator::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--border);
+      z-index: 1;
+    }
+    
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+    }
+    
+    .step.active .step-number {
+      background: var(--primary);
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    }
+    
+    .step.completed .step-number {
+      background: var(--success);
+    }
+    
+    .step-label {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    
+    .step.active .step-label {
+      color: var(--primary);
+    }
+    
+    .content-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      min-height: 150px;
+      white-space: pre-wrap;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .content-title {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+    
+    .btn-generate {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-generate:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+    }
+    
+    .btn-copy {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-copy:hover {
+      background: #3d8b40;
+      transform: translateY(-2px);
+    }
+    
+    .btn-history {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .btn-history:hover {
+      background: #7B1FA2;
+      transform: translateY(-2px);
+    }
+    
+    .btn-all {
+      background: var(--warning);
+      color: white;
+      width: 100%;
+      justify-content: center;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 1.1rem;
+    }
+    
+    .btn-all:hover {
+      background: #F57C00;
+      transform: translateY(-2px);
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transform: translateX(150%);
+      transition: transform 0.4s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.success {
+      background: var(--success);
+    }
+    
+    .notification.warning {
+      background: var(--warning);
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    .seo-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
+    .seo-score {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .score-high {
+      color: var(--success);
+    }
+    
+    .score-medium {
+      color: #FF9800;
+    }
+    
+    .score-low {
+      color: var(--primary);
+    }
+    
+    .thumbnail-preview {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    
+    .thumbnail-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    .thumbnail-image {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .thumbnail-image::before {
+      content: "THUMBNAIL PREVIEW";
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      z-index: 1;
+    }
+    
+    .thumbnail-image::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255, 68, 68, 0.1), rgba(156, 39, 176, 0.1));
+    }
+    
+    .thumbnail-text {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+    
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .progress {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-ghost"></i> Dark Mysteries USA</h1>
+      <p class="subtitle">Ultimate YouTube Content Generator - One Click Video Creation</p>
+    </header>
+    
+    <div class="generator-card">
+      <div class="card-header">
+        <h2><i class="fas fa-video"></i> YouTube Content Generator</h2>
+        <div class="seo-indicator">
+          <div class="seo-score">
+            <i class="fas fa-chart-line"></i>
+            <span>SEO Score: <span id="seoScore">0</span>/100</span>
+          </div>
+          <div class="seo-score">
+            <i class="fas fa-bolt"></i>
+            <span>Viral Potential: <span id="viralScore">0</span>%</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="video-selector">
+        <div class="video-option active" data-video="mystery">Mystery & Crime</div>
+        <div class="video-option" data-video="paranormal">Paranormal</div>
+        <div class="video-option" data-video="conspiracy">Conspiracy</div>
+        <div class="video-option" data-video="truecrime">True Crime</div>
+        <div class="video-option" data-video="unsolved">Unsolved Cases</div>
+      </div>
+      
+      <div class="history-box">
+        <div class="history-header">
+          <div class="history-title">
+            <i class="fas fa-history"></i> Video Concept / Storyline
+          </div>
+          <button class="btn-history" id="copyHistoryBtn">
+            <i class="fas fa-copy"></i> Copy History
+          </button>
+        </div>
+        <div class="history-content" id="historyContent">
+          Exploring the dark secrets behind the mysterious blood trail murders that haunted a small town for decades. This true crime story reveals how a series of unexplained events led to a shocking discovery.
+        </div>
+        <div class="history-actions">
+          <button class="btn-generate" id="generateHistoryBtn">
+            <i class="fas fa-sync-alt"></i> Generate New Concept
+          </button>
+          <button class="btn-all" id="generateVideoBtn">
+            <i class="fas fa-play-circle"></i> Generate Complete Video Content
+          </button>
+        </div>
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress" id="progressBar"></div>
+      </div>
+      
+      <div class="step-indicator">
+        <div class="step active" data-step="1">
+          <div class="step-number">1</div>
+          <div class="step-label">Title</div>
+        </div>
+        <div class="step" data-step="2">
+          <div class="step-number">2</div>
+          <div class="step-label">Description</div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="step-number">3</div>
+          <div class="step-label">Keywords</div>
+        </div>
+      </div>
+      
+      <div class="content-section">
+        <div class="content-header">
+          <div class="content-title">
+            <i class="fas fa-heading"></i> YouTube Title
+          </div>
+          <div class="action-buttons">
+            <button class="btn-generate" id="generateTitleBtn">
+              <i class="fas fa-magic"></i> Generate
+            </button>
+            <button class="btn-copy" id="copyTitleBtn">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+        </div>
+        <div class="content-box" id="titleContent">
+          Blood Trail: The Unsolved Murders That Haunted a Small Town - True Crime Documentary
+        </div>
+        <div class="seo-indicator">
+          <div>Length: <span id="titleLength">0</span>/70 characters</div>
+          <div id="titleScore" class="score-high">SEO: Excellent</div>
+        </div>
+      </div>
+      
+      <div class="content-section">
+        <div class="content-header">
+          <div class="content-title">
+            <i class="fas fa-align-left"></i> Video Description
+          </div>
+          <div class="action-buttons">
+            <button class="btn-generate" id="generateDescBtn">
+              <i class="fas fa-magic"></i> Generate
+            </button>
+            <button class="btn-copy" id="copyDescBtn">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+        </div>
+        <div class="content-box" id="descContent">
+          In this chilling episode of Dark Mysteries USA, we delve into the Blood Trail murders that haunted a small town for decades. 
+
+🔍 What really happened during those terrifying nights?
+🕵️‍♂️ Why did the investigation hit a dead end?
+👻 Are there supernatural forces at play?
+
+Explore the dark corners of this mystery with us as we uncover hidden truths and unexplained phenomena. Don't forget to LIKE, SHARE, and SUBSCRIBE for more terrifying content every week!
+
+#DarkMysteriesUSA #TrueCrime #UnsolvedMysteries
+        </div>
+        <div class="seo-indicator">
+          <div>Length: <span id="descLength">0</span>/5000 characters</div>
+          <div id="descScore" class="score-high">SEO: Excellent</div>
+        </div>
+      </div>
+      
+      <div class="content-section">
+        <div class="content-header">
+          <div class="content-title">
+            <i class="fas fa-hashtag"></i> Keywords & Tags
+          </div>
+          <div class="action-buttons">
+            <button class="btn-generate" id="generateKeywordsBtn">
+              <i class="fas fa-magic"></i> Generate
+            </button>
+            <button class="btn-copy" id="copyKeywordsBtn">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+        </div>
+        <div class="content-box" id="keywordsContent">
+          DarkMysteriesUSA, True Crime, Unsolved Mysteries, Horror Documentary, Blood Trail, Paranormal Investigation, Cold Case, Supernatural, Crime Scene, Mystery, Haunting, Ghost Stories, Serial Killer, Investigation, Dark History
+        </div>
+        <div class="seo-indicator">
+          <div>Keywords: <span id="keywordsCount">0</span></div>
+          <div id="keywordsScore" class="score-high">SEO: Excellent</div>
+        </div>
+      </div>
+      
+      <div class="thumbnail-preview">
+        <div class="thumbnail-title">Thumbnail Design Concept</div>
+        <div class="thumbnail-image"></div>
+        <div class="thumbnail-text" id="thumbnailText">Based on your video concept, create a thumbnail with dark, mysterious imagery and bold text highlighting the key mystery.</div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Dark Mysteries USA &copy; 2023 | Ultimate YouTube Content Generator v4.0</p>
+    </div>
+  </div>
+  
+  <div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span>Content copied to clipboard!</span>
+  </div>
+
+  <script>
+    // Video categories and data
+    const videoCategories = {
+      mystery: {
+        name: "Mystery & Crime",
+        themes: ["unsolved murders", "missing persons", "cold cases", "conspiracies", "criminal investigations"]
+      },
+      paranormal: {
+        name: "Paranormal",
+        themes: ["ghost sightings", "haunted locations", "supernatural events", "poltergeists", "demonic encounters"]
+      },
+      conspiracy: {
+        name: "Conspiracy",
+        themes: ["government cover-ups", "secret societies", "alien encounters", "historical secrets", "hidden agendas"]
+      },
+      truecrime: {
+        name: "True Crime",
+        themes: ["serial killers", "famous cases", "criminal psychology", "forensic investigations", "justice system"]
+      },
+      unsolved: {
+        name: "Unsolved Cases",
+        themes: ["mysterious disappearances", "unexplained phenomena", "cryptic clues", "baffling evidence", "perplexing mysteries"]
+      }
+    };
+
+    // Current video category
+    let currentCategory = "mystery";
+    let currentHistory = "";
+    let currentTitle = "";
+    let currentDescription = "";
+    let currentKeywords = "";
+
+    // DOM elements
+    const videoOptions = document.querySelectorAll('.video-option');
+    const historyContent = document.getElementById('historyContent');
+    const titleContent = document.getElementById('titleContent');
+    const descContent = document.getElementById('descContent');
+    const keywordsContent = document.getElementById('keywordsContent');
+    const generateHistoryBtn = document.getElementById('generateHistoryBtn');
+    const copyHistoryBtn = document.getElementById('copyHistoryBtn');
+    const generateVideoBtn = document.getElementById('generateVideoBtn');
+    const generateTitleBtn = document.getElementById('generateTitleBtn');
+    const copyTitleBtn = document.getElementById('copyTitleBtn');
+    const generateDescBtn = document.getElementById('generateDescBtn');
+    const copyDescBtn = document.getElementById('copyDescBtn');
+    const generateKeywordsBtn = document.getElementById('generateKeywordsBtn');
+    const copyKeywordsBtn = document.getElementById('copyKeywordsBtn');
+    const notification = document.getElementById('notification');
+    const seoScore = document.getElementById('seoScore');
+    const viralScore = document.getElementById('viralScore');
+    const titleLength = document.getElementById('titleLength');
+    const descLength = document.getElementById('descLength');
+    const keywordsCount = document.getElementById('keywordsCount');
+    const titleScore = document.getElementById('titleScore');
+    const descScore = document.getElementById('descScore');
+    const keywordsScore = document.getElementById('keywordsScore');
+    const steps = document.querySelectorAll('.step');
+    const thumbnailText = document.getElementById('thumbnailText');
+    const progressBar = document.getElementById('progressBar');
+
+    // Initialize the application
+    function init() {
+      // Generate initial content
+      generateNewHistory();
+      updateAllContent();
+      
+      // Add event listeners
+      videoOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          const category = option.dataset.video;
+          currentCategory = category;
+          
+          // Update active state
+          videoOptions.forEach(opt => opt.classList.remove('active'));
+          option.classList.add('active');
+          
+          // Generate new content for the category
+          generateNewHistory();
+          updateAllContent();
+        });
+      });
+      
+      generateHistoryBtn.addEventListener('click', () => {
+        generateNewHistory();
+        updateAllContent();
+      });
+      
+      copyHistoryBtn.addEventListener('click', () => copyContent('history'));
+      generateVideoBtn.addEventListener('click', generateCompleteVideo);
+      generateTitleBtn.addEventListener('click', generateTitle);
+      copyTitleBtn.addEventListener('click', () => copyContent('title'));
+      generateDescBtn.addEventListener('click', generateDescription);
+      copyDescBtn.addEventListener('click', () => copyContent('description'));
+      generateKeywordsBtn.addEventListener('click', generateKeywords);
+      copyKeywordsBtn.addEventListener('click', () => copyContent('keywords'));
+      
+      // Update SEO scores initially
+      updateSEOScores();
+    }
+
+    // Generate complete video content in one click
+    function generateCompleteVideo() {
+      // Reset progress bar
+      progressBar.style.width = '0%';
+      
+      // Disable buttons during generation
+      disableButtons(true);
+      
+      // Step 1: Generate history
+      setTimeout(() => {
+        generateNewHistory();
+        progressBar.style.width = '25%';
+        
+        // Step 2: Generate title
+        setTimeout(() => {
+          generateTitle();
+          progressBar.style.width = '50%';
+          
+          // Step 3: Generate description
+          setTimeout(() => {
+            generateDescription();
+            progressBar.style.width = '75%';
+            
+            // Step 4: Generate keywords
+            setTimeout(() => {
+              generateKeywords();
+              progressBar.style.width = '100%';
+              
+              // Re-enable buttons
+              setTimeout(() => {
+                disableButtons(false);
+                progressBar.style.width = '0%';
+                showNotification('Complete video content generated successfully!', 'success');
+              }, 500);
+            }, 600);
+          }, 600);
+        }, 600);
+      }, 600);
+    }
+
+    // Disable/enable all buttons
+    function disableButtons(disabled) {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        if (button.id !== 'generateVideoBtn') {
+          button.disabled = disabled;
+        }
+      });
+      
+      if (disabled) {
+        generateVideoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Video...';
+        generateVideoBtn.disabled = true;
+      } else {
+        generateVideoBtn.innerHTML = '<i class="fas fa-play-circle"></i> Generate Complete Video Content';
+        generateVideoBtn.disabled = false;
+      }
+    }
+
+    // Generate new history based on current category
+    function generateNewHistory() {
+      const category = videoCategories[currentCategory];
+      const themes = category.themes;
+      const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+      
+      const historyTemplates = [
+        `Exploring the dark secrets behind ${randomTheme} that haunted investigators for years. This ${category.name.toLowerCase()} story reveals how a series of unexplained events led to a shocking discovery.`,
+        `Delve into the mysterious world of ${randomTheme} with this chilling investigation. What really happened, and why has this case remained unsolved for so long?`,
+        `Uncover the truth about ${randomTheme} in this gripping ${category.name.toLowerCase()} documentary. Follow the evidence as we piece together what really occurred.`,
+        `This is the story of ${randomTheme} that has baffled experts for decades. Join us as we explore every angle of this perplexing mystery.`,
+        `What if everything you thought you knew about ${randomTheme} was wrong? This investigation reveals startling new evidence that changes everything.`
+      ];
+      
+      currentHistory = historyTemplates[Math.floor(Math.random() * historyTemplates.length)];
+      historyContent.textContent = currentHistory;
+    }
+
+    // Generate title based on current history
+    function generateTitle() {
+      const category = videoCategories[currentCategory];
+      
+      const titleTemplates = [
+        `The Dark Truth About ${extractKeywords(currentHistory)[0]} - ${category.name} Documentary`,
+        `Unsolved: The ${extractKeywords(currentHistory)[0]} Mystery That Baffled Experts`,
+        `${extractKeywords(currentHistory)[0]} - What They Don't Want You To Know`,
+        `The ${extractKeywords(currentHistory)[0]} Files: Evidence They Tried To Hide`,
+        `Mystery Unveiled: The Truth Behind ${extractKeywords(currentHistory)[0]}`,
+        `Dark Secrets of ${extractKeywords(currentHistory)[0]} - Shocking Revelations`,
+        `${extractKeywords(currentHistory)[0]} Exposed: The Untold Story`
+      ];
+      
+      currentTitle = titleTemplates[Math.floor(Math.random() * titleTemplates.length)];
+      titleContent.textContent = currentTitle;
+      updateSEOScores();
+      updateStepIndicators();
+      updateThumbnailText();
+    }
+
+    // Generate description based on current title and history
+    function generateDescription() {
+      if (!currentTitle) {
+        generateTitle();
+      }
+      
+      const category = videoCategories[currentCategory];
+      const keywords = extractKeywords(currentHistory);
+      
+      const descriptionTemplates = [
+        `In this chilling episode of Dark Mysteries USA, we delve into ${currentTitle.toLowerCase()}.\n\n🔍 ${getQuestion(keywords)}\n🕵️‍♂️ ${getQuestion(keywords)}\n👻 ${getQuestion(keywords)}\n\nExplore the dark corners of this mystery with us as we uncover hidden truths and unexplained phenomena. Don't forget to LIKE, SHARE, and SUBSCRIBE for more terrifying content every week!\n\n#DarkMysteriesUSA #${category.name.replace(' ', '')} #${keywords[0].replace(' ', '')}`,
+        
+        `${currentTitle} - This ${category.name.toLowerCase()} investigation will change everything you thought you knew.\n\nWe've uncovered new evidence that sheds light on this decades-old mystery. What really happened, and why has the truth been hidden for so long?\n\nJoin us as we piece together the clues and reveal what they don't want you to know.\n\nIf you enjoy our content, please consider subscribing for more mysteries every week!\n\n#DarkMysteriesUSA #${category.name.replace(' ', '')} #${keywords[0].replace(' ', '')}`,
+        
+        `Welcome to Dark Mysteries USA, your source for the most intriguing ${category.name.toLowerCase()} stories.\n\nIn this episode, we explore ${currentTitle.toLowerCase()}. This case has puzzled investigators for years, but we may have found the missing piece of the puzzle.\n\n${getQuestion(keywords)}\n${getQuestion(keywords)}\n\nDon't forget to hit the LIKE button and SUBSCRIBE for more content that will keep you up at night!\n\n#DarkMysteriesUSA #${category.name.replace(' ', '')} #${keywords[0].replace(' ', '')}`
+      ];
+      
+      currentDescription = descriptionTemplates[Math.floor(Math.random() * descriptionTemplates.length)];
+      descContent.textContent = currentDescription;
+      updateSEOScores();
+      updateStepIndicators();
+    }
+
+    // Generate keywords based on current content
+    function generateKeywords() {
+      if (!currentTitle) {
+        generateTitle();
+      }
+      
+      const category = videoCategories[currentCategory];
+      const keywords = extractKeywords(currentHistory);
+      
+      const baseKeywords = [
+        "DarkMysteriesUSA", 
+        category.name.replace(' ', ''), 
+        ...keywords.slice(0, 3),
+        "Mystery", "Investigation", "Unsolved", "TrueCrime", "Documentary"
+      ];
+      
+      const additionalKeywords = [
+        "Paranormal", "Supernatural", "Conspiracy", "Haunting", "Ghost",
+        "ColdCase", "SerialKiller", "Police", "Detective", "Evidence",
+        "Shocking", "Revelation", "Secret", "CoverUp", "HiddenTruth"
+      ];
+      
+      // Select 5-8 additional keywords
+      const shuffled = [...additionalKeywords].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 5 + Math.floor(Math.random() * 4));
+      
+      currentKeywords = [...baseKeywords, ...selected].join(', ');
+      keywordsContent.textContent = currentKeywords;
+      updateSEOScores();
+      updateStepIndicators();
+    }
+
+    // Update all content displays
+    function updateAllContent() {
+      titleContent.textContent = currentTitle || "Title will be generated here...";
+      descContent.textContent = currentDescription || "Description will be generated here...";
+      keywordsContent.textContent = currentKeywords || "Keywords will be generated here...";
+      updateSEOScores();
+      updateStepIndicators();
+      updateThumbnailText();
+    }
+
+    // Copy content to clipboard
+    function copyContent(type) {
+      let content = '';
+      
+      switch(type) {
+        case 'history':
+          content = currentHistory;
+          break;
+        case 'title':
+          content = currentTitle;
+          break;
+        case 'description':
+          content = currentDescription;
+          break;
+        case 'keywords':
+          content = currentKeywords;
+          break;
+      }
+      
+      if (!content) {
+        showNotification(`Please generate ${type} first!`, 'warning');
+        return;
+      }
+      
+      // Create a temporary textarea to copy from
+      const textarea = document.createElement('textarea');
+      textarea.value = content;
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} copied to clipboard!`, 'success');
+        }
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+        showNotification('Failed to copy text. Please try again.', 'warning');
+      }
+      
+      document.body.removeChild(textarea);
+    }
+
+    // Update SEO scores
+    function updateSEOScores() {
+      // Calculate title score
+      const titleLengthValue = currentTitle ? currentTitle.length : 0;
+      titleLength.textContent = titleLengthValue;
+      
+      let titleScoreValue = 0;
+      if (titleLengthValue > 0) {
+        if (titleLengthValue <= 70) titleScoreValue = 100;
+        else if (titleLengthValue <= 80) titleScoreValue = 80;
+        else titleScoreValue = 60;
+      }
+      
+      // Update title score display
+      titleScore.textContent = `SEO: ${getScoreText(titleScoreValue)}`;
+      titleScore.className = `score-${getScoreLevel(titleScoreValue)}`;
+      
+      // Calculate description score
+      const descLengthValue = currentDescription ? currentDescription.length : 0;
+      descLength.textContent = descLengthValue;
+      
+      let descScoreValue = 0;
+      if (descLengthValue > 0) {
+        if (descLengthValue >= 150 && descLengthValue <= 5000) descScoreValue = 100;
+        else if (descLengthValue > 0) descScoreValue = 70;
+      }
+      
+      // Update description score display
+      descScore.textContent = `SEO: ${getScoreText(descScoreValue)}`;
+      descScore.className = `score-${getScoreLevel(descScoreValue)}`;
+      
+      // Calculate keywords score
+      const keywordsValue = currentKeywords ? currentKeywords.split(',').length : 0;
+      keywordsCount.textContent = keywordsValue;
+      
+      let keywordsScoreValue = 0;
+      if (keywordsValue > 0) {
+        if (keywordsValue >= 5 && keywordsValue <= 15) keywordsScoreValue = 100;
+        else if (keywordsValue > 0) keywordsScoreValue = 70;
+      }
+      
+      // Update keywords score display
+      keywordsScore.textContent = `SEO: ${getScoreText(keywordsScoreValue)}`;
+      keywordsScore.className = `score-${getScoreLevel(keywordsScoreValue)}`;
+      
+      // Calculate overall SEO score
+      const overallScore = Math.round((titleScoreValue + descScoreValue + keywordsScoreValue) / 3);
+      seoScore.textContent = overallScore;
+      
+      // Calculate viral potential
+      const viralPotential = Math.min(100, overallScore + 20);
+      viralScore.textContent = viralPotential;
+    }
+
+    // Update step indicators
+    function updateStepIndicators() {
+      steps.forEach(step => {
+        const stepNum = parseInt(step.dataset.step);
+        step.classList.remove('active', 'completed');
+        
+        if (stepNum === 1) {
+          if (currentTitle) step.classList.add('completed');
+          else step.classList.add('active');
+        } else if (stepNum === 2) {
+          if (currentDescription) step.classList.add('completed');
+          else if (currentTitle) step.classList.add('active');
+        } else if (stepNum === 3) {
+          if (currentKeywords) step.classList.add('completed');
+          else if (currentDescription) step.classList.add('active');
+        }
+      });
+    }
+
+    // Update thumbnail text
+    function updateThumbnailText() {
+      if (!currentTitle) return;
+      
+      const keywords = extractKeywords(currentTitle);
+      thumbnailText.textContent = `Thumbnail suggestion: Use a dark, mysterious background with bold text "${keywords[0]}" and an intriguing image related to ${videoCategories[currentCategory].name.toLowerCase()}. Add a red arrow or circle highlighting a key element.`;
+    }
+
+    // Helper functions
+    function extractKeywords(text) {
+      const words = text.toLowerCase().match(/\b(\w+)\b/g) || [];
+      const filtered = words.filter(word => word.length > 4);
+      return [...new Set(filtered)].slice(0, 5);
+    }
+
+    function getQuestion(keywords) {
+      const questions = [
+        `What really happened with the ${keywords[0]}?`,
+        `Why did the ${keywords[1]} remain unsolved?`,
+        `Is there a connection between the ${keywords[0]} and ${keywords[2]}?`,
+        `What evidence points to a ${keywords[3]}?`,
+        `Could ${keywords[4]} be the key to solving this mystery?`,
+        `What don't they want you to know about ${keywords[0]}?`
+      ];
+      return questions[Math.floor(Math.random() * questions.length)];
+    }
+
+    function getScoreText(score) {
+      if (score >= 90) return "Excellent";
+      if (score >= 70) return "Good";
+      if (score >= 50) return "Fair";
+      return "Poor";
+    }
+
+    function getScoreLevel(score) {
+      if (score >= 80) return "high";
+      if (score >= 60) return "medium";
+      return "low";
+    }
+
+    function showNotification(message, type = 'success') {
+      notification.textContent = message;
+      notification.className = 'notification';
+      notification.classList.add(type);
+      
+      // Change icon based on type
+      const icon = notification.querySelector('i');
+      icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                       type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-exclamation-circle';
+      
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Initialize the application when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

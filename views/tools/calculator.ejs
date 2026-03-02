@@ -1,0 +1,150 @@
+<!-- View Cost Calculator — Fully Migrated -->
+<div class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Tool Header -->
+    <div class="glass-card p-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20"></div>
+        <div class="relative z-10 flex items-center gap-4">
+            <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                <i class="fas fa-calculator text-white text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-white">View Cost Calculator</h2>
+                <p class="text-sm text-gray-400">Calculate total cost, time, and BDT conversion for views</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator Card -->
+    <div class="glass-card p-6">
+        <div class="space-y-5">
+
+            <!-- Cost per View -->
+            <div>
+                <label for="costPerView" class="block text-sm font-semibold text-gray-300 mb-2">
+                    <i class="fas fa-coins text-purple-400 mr-1"></i> Cost per View (rubles)
+                </label>
+                <input id="costPerView" type="number" value="0.05" step="0.001" min="0"
+                    class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-white text-right text-sm focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all" />
+            </div>
+
+            <!-- Number of Views -->
+            <div>
+                <label for="views" class="block text-sm font-semibold text-gray-300 mb-2">
+                    <i class="fas fa-eye text-purple-400 mr-1"></i> Number of Views
+                </label>
+                <input id="views" type="number" value="1000" min="1"
+                    class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-white text-right text-sm focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all" />
+            </div>
+
+            <!-- Viewing Time -->
+            <div>
+                <label for="timePerView" class="block text-sm font-semibold text-gray-300 mb-2">
+                    <i class="fas fa-clock text-purple-400 mr-1"></i> Viewing Time (seconds)
+                </label>
+                <select id="timePerView"
+                    class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-all appearance-none cursor-pointer">
+                    <option value="15" class="bg-gray-800">15 seconds</option>
+                    <option value="20" class="bg-gray-800">20 seconds</option>
+                    <option value="25" class="bg-gray-800">25 seconds</option>
+                    <option value="30" class="bg-gray-800">30 seconds</option>
+                    <option value="35" class="bg-gray-800">35 seconds</option>
+                    <option value="40" class="bg-gray-800">40 seconds</option>
+                    <option value="45" class="bg-gray-800">45 seconds</option>
+                    <option value="50" selected class="bg-gray-800">50 seconds</option>
+                    <option value="55" class="bg-gray-800">55 seconds</option>
+                    <option value="60" class="bg-gray-800">60 seconds</option>
+                </select>
+            </div>
+
+            <!-- Conversion Rate -->
+            <div>
+                <label for="rateBDT" class="block text-sm font-semibold text-gray-300 mb-2">
+                    <i class="fas fa-exchange-alt text-purple-400 mr-1"></i> 1 Ruble = BDT (Conversion Rate)
+                </label>
+                <input id="rateBDT" type="number" value="1.50" step="0.01" min="0"
+                    class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-white text-right text-sm focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all" />
+                <p class="text-xs text-gray-500 mt-1">Conversion rate to Bangladeshi Taka (৳)</p>
+            </div>
+
+            <!-- Calculate Button -->
+            <button onclick="calculate()" id="calcBtn"
+                class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-purple-500/30 hover:shadow-xl transition-all duration-300">
+                <i class="fas fa-calculator mr-2"></i> Calculate Total Cost
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="result" class="glass-card p-6 hidden">
+        <h3 class="text-lg font-bold text-white mb-4 pb-3 border-b border-white/10 text-center">
+            <i class="fas fa-chart-bar text-purple-400 mr-2"></i>Calculation Results
+        </h3>
+        <div class="space-y-3">
+            <div class="flex items-center gap-3 p-4 rounded-xl bg-purple-500/10 border-l-4 border-purple-500">
+                <i class="fas fa-ruble-sign text-purple-400 text-lg"></i>
+                <p id="rublesResult" class="text-sm text-gray-300 font-medium"></p>
+            </div>
+            <div class="flex items-center gap-3 p-4 rounded-xl bg-indigo-500/10 border-l-4 border-indigo-500">
+                <i class="fas fa-money-bill-wave text-indigo-400 text-lg"></i>
+                <p id="bdtResult" class="text-sm text-gray-300 font-medium"></p>
+            </div>
+            <div class="flex items-center gap-3 p-4 rounded-xl bg-sky-500/10 border-l-4 border-sky-500">
+                <i class="fas fa-hourglass-half text-sky-400 text-lg"></i>
+                <p id="totalTime" class="text-sm text-gray-300 font-medium"></p>
+            </div>
+            <div class="flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border-l-4 border-green-500">
+                <i class="fas fa-tachometer-alt text-green-400 text-lg"></i>
+                <p id="costPerMinute" class="text-sm text-gray-300 font-medium"></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function calculate() {
+        const costPerView = parseFloat(document.getElementById('costPerView').value);
+        const views = parseInt(document.getElementById('views').value);
+        const timePerView = parseInt(document.getElementById('timePerView').value);
+        const rateBDT = parseFloat(document.getElementById('rateBDT').value);
+
+        if (isNaN(costPerView) || isNaN(views) || isNaN(timePerView) || isNaN(rateBDT) || views < 1 || costPerView < 0 || rateBDT < 0) {
+            document.getElementById('rublesResult').textContent = 'Invalid input. Please check the numbers.';
+            document.getElementById('bdtResult').textContent = '';
+            document.getElementById('totalTime').textContent = '';
+            document.getElementById('costPerMinute').textContent = '';
+            document.getElementById('result').classList.remove('hidden');
+            return;
+        }
+
+        const totalRubles = costPerView * views;
+        const totalBDT = totalRubles * rateBDT;
+        const totalSeconds = timePerView * views;
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        const totalMinutes = totalSeconds / 60;
+        const costPerMin = totalMinutes > 0 ? totalRubles / totalMinutes : 0;
+
+        document.getElementById('rublesResult').innerHTML = `<span class="text-purple-400 font-bold">Total Cost:</span> ${totalRubles.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} rubles`;
+        document.getElementById('bdtResult').innerHTML = `<span class="text-indigo-400 font-bold">Equivalent:</span> ${totalBDT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ৳ (BDT)`;
+        document.getElementById('totalTime').innerHTML = `<span class="text-sky-400 font-bold">Total Time:</span> ${hours}h ${minutes}m ${seconds}s`;
+        document.getElementById('costPerMinute').innerHTML = `<span class="text-green-400 font-bold">Avg Cost/Min:</span> ${costPerMin.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })} rubles`;
+
+        document.getElementById('result').classList.remove('hidden');
+
+        if (window.innerWidth < 640) {
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Auto-calculate on input change
+    document.querySelectorAll('#costPerView, #views, #timePerView, #rateBDT').forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    // Calculate on page load
+    window.addEventListener('load', calculate);
+</script>

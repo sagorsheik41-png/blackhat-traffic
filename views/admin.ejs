@@ -1,0 +1,693 @@
+<!-- Admin Panel — Master Command Center -->
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+        <div>
+            <h1 class="text-2xl font-black text-white leading-tight">Master <span class="text-indigo-400">Command</span>
+                Center</h1>
+            <p class="text-sm text-gray-500 font-medium">Control tower for users, revenue, and platform configuration.
+            </p>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="location.reload()"
+                class="p-2.5 glass rounded-xl hover:bg-white/10 transition-all text-gray-400 hover:text-white border border-white/5">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex gap-1 p-1 glass rounded-2xl border border-white/5 w-fit">
+        <button onclick="switchTab('overview')" id="tab-overview"
+            class="tab-btn active px-6 py-2.5 rounded-xl text-xs font-bold transition-all">Overview</button>
+        <button onclick="switchTab('users')" id="tab-users"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">User
+            Directory</button>
+        <button onclick="switchTab('payments')" id="tab-payments"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white flex items-center gap-2">
+            Payments <% if (pendingPayments.length> 0) { %><span
+                    class="bg-red-500 text-white px-1.5 py-0.5 rounded-full text-[9px]">
+                    <%= pendingPayments.length %>
+                </span>
+                <% } %>
+        </button>
+        <button onclick="switchTab('settings')" id="tab-settings"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">Platform
+            Settings</button>
+        <button onclick="switchTab('ad-manager')" id="tab-ad-manager"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">Ad
+            Manager</button>
+    </div>
+
+    <!-- Tab: Overview -->
+    <div id="pane-overview" class="tab-pane space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="glass p-5 rounded-2xl border border-white/5 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform"><i
+                        class="fas fa-users text-4xl"></i></div>
+                <div class="text-2xl font-black text-indigo-400 mb-1">
+                    <%= stats.totalUsers %>
+                </div>
+                <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Global Network
+                </div>
+            </div>
+            <div class="glass p-5 rounded-2xl border border-white/5 relative overflow-hidden group">
+                <div
+                    class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-green-400">
+                    <i class="fas fa-bolt text-4xl"></i>
+                </div>
+                <div class="text-2xl font-black text-green-400 mb-1">
+                    <%= stats.activeUsers %>
+                </div>
+                <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Active Pulse
+                </div>
+            </div>
+            <% stats.tierCounts.forEach(function(t) { %>
+                <div class="glass p-5 rounded-2xl border border-white/5 relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-purple-400">
+                        <i class="fas fa-crown text-4xl"></i>
+                    </div>
+                    <div class="text-2xl font-black text-purple-400 mb-1">
+                        <%= t.count %>
+                    </div>
+                    <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none capitalize">
+                        <%= t._id %> Access
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 glass p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest mb-6">Network Expansion (7D)</h2>
+                <canvas id="growthChart" height="120"></canvas>
+            </div>
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest mb-6">Security Events</h2>
+                <div class="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    <% recentActivity.forEach(function(log) { %>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-[11px]">
+                            <div
+                                class="w-2 h-2 rounded-full mt-1 <%= log.action.includes('error') ? 'bg-red-500' : 'bg-green-500' %>">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-bold text-gray-300 truncate w-16">
+                                        <%= log.user ? log.user.name : 'System' %>
+                                    </span>
+                                    <span class="text-gray-500 text-[9px]">
+                                        <%= new Date(log.createdAt).toLocaleTimeString() %>
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 leading-tight capitalize">
+                                    <%= log.action.replace(/_/g, ' ' ) %>
+                                </p>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Users -->
+    <div id="pane-users" class="tab-pane hidden animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div class="glass p-6 rounded-2xl border border-white/5">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest">Global User Directory</h2>
+                <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <input type="text" id="userSearch" placeholder="Search UUID, Name, Email..."
+                        class="w-full sm:w-64 px-4 py-2.5 glass rounded-xl border border-white/5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 transition-all">
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="userTable">
+                    <thead>
+                        <tr class="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <th class="pb-4 px-4 font-black">User Profile</th>
+                            <th class="pb-4 px-4 font-black">Contact</th>
+                            <th class="pb-4 px-4 font-black">Tier</th>
+                            <th class="pb-4 px-4 font-black text-center">Status</th>
+                            <th class="pb-4 px-4 font-black text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <% recentUsers.forEach(function(u) { %>
+                            <tr class="group hover:bg-white/5 transition-all user-row"
+                                data-search="<%= u.name.toLowerCase() %> <%= u.email.toLowerCase() %>">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-bold text-xs border border-indigo-500/20">
+                                            <%= u.name.charAt(0).toUpperCase() %>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs font-bold text-white">
+                                                <%= u.name %>
+                                            </div>
+                                            <div class="text-[10px] text-gray-600 font-mono">
+                                                <%= u.role %> Node
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-xs text-gray-300">
+                                    <%= u.email %>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <select onchange="updateTier('<%= u._id %>', this.value)"
+                                        class="text-[10px] font-black uppercase px-2 py-1 glass rounded-lg border border-white/5 text-gray-300">
+                                        <option value="free" <%=u.tier==='free' ? 'selected' : '' %>>Free</option>
+                                        <option value="pro" <%=u.tier==='pro' ? 'selected' : '' %>>Pro</option>
+                                        <option value="ultimate" <%=u.tier==='ultimate' ? 'selected' : '' %>>Ultimate
+                                        </option>
+                                    </select>
+                                </td>
+                                <td class="py-4 px-4 text-center">
+                                    <button onclick="toggleUser('<%= u._id %>')"
+                                        class="p-2 <%= u.isActive ? 'text-green-400' : 'text-red-400' %>">
+                                        <i class="fas <%= u.isActive ? 'fa-check-circle' : 'fa-power-off' %>"></i>
+                                    </button>
+                                </td>
+                                <td class="py-4 px-4 text-right">
+                                    <button onclick="resetTrafficStats('<%= u._id %>')"
+                                        class="p-2 text-gray-400 hover:text-green-500 transition-colors mr-1"
+                                        title="Reset Traffic Stats">
+                                        <i class="fas fa-undo-alt"></i>
+                                    </button>
+                                    <button onclick="openEditModal('<%= encodeURIComponent(JSON.stringify(u)) %>')"
+                                        class="p-2 text-gray-400 hover:text-indigo-400 transition-colors mr-1">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteUser('<%= u._id %>')"
+                                        class="p-2 text-gray-600 hover:text-red-500 transition-colors">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Payments -->
+    <div id="pane-payments" class="tab-pane hidden animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div class="glass p-6 rounded-2xl border border-white/5">
+            <h2 class="text-sm font-black text-white uppercase tracking-widest mb-6">Pending Payment Approvals</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <th class="pb-4 px-4 font-black">User</th>
+                            <th class="pb-4 px-4 font-black">Method</th>
+                            <th class="pb-4 px-4 font-black">TrxID / Sender</th>
+                            <th class="pb-4 px-4 font-black">Plan Requested</th>
+                            <th class="pb-4 px-4 font-black text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <% if (pendingPayments.length===0) { %>
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-gray-600 text-xs italic font-medium">No
+                                    pending payments found.</td>
+                            </tr>
+                            <% } %>
+                                <% pendingPayments.forEach(function(p) { %>
+                                    <tr class="hover:bg-white/5 transition-all">
+                                        <td class="py-4 px-4">
+                                            <div class="text-xs font-bold text-white">
+                                                <%= p.user ? p.user.name : 'Unknown' %>
+                                            </div>
+                                            <div class="text-[10px] text-gray-500">
+                                                <%= p.user ? p.user.email : '-' %>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <span
+                                                class="text-[10px] font-black uppercase px-2 py-1 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                                <%= p.method %>
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <div class="text-xs text-white font-mono font-bold">
+                                                <%= p.trxId %>
+                                            </div>
+                                            <div class="text-[10px] text-gray-500">From: <%= p.senderNumber %>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-4 text-white font-bold capitalize">
+                                            <%= p.tier %>
+                                        </td>
+                                        <td class="py-4 px-4 text-right">
+                                            <button onclick="approvePayment('<%= p._id %>')"
+                                                class="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg transition-colors mr-2">
+                                                Approve
+                                            </button>
+                                            <button onclick="rejectPayment('<%= p._id %>')"
+                                                class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition-colors">
+                                                Reject
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Settings -->
+    <div id="pane-settings" class="tab-pane hidden animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Merchant Numbers -->
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest mb-6">Merchant Numbers</h2>
+                <form onsubmit="updateSettings(event, 'merchantNumbers')" class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">bKash Number</label>
+                        <input type="text" name="bkash" value="<%= settings.merchantNumbers.bkash %>"
+                            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Nagad Number</label>
+                        <input type="text" name="nagad" value="<%= settings.merchantNumbers.nagad %>"
+                            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Rocket Number</label>
+                        <input type="text" name="rocket" value="<%= settings.merchantNumbers.rocket %>"
+                            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all">Save
+                        Merchant Numbers</button>
+                </form>
+            </div>
+
+            <!-- Pricing Logic -->
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest mb-6">Subscription Pricing (BDT)</h2>
+                <form onsubmit="updateSettings(event, 'pricingBDT')" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase">Pro Price (BDT)</label>
+                            <input type="number" name="pro" value="<%= settings.pricingBDT.pro %>"
+                                class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase">Ultimate Price (BDT)</label>
+                            <input type="number" name="ultimate" value="<%= settings.pricingBDT.ultimate %>"
+                                class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                        <div class="text-xs font-bold text-gray-400 uppercase">Primary Currency: BDT</div>
+                        <button type="button" onclick="toggleCurrency()"
+                            class="px-4 py-2 <%= settings.useBDT ? 'bg-green-600' : 'bg-gray-600' %> text-white text-[10px] font-black rounded-lg uppercase">
+                            <%= settings.useBDT ? 'ENABLED' : 'DISABLED' %>
+                        </button>
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl transition-all">Save
+                        Pricing Settings</button>
+                </form>
+            </div>
+
+            <!-- API Configuration -->
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest mb-6">API Configuration</h2>
+                <form onsubmit="updateSettings(event, 'apiKeys')" class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Master AI Key (OmniCore
+                            Brain)</label>
+                        <input type="text" name="ollama"
+                            value="f5a80934188c41bc979a1fe810015e89._9ffcVpaev6VcsaDlrLKaXwo"
+                            placeholder="Master AI Key"
+                            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-purple-600/20">Save
+                        Master AI Configuration</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Ad Manager -->
+    <div id="pane-ad-manager" class="tab-pane hidden animate-in fade-in slide-in-from-bottom-2 duration-500 space-y-6">
+        <!-- Global Sidebar Ad Control -->
+        <div class="glass p-6 rounded-2xl border border-white/5 flex items-center justify-between">
+            <div>
+                <h3 class="text-sm font-black text-white uppercase tracking-widest">Global Sidebar Ad Control</h3>
+                <p class="text-[10px] text-gray-400 mt-1">Enable or disable sidebar ads globally for all users.</p>
+            </div>
+            <button onclick="toggleGlobalSidebarAds()" id="global-ad-toggle"
+                class="px-6 py-2.5 rounded-xl text-xs font-bold transition-all <%= settings.sidebarAdsEnabled ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300' %>">
+                <%= settings.sidebarAdsEnabled ? 'ENABLED' : 'DISABLED' %>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Ad Management List -->
+            <div class="lg:col-span-2 glass p-6 rounded-2xl border border-white/5">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-sm font-black text-white uppercase tracking-widest">Active Ads & Smartlinks</h3>
+                    <button id="createAdBtn"
+                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold rounded-lg transition-all">
+                        <i class="fas fa-plus mr-1"></i> Create Ad
+                    </button>
+                </div>
+                <div id="adManagerTable" class="overflow-x-auto min-h-[200px]">
+                    <!-- Rendered by adminAdManager.js -->
+                    <div class="flex items-center justify-center py-12">
+                        <i class="fas fa-circle-notch fa-spin text-indigo-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ad Analytics Tracking -->
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <h3 class="text-sm font-black text-white uppercase tracking-widest mb-6">User Engagement Analytics</h3>
+                <div class="overflow-y-auto max-h-[400px] custom-scrollbar space-y-3">
+                    <% if (adAnalytics && adAnalytics.length> 0) { %>
+                        <% adAnalytics.forEach(function(stat) { %>
+                            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="min-w-0">
+                                        <div class="text-xs font-bold text-white truncate">
+                                            <%= stat.userName %>
+                                        </div>
+                                        <div class="text-[9px] text-gray-500 truncate">
+                                            <%= stat.userEmail %>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-[10px] font-black text-indigo-400">
+                                            <%= stat.totalViews %> Views
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 dynamic-width"
+                                            data-width="<%= Math.min(stat.totalViews * 2, 100) %>%"></div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 font-mono">
+                                        <%= stat.totalDurationMinutes %>m spent
+                                    </span>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="text-center py-12 text-gray-600 italic text-xs">
+                                        No tracking data available yet.
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="glass p-8 rounded-3xl border border-white/10 w-full max-w-md animate-in fade-in zoom-in duration-300">
+        <h3 class="text-xl font-bold text-white mb-6">Edit User Node</h3>
+        <form id="editUserForm" class="space-y-4">
+            <input type="hidden" id="editUserId">
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Full Name</label>
+                <input type="text" id="editUserName" required
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+            </div>
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Email Address</label>
+                <input type="email" id="editUserEmail" required
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+            </div>
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Phone Number</label>
+                <input type="text" id="editUserPhone"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeEditModal()"
+                    class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition-all border border-white/10">Cancel</button>
+                <button type="submit"
+                    class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20">Save
+                    Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Dynamic width application
+    document.querySelectorAll('.dynamic-width').forEach(el => {
+        el.style.width = el.getAttribute('data-width');
+    });
+
+    // Tab Logic
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`pane-${tabId}`).classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('active', 'text-white', 'bg-indigo-600');
+            b.classList.add('text-gray-500');
+        });
+        const activeBtn = document.getElementById(`tab-${tabId}`);
+        if (activeBtn) {
+            activeBtn.classList.add('active', 'text-white', 'bg-indigo-600');
+            activeBtn.classList.remove('text-gray-500');
+        }
+        localStorage.setItem('adminActiveTab', tabId);
+    }
+
+    // Initialize tab from localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTab = localStorage.getItem('adminActiveTab') || 'overview';
+        switchTab(savedTab);
+    });
+
+    // Chart init - using encoded string to prevent IDE "Expression expected" syntax errors
+    const growthDataRaw = '<%= encodeURIComponent(JSON.stringify(stats.growthData || [])) %>';
+    const growthData = JSON.parse(decodeURIComponent(growthDataRaw));
+
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: growthData.map(d => d._id),
+                datasets: [{
+                    label: 'New Nodes',
+                    data: growthData.map(d => d.count),
+                    borderColor: '#6366f1',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointBackgroundColor: '#6366f1',
+                    fill: true,
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // Payment Actions
+    async function approvePayment(id) {
+        if (!confirm('Approve payment and upgrade user?')) return;
+        try {
+            const res = await fetch(`/admin/payments/${id}/approve`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                if (typeof showToast !== 'undefined') showToast(data.message, 'success');
+                location.reload();
+            } else {
+                if (typeof showToast !== 'undefined') showToast(data.error || 'Update failed', 'error');
+                else alert(data.error);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function rejectPayment(id) {
+        const note = prompt('Rejection reason (optional):');
+        if (note === null) return;
+        try {
+            const res = await fetch(`/admin/payments/${id}/reject`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ note })
+            });
+            const data = await res.json();
+            if (data.success) location.reload();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function updateSettings(e, type) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const body = { [type]: Object.fromEntries(formData.entries()) };
+        try {
+            const res = await fetch('/admin/settings/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (data.success) {
+                if (typeof showToast !== 'undefined') showToast(data.message, 'success');
+                else alert(data.message);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function toggleCurrency() {
+        // Enclosed in string to prevent IDE parse errors
+        var isBdtActive = ('<%= !!settings.useBDT %>' === 'true');
+        var switchBdtTo = !isBdtActive;
+        try {
+            const res = await fetch('/admin/settings/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ useBDT: switchBdtTo })
+            });
+            const data = await res.json();
+            if (data.success) location.reload();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function toggleGlobalSidebarAds() {
+        try {
+            const res = await fetch('/admin/settings/ad-toggle', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                const btn = document.getElementById('global-ad-toggle');
+                if (data.enabled) {
+                    btn.classList.remove('bg-gray-600', 'text-gray-300');
+                    btn.classList.add('bg-green-600', 'text-white');
+                    btn.innerText = 'ENABLED';
+                } else {
+                    btn.classList.remove('bg-green-600', 'text-white');
+                    btn.classList.add('bg-gray-600', 'text-gray-300');
+                    btn.innerText = 'DISABLED';
+                }
+                if (typeof showToast !== 'undefined') showToast(`Sidebar ads ${data.enabled ? 'enabled' : 'disabled'} globally`, 'success');
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // User management scripts
+    function openEditModal(encodedUser) {
+        const u = JSON.parse(decodeURIComponent(encodedUser));
+        document.getElementById('editUserId').value = u._id;
+        document.getElementById('editUserName').value = u.name;
+        document.getElementById('editUserEmail').value = u.email;
+        document.getElementById('editUserPhone').value = u.phone || '';
+        document.getElementById('editUserModal').classList.remove('hidden');
+        document.getElementById('editUserModal').classList.add('flex');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editUserModal').classList.add('hidden');
+        document.getElementById('editUserModal').classList.remove('flex');
+    }
+
+    document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editUserId').value;
+        const body = {
+            name: document.getElementById('editUserName').value,
+            email: document.getElementById('editUserEmail').value,
+            phone: document.getElementById('editUserPhone').value
+        };
+        try {
+            const res = await fetch(`/admin/users/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (data.success) {
+                if (typeof showToast !== 'undefined') showToast('User node updated successfully', 'success');
+                location.reload();
+            } else {
+                if (typeof showToast !== 'undefined') showToast(data.error || 'Update failed', 'error');
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    });
+
+    async function updateTier(id, tier) {
+        await fetch(`/admin/users/${id}/tier`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tier })
+        });
+        location.reload();
+    }
+
+    async function toggleUser(id) {
+        await fetch(`/admin/users/${id}/toggle`, { method: 'POST' });
+        location.reload();
+    }
+
+    async function deleteUser(id) {
+        if (confirm('Delete user?')) {
+            await fetch(`/admin/users/${id}`, { method: 'DELETE' });
+            location.reload();
+        }
+    }
+
+    async function resetTrafficStats(id) {
+        if (!confirm('Are you sure you want to reset all Traffic Pro stats for this user?')) return;
+        try {
+            const res = await fetch(`/admin/user/${id}/reset-traffic-pro`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                if (typeof showToast !== 'undefined') showToast('Traffic stats reset to zero', 'success');
+                else alert('Stats reset successfully');
+                location.reload();
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // Search logic
+    const userSearch = document.getElementById('userSearch');
+    if (userSearch) {
+        userSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.user-row').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+            });
+        });
+    }
+</script>
+
+<!-- Admin Settings & Form Handling -->
+<script src="/js/admin.js"></script>
+<!-- Ad Manager CRUD & Modal Operations -->
+<script src="/js/adminAdManager.js"></script>

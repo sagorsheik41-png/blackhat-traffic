@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   BlackHat Traffic SaaS — Shared Styles
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    @apply bg-gray-900 text-gray-100 min-h-screen;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Cards */
+  .glass-card {
+    @apply bg-white/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply -translate-y-0.5 shadow-[0_30px_60px_rgba(0,0,0,0.2)];
+  }
+
+  .glass-card-dark {
+    background: rgba(30, 41, 59, 0.9);
+    backdrop-filter: blur(20px);
+    @apply border border-white/10 rounded-2xl shadow-2xl transition-all duration-300;
+  }
+
+  /* Gradient Header */
+  .gradient-header {
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    @apply relative overflow-hidden;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    @apply text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 inline-flex items-center justify-center gap-2 shadow-lg;
+  }
+
+  .btn-primary:hover {
+    @apply -translate-y-0.5 shadow-xl;
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    @apply text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 inline-flex items-center justify-center gap-2 shadow-lg;
+  }
+
+  .btn-success:hover {
+    @apply -translate-y-0.5 shadow-xl;
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    @apply text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 inline-flex items-center justify-center gap-2 shadow-lg;
+  }
+
+  .btn-danger:hover {
+    @apply -translate-y-0.5 shadow-xl;
+  }
+
+  .btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    @apply text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 inline-flex items-center justify-center gap-2 shadow-lg;
+  }
+
+  /* Form Inputs */
+  .input-field {
+    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all duration-300 bg-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10;
+  }
+
+  .select-field {
+    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all duration-300 bg-white focus:outline-none focus:border-indigo-500;
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    @apply bg-white/90 p-6 rounded-2xl text-center border-2 border-indigo-500/10 transition-all duration-300 shadow-md;
+  }
+
+  .stat-card:hover {
+    @apply -translate-y-0.5 shadow-lg border-indigo-500/30;
+  }
+
+  /* Sidebar */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 font-medium transition-all duration-200 hover:bg-white/10 hover:text-white;
+  }
+
+  .sidebar-link.active {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    @apply text-white shadow-lg;
+  }
+
+  /* Notification Toast */
+  .toast {
+    @apply fixed top-5 right-5 z-50 px-6 py-4 rounded-xl text-white font-semibold shadow-2xl transform translate-x-full transition-transform duration-300;
+  }
+
+  .toast.show {
+    @apply translate-x-0;
+  }
+
+  /* Badge */
+  .tier-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase;
+  }
+
+  .tier-free {
+    @apply bg-gray-200 text-gray-700;
+  }
+
+  .tier-pro {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    @apply text-white;
+  }
+
+  .tier-ultimate {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    @apply text-white;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}

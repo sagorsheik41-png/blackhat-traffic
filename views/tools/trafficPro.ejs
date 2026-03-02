@@ -1,0 +1,548 @@
+<%- contentFor('body') %>
+
+    <div class="space-y-6 max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-white flex items-center">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-700 flex items-center justify-center mr-4 shadow-lg shadow-green-500/20">
+                        <i class="fas fa-bolt text-xl text-white"></i>
+                    </div>
+                    Traffic Automation X
+                </h1>
+                <p class="text-gray-400 mt-2">Complete Automated Digital Marketing & Traffic System</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/20">
+                    <i class="fas fa-play mr-2"></i> Start Campaign
+                </button>
+                <button
+                    class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-lg font-medium transition-colors border border-gray-700">
+                    <i class="fas fa-cog mr-2"></i> Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div
+                class="bg-gray-900/50 backdrop-blur-md rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-users text-5xl text-blue-500"></i>
+                </div>
+                <p class="text-sm font-medium text-gray-400 mb-1">Total Visitors</p>
+                <div class="flex items-end gap-2">
+                    <h3 class="text-3xl font-bold text-white" id="statVisitors">0</h3>
+                    <span class="text-sm text-green-400 mb-1"><i class="fas fa-arrow-up"></i> 12%</span>
+                </div>
+            </div>
+
+            <div
+                class="bg-gray-900/50 backdrop-blur-md rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-mouse-pointer text-5xl text-purple-500"></i>
+                </div>
+                <p class="text-sm font-medium text-gray-400 mb-1">Today's Clicks</p>
+                <div class="flex items-end gap-2">
+                    <h3 class="text-3xl font-bold text-white" id="statClicks">0</h3>
+                    <span class="text-sm text-green-400 mb-1"><i class="fas fa-arrow-up"></i> 5%</span>
+                </div>
+            </div>
+
+            <div
+                class="bg-gray-900/50 backdrop-blur-md rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-bullseye text-5xl text-red-500"></i>
+                </div>
+                <p class="text-sm font-medium text-gray-400 mb-1">Conversions</p>
+                <div class="flex items-end gap-2">
+                    <h3 class="text-3xl font-bold text-white" id="statConversions">0</h3>
+                    <span class="text-sm text-green-400 mb-1"><i class="fas fa-arrow-up"></i> 8%</span>
+                </div>
+            </div>
+
+            <div
+                class="bg-gray-900/50 backdrop-blur-md rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-dollar-sign text-5xl text-emerald-500"></i>
+                </div>
+                <p class="text-sm font-medium text-gray-400 mb-1">Revenue</p>
+                <div class="flex items-end gap-2">
+                    <h3 class="text-3xl font-bold text-white" id="statRevenue">$0.00</h3>
+                    <span class="text-sm text-green-400 mb-1"><i class="fas fa-arrow-up"></i> 15%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="bg-gray-900/30 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+
+            <!-- Tabs Navigation -->
+            <div class="flex border-b border-white/10" id="taTabNav">
+                <button
+                    class="ta-tab-btn active px-6 py-4 text-sm font-medium focus:outline-none border-b-2 border-green-500 text-green-400"
+                    data-target="taTabTraffic">
+                    <i class="fas fa-chart-line mr-2"></i> Auto Traffic Generator
+                </button>
+                <button
+                    class="ta-tab-btn px-6 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 focus:outline-none border-b-2 border-transparent transition-colors"
+                    data-target="taTabSeo">
+                    <i class="fas fa-search mr-2"></i> SEO Optimizer
+                </button>
+                <button
+                    class="ta-tab-btn px-6 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 focus:outline-none border-b-2 border-transparent transition-colors"
+                    data-target="taTabSocial">
+                    <i class="fas fa-share-alt mr-2"></i> Social Automation
+                </button>
+                <button
+                    class="ta-tab-btn px-6 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 focus:outline-none border-b-2 border-transparent transition-colors"
+                    data-target="taTabAiContent">
+                    <i class="fas fa-robot mr-2"></i> AI Content Creator
+                </button>
+            </div>
+
+            <div class="p-6">
+
+                <!-- Tab 1: Auto Traffic Generator -->
+                <div id="taTabTraffic" class="ta-tab-content block">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Setup -->
+                        <div class="lg:col-span-1 space-y-4">
+                            <div class="bg-gray-800/50 rounded-xl p-5 border border-white/5">
+                                <h3 class="text-lg font-semibold text-white mb-4"><i
+                                        class="fas fa-globe text-blue-400 mr-2"></i> Campaign Setup</h3>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Target URL</label>
+                                        <input type="url" id="taTargetUrl"
+                                            class="w-full bg-black/50 border border-gray-700 text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5"
+                                            placeholder="https://example.com" value="https://mysite.com/offer">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Traffic Source
+                                            Mix</label>
+                                        <select
+                                            class="w-full bg-black/50 border border-gray-700 text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5">
+                                            <option>Balanced (Organic + Social + Direct)</option>
+                                            <option>Heavy Organic Search</option>
+                                            <option>Social Media Viral</option>
+                                            <option>Direct / Referral Mix</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="bg-black/20 p-4 rounded-xl border border-white/5">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <label class="text-sm font-medium text-gray-400">Volume Rate</label>
+                                            <span id="taVolumeDisplay"
+                                                class="text-xs font-bold text-green-400 bg-green-500/10 px-2 py-0.5 rounded">50
+                                                /hr</span>
+                                        </div>
+                                        <input type="range" id="taVolumeSlider"
+                                            class="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500"
+                                            min="1" max="5000" value="50">
+                                        <div class="flex justify-between text-[10px] text-gray-500 mt-2 font-medium">
+                                            <span>MINIMAL</span>
+                                            <span>AGGRESSIVE (5K/HR)</span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Keywords (Comma
+                                            Separated)</label>
+                                        <textarea rows="2" id="taKeywords"
+                                            class="w-full bg-black/50 border border-gray-700 text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5"
+                                            placeholder="marketing, software, crypto..."></textarea>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-400 mb-1">Country
+                                                Targeting</label>
+                                            <select id="taCountrySelect"
+                                                class="w-full bg-black/50 border border-gray-700 text-white text-sm rounded-lg p-2.5">
+                                                <option value="Global">Global / Random</option>
+                                                <option value="USA">United States</option>
+                                                <option value="UK">United Kingdom</option>
+                                                <option value="Canada">Canada</option>
+                                                <option value="Germany">Germany</option>
+                                                <option value="India">India</option>
+                                                <option value="Bangladesh">Bangladesh</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-400 mb-1">Campaign
+                                                Status</label>
+                                            <div class="flex h-[42px] items-center">
+                                                <span
+                                                    class="px-3 py-1 bg-yellow-500/20 text-yellow-500 text-xs font-bold rounded-lg border border-yellow-500/20">
+                                                    <i class="fas fa-clock mr-1"></i> Pending
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-center justify-between bg-black/20 p-4 rounded-xl border border-white/5">
+                                        <div>
+                                            <h4 class="text-sm font-bold text-white">IP & User-Agent Rotation</h4>
+                                            <p class="text-[10px] text-gray-500">Rotate identity per visitor</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="taRotationToggle" class="sr-only peer">
+                                            <div
+                                                class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Target
+                                            Browsers</label>
+                                        <div class="grid grid-cols-3 gap-2" id="taBrowserSelect">
+                                            <button
+                                                class="browser-btn active px-2 py-1.5 rounded bg-white/5 border border-white/10 text-[10px] text-gray-400 hover:text-white"
+                                                data-val="Chrome">Chrome</button>
+                                            <button
+                                                class="browser-btn px-2 py-1.5 rounded bg-white/5 border border-white/10 text-[10px] text-gray-400 hover:text-white"
+                                                data-val="Firefox">Firefox</button>
+                                            <button
+                                                class="browser-btn px-2 py-1.5 rounded bg-white/5 border border-white/10 text-[10px] text-gray-400 hover:text-white"
+                                                data-val="Safari">Safari</button>
+                                        </div>
+                                    </div>
+
+                                    <button id="taStartTrafficBtn"
+                                        class="w-full text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition-all shadow-lg shadow-green-500/30">
+                                        <i class="fas fa-satellite-dish mr-2"></i> Start Traffic Engine
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Chart & Logs -->
+                        <div class="lg:col-span-2 space-y-4">
+                            <div class="bg-gray-800/50 rounded-xl p-5 border border-white/5 h-64 flex flex-col">
+                                <h3 class="text-sm font-semibold text-gray-300 mb-2">Live Traffic Pulse</h3>
+                                <div class="flex-1 min-h-0 relative">
+                                    <canvas id="taTrafficChart"></canvas>
+                                    <!-- Status Overlay -->
+                                    <div id="taStatusOverlay"
+                                        class="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm rounded-lg z-10 transition-opacity">
+                                        <div class="text-center">
+                                            <div
+                                                class="inline-block p-3 rounded-full bg-gray-800 border border-gray-600 mb-2">
+                                                <i class="fas fa-pause text-gray-400 text-xl"></i>
+                                            </div>
+                                            <p class="text-gray-400 font-medium">Engine Offline</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-black/40 rounded-xl p-4 border border-white/5 h-48 flex flex-col">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-sm font-semibold text-gray-300">Activity Log</h3>
+                                    <div class="flex items-center">
+                                        <span class="relative flex h-3 w-3 mr-2">
+                                            <span id="taPulseOuter"
+                                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                            <span id="taPulseInner"
+                                                class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                        </span>
+                                        <span class="text-xs text-gray-400" id="taStatusText">System Idle</span>
+                                    </div>
+                                </div>
+                                <div id="taLogTerminal"
+                                    class="flex-1 overflow-y-auto font-mono text-xs space-y-1 p-2 bg-black rounded shadow-inner border border-gray-800">
+                                    <div class="text-gray-500">System initialized. Waiting for command...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: SEO Optimizer -->
+                <div id="taTabSeo" class="ta-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Input -->
+                        <div class="space-y-4">
+                            <div class="bg-gray-800/30 p-5 rounded-xl border border-white/5">
+                                <h3 class="text-lg font-semibold text-white mb-4"><i
+                                        class="fas fa-search-plus text-indigo-400 mr-2"></i> On-Page Analyzer</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Target
+                                            Keyword</label>
+                                        <input type="text" id="taSeoKeyword"
+                                            class="w-full bg-black/50 border border-gray-700 text-white rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
+                                            placeholder="e.g. blackhat seo tools">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Content URL</label>
+                                        <input type="url" id="taSeoUrl"
+                                            class="w-full bg-black/50 border border-gray-700 text-white rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
+                                            placeholder="https://yoursite.com/post">
+                                    </div>
+                                    <div class="flex gap-2 text-sm pt-2">
+                                        <button id="taAnalyzeSeoBtn"
+                                            class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors">
+                                            <i class="fas fa-chart-line mr-1"></i> Analyze
+                                        </button>
+                                        <button id="taGenKeywordsBtn"
+                                            class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition-colors border border-gray-600">
+                                            <i class="fas fa-key mr-1"></i> Gen Keywords
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output Results -->
+                        <div class="space-y-4">
+                            <div class="bg-gray-800/30 p-5 rounded-xl border border-white/5 h-full">
+
+                                <!-- Score -->
+                                <div class="mb-6 flex items-center justify-between">
+                                    <div>
+                                        <h4 class="text-sm text-gray-400 mb-1">Overall SEO Score</h4>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-48 h-3 bg-gray-700 rounded-full overflow-hidden">
+                                                <div id="taSeoScoreBar"
+                                                    class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 w-0 transition-all duration-1000">
+                                                </div>
+                                            </div>
+                                            <span id="taSeoScoreText" class="font-bold text-xl text-white">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Keywords Area -->
+                                <div class="mb-4">
+                                    <h4 class="text-xs font-semibold uppercase text-gray-500 tracking-wider mb-2">
+                                        Suggested Keywords</h4>
+                                    <div id="taSeoKeywordsOutput"
+                                        class="min-h-[60px] p-3 bg-black/40 border border-gray-800 rounded-lg text-sm text-gray-300 break-words flex flex-wrap gap-2">
+                                        <span class="text-gray-600 italic leading-loose">Waiting for analysis...</span>
+                                    </div>
+                                </div>
+
+                                <!-- Tips -->
+                                <div>
+                                    <h4 class="text-xs font-semibold uppercase text-gray-500 tracking-wider mb-2">
+                                        Actionable Tips</h4>
+                                    <ul id="taSeoTipsOutput" class="space-y-2 text-sm text-gray-300">
+                                        <li class="flex items-start text-gray-600 italic">
+                                            <i class="fas fa-info-circle mt-1 flex-shrink-0 mr-2"></i> Run analysis to
+                                            see tips.
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Social Automation -->
+                <div id="taTabSocial" class="ta-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-gray-800/30 p-5 rounded-xl border border-white/5">
+                                <h3 class="text-lg font-semibold text-white mb-4"><i
+                                        class="fas fa-share-square text-pink-500 mr-2"></i> Schedule Distribution</h3>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Post Content</label>
+                                        <textarea id="taSocialContent" rows="3"
+                                            class="w-full bg-black/50 border border-gray-700 text-white rounded-lg p-2.5 focus:ring-pink-500 focus:border-pink-500"
+                                            placeholder="Type your multi-platform blast here..."></textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-2">Target
+                                            Networks</label>
+                                        <div class="flex flex-wrap gap-2" id="taSocialNetworks">
+                                            <!-- Buttons will be toggleable -->
+                                            <button
+                                                class="ta-net-btn px-3 py-1.5 rounded-lg border border-gray-600 text-gray-400 text-sm hover:border-blue-500 hover:text-blue-400 transition-colors"
+                                                data-net="facebook"><i class="fab fa-facebook mr-1"></i>
+                                                Facebook</button>
+                                            <button
+                                                class="ta-net-btn px-3 py-1.5 rounded-lg border border-gray-600 text-gray-400 text-sm hover:border-sky-400 hover:text-sky-400 transition-colors"
+                                                data-net="twitter"><i class="fab fa-twitter mr-1"></i> Twitter</button>
+                                            <button
+                                                class="ta-net-btn px-3 py-1.5 rounded-lg border border-gray-600 text-gray-400 text-sm hover:border-pink-500 hover:text-pink-500 transition-colors"
+                                                data-net="instagram"><i class="fab fa-instagram mr-1"></i>
+                                                Instagram</button>
+                                            <button
+                                                class="ta-net-btn px-3 py-1.5 rounded-lg border border-gray-600 text-gray-400 text-sm hover:border-red-600 hover:text-red-500 transition-colors"
+                                                data-net="pinterest"><i class="fab fa-pinterest mr-1"></i>
+                                                Pinterest</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-400 mb-1">Schedule
+                                                Time</label>
+                                            <input type="datetime-local" id="taScheduleTime"
+                                                class="w-full bg-black/50 border border-gray-700 text-white rounded-lg p-2 text-sm">
+                                        </div>
+                                        <div class="flex items-end">
+                                            <button id="taSchedulePostBtn"
+                                                class="w-full bg-pink-600 hover:bg-pink-700 text-white py-2.5 rounded-lg transition-colors font-medium">
+                                                <i class="fas fa-clock mr-1"></i> Add to Queue
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="bg-gray-800/30 p-5 rounded-xl border border-white/5 h-full flex flex-col">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-sm font-semibold text-gray-300">Pending & Active Queue</h3>
+                                    <span class="bg-gray-700 text-xs px-2 py-0.5 rounded text-gray-300"
+                                        id="taQueueCount">0 items</span>
+                                </div>
+
+                                <div id="taSocialQueueList"
+                                    class="flex-1 overflow-y-auto space-y-2 max-h-[300px] pr-2 custom-scrollbar">
+                                    <div
+                                        class="text-center text-gray-500 py-8 text-sm italic border border-dashed border-gray-700 rounded-lg">
+                                        Queue is empty</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: AI Content Creator -->
+                <div id="taTabAiContent" class="ta-tab-content hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Config -->
+                        <div class="lg:col-span-4 space-y-4">
+                            <div class="bg-gray-800/30 p-5 rounded-xl border border-white/5">
+                                <h3 class="text-lg font-semibold text-white mb-4"><i
+                                        class="fas fa-magic text-yellow-400 mr-2"></i> Content Generator</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Topic / Niche /
+                                            Keyword</label>
+                                        <input type="text" id="taAiTopic"
+                                            class="w-full bg-black/50 border border-gray-700 text-white rounded-lg p-2.5 focus:ring-yellow-500 focus:border-yellow-500"
+                                            placeholder="e.g. affiliate marketing guide">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Content Type</label>
+                                        <select id="taAiType"
+                                            class="w-full bg-black/50 border border-gray-700 text-white rounded-lg p-2.5 focus:ring-yellow-500 focus:border-yellow-500">
+                                            <option value="blog">Blog Post (SEO friendly)</option>
+                                            <option value="email">Welcome Email Series</option>
+                                            <option value="product">Product Review / Desc</option>
+                                            <option value="social">Viral Social Media Thread</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Length</label>
+                                        <select id="taAiLength"
+                                            class="w-full bg-black/50 border border-gray-700 text-white text-sm rounded-lg p-2">
+                                            <option value="short">Short (~300 words)</option>
+                                            <option value="medium" selected>Medium (~800 words)</option>
+                                            <option value="long">Long (~1500+ words)</option>
+                                        </select>
+                                    </div>
+
+                                    <button id="taGenAiBtn"
+                                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-lg transition-colors shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                                        <i class="fas fa-brain mr-2"></i> Synthesize Content
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output -->
+                        <div class="lg:col-span-8 h-[400px]">
+                            <div
+                                class="bg-black/40 rounded-xl border border-gray-700 h-full flex flex-col overflow-hidden relative group">
+                                <!-- Top bar -->
+                                <div
+                                    class="bg-gray-800 border-b border-gray-700 px-4 py-2 flex justify-between items-center">
+                                    <span class="text-xs text-gray-400 font-mono">Output.md</span>
+                                    <button id="taCopyAiBtn" class="text-gray-400 hover:text-white transition-colors"
+                                        title="Copy to clipboard">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                                <!-- Editor Area -->
+                                <textarea id="taAiOutput"
+                                    class="flex-1 w-full bg-transparent border-none text-gray-300 p-4 font-mono text-sm focus:ring-0 resize-none"
+                                    placeholder="AI generated magic will appear here..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Custom scrollbar for minor areas */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Active states for social network toggle buttons */
+        .ta-net-btn.active-fb {
+            background: rgba(24, 119, 242, 0.1);
+            border-color: #1877f2;
+            color: #1877f2;
+        }
+
+        .ta-net-btn.active-tw {
+            border-color: #1da1f2;
+            color: #1da1f2;
+        }
+
+        /* Twitter X */
+        .ta-net-btn.active-ig {
+            background: rgba(225, 48, 108, 0.1);
+            border-color: #e1306c;
+            color: #e1306c;
+        }
+
+        .ta-net-btn.active-pi {
+            background: rgba(189, 8, 28, 0.1);
+            border-color: #bd081c;
+            color: #bd081c;
+        }
+    </style>
+
+    <!-- Pass user tier logic if needed -->
+    <script>
+        const userTier = '<%= user?.tier || "free" %>';
+    </script>
+    <script src="/js/trafficPro.js"></script>

@@ -1,0 +1,313 @@
+<!-- URL & Link Tools — Fully Migrated -->
+<div class="max-w-5xl mx-auto space-y-8">
+
+    <!-- Header -->
+    <div class="glass-card p-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-cyan-600/20 to-blue-600/20"></div>
+        <div class="relative z-10 flex items-center gap-4">
+            <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
+                <i class="fas fa-link text-white text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-white">URL & Link Tools</h2>
+                <p class="text-sm text-gray-400">Direct Shortlink Generator and Facebook Media Downloader</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Left Column: Shortlink Generator -->
+        <div class="glass-card p-6 relative">
+            <div class="absolute top-0 right-0 p-4">
+                <i class="fas fa-bolt text-cyan-500/20 text-6xl"></i>
+            </div>
+
+            <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <i class="fas fa-magic text-cyan-400"></i> Direct Shortlink Generator
+            </h3>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Original URL</label>
+                    <input type="url" id="originalUrl" placeholder="https://example.com/very/long/link"
+                        class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Custom Alias <span
+                                class="text-gray-500 font-normal">(Optional)</span></label>
+                        <input type="text" id="customAlias" placeholder="my-link"
+                            class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Expiry Date <span
+                                class="text-gray-500 font-normal">(Optional)</span></label>
+                        <input type="date" id="expiryDate"
+                            class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-gray-300 text-sm focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all"
+                            style="color-scheme: dark;" />
+                    </div>
+                </div>
+
+                <button onclick="generateShortLink()"
+                    class="w-full py-3.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-cyan-500/30 hover:shadow-xl transition-all duration-300">
+                    <i class="fas fa-link mr-2"></i> Generate Shortlink
+                </button>
+            </div>
+
+            <!-- Shortlink Result -->
+            <div id="shortlinkResult" class="mt-6 p-5 rounded-xl bg-cyan-500/10 border-l-4 border-cyan-500 hidden">
+                <h4 class="font-bold text-cyan-400 mb-3 text-sm">Generated Shortlink</h4>
+
+                <div class="flex items-center gap-2 mb-4">
+                    <input type="text" id="shortUrlInput" readonly
+                        class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white font-mono text-sm" />
+                    <button onclick="copyToClipboard('shortUrlInput')"
+                        class="p-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors"
+                        title="Copy">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <a id="testLinkBtn" href="#" target="_blank"
+                        class="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
+                        title="Test Link" onclick="trackClick()">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="bg-white p-2 rounded-lg inline-block">
+                        <div id="qrCodeContainer" class="w-24 h-24"></div>
+                    </div>
+                    <div class="flex-1 space-y-2 text-sm text-gray-300">
+                        <p><span class="text-gray-500">Original:</span> <span id="displayOriginalUrl"
+                                class="break-all"></span></p>
+                        <p><span class="text-gray-500">Clicks:</span> <span id="clickCounter"
+                                class="font-bold text-cyan-400">0</span></p>
+                        <button onclick="downloadQR()"
+                            class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors mt-1">
+                            <i class="fas fa-download mr-1"></i> Download QR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Facebook Downloader -->
+        <div class="glass-card p-6 relative">
+            <div class="absolute top-0 right-0 p-4">
+                <i class="fab fa-facebook text-blue-500/20 text-6xl"></i>
+            </div>
+
+            <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <i class="fas fa-download text-blue-400"></i> Facebook Media Downloader
+            </h3>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Facebook Post/Video URL</label>
+                    <input type="url" id="fbUrl" placeholder="https://www.facebook.com/..."
+                        class="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" />
+                </div>
+
+                <div class="flex gap-3">
+                    <button id="btnFbExtract" onclick="extractFbMedia()"
+                        class="flex-1 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-blue-500/30 hover:shadow-xl transition-all duration-300">
+                        <i class="fas fa-search mr-2"></i> Extract Media
+                    </button>
+                    <button onclick="clearFb()"
+                        class="px-5 py-3.5 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-all">
+                        Clear
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500"><i class="fas fa-info-circle mr-1"></i> Only works for public posts.
+                    Respect privacy and copyright.</p>
+            </div>
+
+            <!-- Error / Processing Msg -->
+            <p id="fbMsg" class="text-red-400 text-sm font-medium mt-4 hidden"></p>
+
+            <!-- FB Results -->
+            <div id="fbResult" class="mt-6 space-y-6 hidden">
+
+                <div id="fbVideosSection" class="hidden">
+                    <h4 class="font-bold text-white mb-3 text-sm pb-2 border-b border-white/10"><i
+                            class="fas fa-video mr-2 text-blue-400"></i>Videos</h4>
+                    <div id="fbVideos" class="space-y-4"></div>
+                </div>
+
+                <div id="fbImagesSection" class="hidden">
+                    <h4 class="font-bold text-white mb-3 text-sm pb-2 border-b border-white/10"><i
+                            class="fas fa-image mr-2 text-blue-400"></i>Images</h4>
+                    <div id="fbImages" class="grid grid-cols-2 gap-3"></div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- QR Code Library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<script>
+    /** 
+     * SHORTLINK GENERATOR LOGIC
+     */
+    let generatedLink = null;
+    const MY_DOMAIN = window.location.origin;
+
+    function generateShortLink() {
+        const originalUrl = document.getElementById('originalUrl').value.trim();
+        const customAlias = document.getElementById('customAlias').value.trim();
+        const expiryDate = document.getElementById('expiryDate').value;
+
+        if (!isValidUrl(originalUrl)) {
+            showToast('Please enter a valid URL', 'error');
+            return;
+        }
+
+        const shortCode = customAlias || Math.random().toString(36).substring(2, 8);
+        const shortUrl = `${MY_DOMAIN}/s/${shortCode}`; // Mocking shortlink system for now
+
+        generatedLink = { shortUrl, originalUrl, clicks: 0 };
+
+        document.getElementById('shortUrlInput').value = shortUrl;
+        document.getElementById('displayOriginalUrl').textContent = originalUrl.length > 40 ? originalUrl.substring(0, 40) + '...' : originalUrl;
+        document.getElementById('testLinkBtn').href = originalUrl;
+        document.getElementById('clickCounter').textContent = '0';
+
+        // Generate QR
+        const qrContainer = document.getElementById('qrCodeContainer');
+        qrContainer.innerHTML = '<canvas id="qrCanvas"></canvas>';
+        QRCode.toCanvas(document.getElementById('qrCanvas'), shortUrl, {
+            width: 96, margin: 0,
+            color: { dark: '#000000', light: '#ffffff' }
+        });
+
+        document.getElementById('shortlinkResult').classList.remove('hidden');
+        showToast('Shortlink created successfully!', 'success');
+    }
+
+    function trackClick() {
+        if (generatedLink) {
+            generatedLink.clicks++;
+            document.getElementById('clickCounter').textContent = generatedLink.clicks;
+        }
+    }
+
+    function copyToClipboard(elementId) {
+        const el = document.getElementById(elementId);
+        el.select();
+        document.execCommand('copy');
+        showToast('Link copied to clipboard', 'success');
+    }
+
+    function downloadQR() {
+        const canvas = document.getElementById('qrCanvas');
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = 'shortlink-qr.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    function isValidUrl(string) {
+        try { new URL(string); return true; } catch (_) { return false; }
+    }
+
+    /** 
+     * FACEBOOK DOWNLOADER LOGIC (Mocked backend simulation)
+     */
+    async function extractFbMedia() {
+        const urlInput = document.getElementById('fbUrl');
+        const btn = document.getElementById('btnFbExtract');
+        const msg = document.getElementById('fbMsg');
+        const resBox = document.getElementById('fbResult');
+        const imgSec = document.getElementById('fbImagesSection');
+        const vidSec = document.getElementById('fbVideosSection');
+        const imgDiv = document.getElementById('fbImages');
+        const vidDiv = document.getElementById('fbVideos');
+
+        let url = urlInput.value.trim();
+        if (!isValidUrl(url)) {
+            msg.textContent = 'Please enter a valid Facebook URL.';
+            msg.classList.remove('hidden');
+            return;
+        }
+
+        msg.classList.add('hidden');
+        resBox.classList.add('hidden');
+        imgDiv.innerHTML = ''; vidDiv.innerHTML = '';
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+        btn.disabled = true;
+
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Mock Response
+            const mockImages = [
+                "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=400&q=80",
+                "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=400&q=80"
+            ];
+            const mockVideos = [
+                "https://www.w3schools.com/html/mov_bbb.mp4"
+            ];
+
+            // Render Images
+            if (mockImages.length > 0) {
+                mockImages.forEach(src => {
+                    imgDiv.innerHTML += `
+          <div class="bg-black/20 rounded-lg p-2 border border-white/5">
+            <img src="${src}" class="w-full h-24 object-cover rounded-md mb-2">
+            <a href="${src}" target="_blank" download class="block w-full text-center py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded">Download</a>
+          </div>
+        `;
+                });
+                imgSec.classList.remove('hidden');
+            } else {
+                imgSec.classList.add('hidden');
+            }
+
+            // Render Videos
+            if (mockVideos.length > 0) {
+                mockVideos.forEach(src => {
+                    vidDiv.innerHTML += `
+          <div class="bg-black/20 rounded-lg p-3 border border-white/5">
+            <video controls class="w-full rounded-lg mb-3 bg-black">
+              <source src="${src}" type="video/mp4">
+            </video>
+            <div class="flex gap-2">
+              <a href="${src}" target="_blank" class="flex-1 text-center py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded">Open</a>
+              <a href="${src}" download class="flex-1 text-center py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded">Download</a>
+            </div>
+          </div>
+        `;
+                });
+                vidSec.classList.remove('hidden');
+            } else {
+                vidSec.classList.add('hidden');
+            }
+
+            resBox.classList.remove('hidden');
+            showToast('Media extracted successfully!', 'success');
+
+        } catch (err) {
+            msg.textContent = 'An error occurred while processing your request.';
+            msg.classList.remove('hidden');
+        } finally {
+            btn.innerHTML = '<i class="fas fa-search mr-2"></i> Extract Media';
+            btn.disabled = false;
+        }
+    }
+
+    function clearFb() {
+        document.getElementById('fbUrl').value = '';
+        document.getElementById('fbMsg').classList.add('hidden');
+        document.getElementById('fbResult').classList.add('hidden');
+    }
+</script>

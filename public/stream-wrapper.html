@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Player Wrapper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        #player-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        #player {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #444;
+            border-top-color: #0ea5e9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            color: #fff;
+            display: none;
+            max-width: 500px;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .error h2 {
+            color: #ef4444;
+            margin-bottom: 15px;
+        }
+
+        .error p {
+            color: #999;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="player-container">
+        <iframe 
+            id="player"
+            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-presentation allow-forms allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+            loading="lazy">
+        </iframe>
+        <div id="loading" class="loading show">
+            <div class="spinner"></div>
+            <p>Loading stream...</p>
+        </div>
+        <div id="error" class="error">
+            <h2>Stream Failed</h2>
+            <p id="error-msg">Unable to load the requested stream</p>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const sourceUrl = params.get('src');
+        const player = document.getElementById('player');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const errorMsg = document.getElementById('error-msg');
+
+        if (!sourceUrl) {
+            errorMsg.textContent = 'Invalid or missing stream URL';
+            error.classList.add('show');
+            loading.classList.remove('show');
+        } else {
+            player.src = sourceUrl;
+
+            // Handle load
+            player.addEventListener('load', () => {
+                loading.classList.remove('show');
+                console.log('Stream loaded successfully');
+            });
+
+            // Handle error
+            player.addEventListener('error', () => {
+                loading.classList.remove('show');
+                error.classList.add('show');
+                errorMsg.textContent = 'Failed to load stream from source';
+                console.error('Stream load error');
+            });
+
+            // Timeout fallback
+            setTimeout(() => {
+                if (loading.classList.contains('show')) {
+                    loading.classList.remove('show');
+                    console.log('Load timeout - showing player anyway');
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
