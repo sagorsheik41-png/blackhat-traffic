@@ -214,7 +214,7 @@ async function connectDB() {
             serverSelectionTimeoutMS: 5000,
         });
         console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
-        seedAdmin();
+        await seedAdmin();
     } catch (err) {
         console.warn(`⚠️  MongoDB unavailable: ${err.message}`);
         console.warn('   Server running without database. Auth/data features disabled.');
@@ -270,10 +270,19 @@ const seedAdmin = async () => {
 
 // ─── Start Server ───────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`\n🚀 BlackHat Traffic SaaS running on http://localhost:${PORT}`);
-    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}\n`);
-    connectDB();
-});
+
+const startServer = async () => {
+    console.log('\n🚀 Starting BlackHat Traffic SaaS...');
+    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+
+    // Connect to database FIRST
+    await connectDB();
+
+    server.listen(PORT, '0.0.0.0', () => {
+        console.log(`\n✅ Server is listening on http://0.0.0.0:${PORT}\n`);
+    });
+};
+
+startServer();
 
 module.exports = { app, server };
