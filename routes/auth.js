@@ -43,7 +43,8 @@ router.post('/register', [
                 data: {
                     name,
                     phone
-                }
+                },
+                emailRedirectTo: `${process.env.SITE_URL || 'https://blackhat-traffic.onrender.com'}/auth/callback`
             }
         });
 
@@ -59,7 +60,7 @@ router.post('/register', [
             user = await User.create({ name, email, phone, password });
         }
 
-        // 3. Set custom JWT cookie using Supabase Session
+        // 3. Set custom JWT cookie using Supabase Session (if available)
         const session = authData.session;
         if (session) {
             res.cookie('token', session.access_token, {
@@ -68,9 +69,16 @@ router.post('/register', [
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'lax',
             });
+            
+            res.cookie('refreshToken', session.refresh_token, {
+                httpOnly: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+            });
         } else {
-            // If email confirmation is enabled on Supabase, session will be null here
-            req.flash('success_msg', 'Please check your email to verify your account!');
+            // Email confirmation is required - user needs to verify email
+            req.flash('success_msg', 'Registration successful! A confirmation email has been sent to ' + email + '. Please check your email and click the confirmation link.');
             return res.redirect('/auth/login');
         }
 
@@ -89,7 +97,7 @@ router.post('/register', [
             console.error('ActivityLog warning on register:', logErr);
         }
 
-        req.flash('success_msg', 'Registration successful!');
+        req.flash('success_msg', 'Registration successful! A confirmation email has been sent to ' + email + '. Please check your email and click the confirmation link to activate your account.');
         res.redirect('/dashboard');
     } catch (err) {
         console.error('Register error:', err);
@@ -114,20 +122,21 @@ router.post('/login', [
 
         const { email, password } = req.body;
 
-        // 1. Authenticate with Supabase
+        // Authenticate with Supabase
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
         if (authError) {
+            console.error('Supabase Auth Error:', authError.message);
             return res.render('auth/login', {
                 layout: false,
-                error: authError.message, // Provide the exact Supabase error (e.g., 'Email not confirmed')
+                error: 'Invalid email or password',
             });
         }
 
-        // Find associated user in MongoDB
+        // Get user from MongoDB
         const user = await User.findOne({ email });
         if (!user) {
             return res.render('auth/login', {
@@ -135,6 +144,7 @@ router.post('/login', [
                 error: 'Profile not found. Please contact support.',
             });
         }
+
 
         if (!user.isActive) {
             return res.render('auth/login', {
@@ -147,7 +157,7 @@ router.post('/login', [
         user.lastLogin = new Date();
         await user.save();
 
-        // 2. Set Supabase access token as our auth cookie
+        // Set Supabase access token as our auth cookie
         res.cookie('token', authData.session.access_token, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -155,7 +165,7 @@ router.post('/login', [
             sameSite: 'lax',
         });
 
-        // Also save Supabase refresh token in case we need it
+        // Also save Supabase refresh token
         res.cookie('refreshToken', authData.session.refresh_token, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -215,6 +225,71 @@ router.get('/logout', async (req, res) => {
     req.session.destroy(() => {
         res.redirect('/auth/login');
     });
+});
+
+// ─── GET /auth/callback ─────────────────────────────────────
+// Callback for email confirmation link from Supabase
+router.get('/callback', async (req, res) => {
+    try {
+        const { code, error } = req.query;
+
+        if (error) {
+            console.error('Email confirmation error:', error);
+            req.flash('error', 'Email confirmation failed. Please try again.');
+            return res.redirect('/auth/login');
+        }
+
+        if (!code) {
+            return res.redirect('/auth/login');
+        }
+
+        // Exchange code for session
+        const { data: sessionData, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+
+        if (sessionError) {
+            console.error('Session exchange error:', sessionError.message);
+            req.flash('error', 'Email confirmation failed. Please try again.');
+            return res.redirect('/auth/login');
+        }
+
+        // User email is now confirmed
+        const { user } = sessionData;
+
+        // Find or update user in MongoDB
+        let dbUser = await User.findOne({ email: user.email });
+        if (!dbUser) {
+            dbUser = await User.create({
+                name: user.user_metadata?.name || user.email,
+                email: user.email,
+                phone: user.user_metadata?.phone || '',
+                password: '', // Password is managed by Supabase
+            });
+        }
+
+        // Set session cookie
+        res.cookie('token', sessionData.session.access_token, {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+        });
+
+        res.cookie('refreshToken', sessionData.session.refresh_token, {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+        });
+
+        req.session.userId = dbUser._id;
+
+        req.flash('success_msg', 'Email confirmed! You are now logged in.');
+        res.redirect('/dashboard');
+    } catch (err) {
+        console.error('Callback error:', err);
+        req.flash('error', 'Confirmation failed. Please try again.');
+        res.redirect('/auth/login');
+    }
 });
 
 module.exports = router;

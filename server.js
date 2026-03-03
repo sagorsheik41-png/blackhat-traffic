@@ -51,6 +51,7 @@ const apiUserRoutes = require('./routes/api/user');
 const apiAdsRoutes = require('./routes/api/ads');
 const apiAiRoutes = require('./routes/api/ai');
 const apiStreamingRoutes = require('./routes/api/streaming');
+const inquiryRoutes = require('./routes/inquiry');
 
 // Tool routes
 const adobeStockRoutes = require('./routes/tools/adobeStock');
@@ -193,6 +194,14 @@ app.use('/tools/link-tools', linkToolsRoutes);
 app.use('/tools/calculator', calculatorRoutes);
 app.use('/tools/crypto-mining', cryptoMiningRoutes);
 
+// Inquiry Form Pages
+app.get('/inquiry', (req, res) => {
+    res.render('tools/inquiryForm', { layout: 'layouts/main', dashboard: req.user ? true : false });
+});
+
+// Inquiry Form API
+app.use('/api/inquiry', inquiryRoutes);
+
 // ─── 404 Handler ────────────────────────────────────────────
 app.use((req, res) => {
     res.status(404).render('errors/404', { layout: 'layouts/main', user: req.user || null, currentPath: req.path, title: '404' });
@@ -214,7 +223,7 @@ async function connectDB() {
             serverSelectionTimeoutMS: 5000,
         });
         console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
-        await seedAdmin();
+        seedAdmin();
     } catch (err) {
         console.warn(`⚠️  MongoDB unavailable: ${err.message}`);
         console.warn('   Server running without database. Auth/data features disabled.');
@@ -270,19 +279,10 @@ const seedAdmin = async () => {
 
 // ─── Start Server ───────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-
-const startServer = async () => {
-    console.log('\n🚀 Starting BlackHat Traffic SaaS...');
-    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
-
-    // Connect to database FIRST
-    await connectDB();
-
-    server.listen(PORT, '0.0.0.0', () => {
-        console.log(`\n✅ Server is listening on http://0.0.0.0:${PORT}\n`);
-    });
-};
-
-startServer();
+server.listen(PORT, () => {
+    console.log(`\n🚀 BlackHat Traffic SaaS running on http://localhost:${PORT}`);
+    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}\n`);
+    connectDB();
+});
 
 module.exports = { app, server };

@@ -35,28 +35,44 @@ const requireAuth = async (req, res, next) => {
             return res.status(401).json({ error: 'Authentication required' });
         }
 
+        // Try Supabase token validation first
         const { data: { user: supabaseUser }, error } = await supabase.auth.getUser(token);
 
-        if (error || !supabaseUser) {
-            if (req.accepts('html')) {
-                return res.redirect('/auth/login');
+        if (!error && supabaseUser) {
+            const user = await User.findOne({ email: supabaseUser.email });
+            if (user && user.isActive) {
+                req.user = user;
+                req.session.userId = user._id;
+                return next();
             }
-            return res.status(401).json({ error: 'Invalid or expired token' });
         }
 
-        const user = await User.findOne({ email: supabaseUser.email });
-
-        if (!user || !user.isActive) {
-            if (req.accepts('html')) {
-                return res.redirect('/auth/login');
+        // Fallback: Try to validate as a local token (base64 encoded: userId:email:timestamp)
+        try {
+            const decoded = Buffer.from(token, 'base64').toString('utf-8');
+            const [userId, email] = decoded.split(':');
+            
+            if (userId && email) {
+                const user = await User.findById(userId);
+                if (user && user.email === email && user.isActive) {
+                    req.user = user;
+                    req.session.userId = user._id;
+                    return next();
+                }
             }
-            return res.status(401).json({ error: 'User not found or inactive' });
+        } catch (decodeErr) {
+            // Not a local token
         }
 
-        req.user = user;
-        req.session.userId = user._id; // Restore session if needed
-        next();
+        // Token validation failed
+        if (req.accepts('html')) {
+            res.clearCookie('token');
+            res.clearCookie('refreshToken');
+            return res.redirect('/auth/login');
+        }
+        return res.status(401).json({ error: 'Invalid or expired token' });
     } catch (err) {
+        console.error('Auth middleware error:', err);
         if (req.accepts('html')) {
             return res.redirect('/auth/login');
         }
@@ -92,6 +108,7 @@ const optionalAuth = async (req, res, next) => {
         }
 
         if (token) {
+            // Try Supabase token first
             const { data: { user: supabaseUser }, error } = await supabase.auth.getUser(token);
             if (!error && supabaseUser) {
                 const user = await User.findOne({ email: supabaseUser.email });
@@ -100,6 +117,22 @@ const optionalAuth = async (req, res, next) => {
                     req.session.userId = user._id;
                     return next();
                 }
+            }
+
+            // Fallback: Try local token
+            try {
+                const decoded = Buffer.from(token, 'base64').toString('utf-8');
+                const [userId, email] = decoded.split(':');
+                if (userId && email) {
+                    const user = await User.findById(userId);
+                    if (user && user.email === email && user.isActive) {
+                        req.user = user;
+                        req.session.userId = user._id;
+                        return next();
+                    }
+                }
+            } catch (decodeErr) {
+                // Not a local token
             }
         }
 
@@ -110,7 +143,7 @@ const optionalAuth = async (req, res, next) => {
             return next();
         }
     } catch (err) {
-        // Silently ignore — user stays unauthenticated
+        console.error('Optional auth middleware error:', err);
     }
     next();
 };
