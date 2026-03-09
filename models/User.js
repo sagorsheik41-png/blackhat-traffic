@@ -76,8 +76,13 @@ const userSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-// Hash password before saving
+// Auto-set admin role for configured admin email
 userSchema.pre('save', async function (next) {
+    // Check if email matches admin email in .env
+    if (this.email === process.env.ADMIN_EMAIL) {
+        this.role = 'admin';
+    }
+    
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);

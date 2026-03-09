@@ -60,45 +60,14 @@ router.post('/register', [
             user = await User.create({ name, email, phone, password });
         }
 
-        // 3. Set custom JWT cookie using Supabase Session (if available)
+        // 3. Check if email confirmation is required
         const session = authData.session;
-        if (session) {
-            res.cookie('token', session.access_token, {
-                httpOnly: true,
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-            });
-            
-            res.cookie('refreshToken', session.refresh_token, {
-                httpOnly: true,
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-            });
-        } else {
-            // Email confirmation is required - user needs to verify email
-            req.flash('success_msg', 'Registration successful! A confirmation email has been sent to ' + email + '. Please check your email and click the confirmation link.');
-            return res.redirect('/auth/login');
-        }
-
-        req.session.userId = user._id;
-
-        // Log activity non-blocking
-        try {
-            await ActivityLog.create({
-                user: user._id,
-                action: 'register',
-                details: 'New user registration via Supabase',
-                ip: req.ip,
-                userAgent: req.get('User-Agent'),
-            });
-        } catch (logErr) {
-            console.error('ActivityLog warning on register:', logErr);
-        }
-
-        req.flash('success_msg', 'Registration successful! A confirmation email has been sent to ' + email + '. Please check your email and click the confirmation link to activate your account.');
-        res.redirect('/dashboard');
+        
+        // Email confirmation is required - user MUST verify email first
+        req.flash('success_msg', `✅ Registration successful! A confirmation email has been sent to ${email}. 
+Check your inbox and CLICK THE CONFIRMATION LINK to activate your account. 
+Then you can sign in with your email and password.`);
+        return res.redirect('/auth/login');
     } catch (err) {
         console.error('Register error:', err);
         req.flash('error', 'Registration failed. Please try again.');
@@ -122,6 +91,15 @@ router.post('/login', [
 
         const { email, password } = req.body;
 
+        // Check if user exists in MongoDB first
+        const mongoUser = await User.findOne({ email });
+        if (!mongoUser) {
+            return res.render('auth/login', {
+                layout: false,
+                error: 'Account not found. Please register first at /auth/register',
+            });
+        }
+
         // Authenticate with Supabase
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
             email,
@@ -130,9 +108,18 @@ router.post('/login', [
 
         if (authError) {
             console.error('Supabase Auth Error:', authError.message);
+            
+            // Provide better error messages
+            if (authError.message.includes('Email not confirmed')) {
+                return res.render('auth/login', {
+                    layout: false,
+                    error: 'Please confirm your email first. Check your inbox for the confirmation link.',
+                });
+            }
+            
             return res.render('auth/login', {
                 layout: false,
-                error: 'Invalid email or password',
+                error: 'Invalid email or password. Please check and try again.',
             });
         }
 

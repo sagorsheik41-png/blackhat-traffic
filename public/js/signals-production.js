@@ -23,40 +23,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const UIController = {
         activeTab: 'aviator',
         elements: {
-            btnAviator: null,
-            btnCrazyTime: null,
-            viewAviator: null,
-            viewCrazyTime: null,
+            tabAv: null,
+            tabCt: null,
+            viewAv: null,
+            viewCt: null,
             tabIndicator: null,
             globalClock: null
         },
 
         init() {
-            // Grab element references explicitly with strict checking
-            this.elements.btnAviator = document.getElementById('btn-tab-aviator');
-            this.elements.btnCrazyTime = document.getElementById('btn-tab-crazytime');
-            this.elements.viewAviator = document.getElementById('wrapper-aviator');
-            this.elements.viewCrazyTime = document.getElementById('wrapper-crazytime');
+            // Grab element references
+            this.elements.tabAv = document.getElementById('tabAviator');
+            this.elements.tabCt = document.getElementById('tabCrazyTime');
+            this.elements.viewAv = document.getElementById('aviatorView');
+            this.elements.viewCt = document.getElementById('crazyTimeView');
             this.elements.tabIndicator = document.getElementById('tabIndicator');
             this.elements.globalClock = document.getElementById('globalSyncClock');
 
-            // Explicit console warnings if missing (Bulletproof Targeting)
-            if (!this.elements.btnAviator) console.warn("[UIController] Aviator tab button ('btn-tab-aviator') not found");
-            if (!this.elements.btnCrazyTime) console.warn("[UIController] Crazy Time tab button ('btn-tab-crazytime') not found");
-            if (!this.elements.viewAviator) console.warn("[UIController] Aviator wrapper container ('wrapper-aviator') not found");
-            if (!this.elements.viewCrazyTime) console.warn("[UIController] Crazy Time wrapper container ('wrapper-crazytime') not found");
+            // Validate all required elements exist
+            const missingElements = [];
+            if (!this.elements.tabAv) missingElements.push('tabAviator');
+            if (!this.elements.tabCt) missingElements.push('tabCrazyTime');
+            if (!this.elements.viewAv) missingElements.push('aviatorView');
+            if (!this.elements.viewCt) missingElements.push('crazyTimeView');
 
-            // Bind tab click handlers safely with optional chaining
-            this.elements.btnAviator?.addEventListener('click', (e) => {
+            if (missingElements.length > 0) {
+                console.error('[UIController] FATAL: Missing DOM elements:', missingElements);
+                return false;
+            }
+
+            // Bind tab click handlers
+            this.elements.tabAv.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 this.switchTab('aviator');
             });
 
-            this.elements.btnCrazyTime?.addEventListener('click', (e) => {
+            this.elements.tabCt.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                this.switchTab('crazytime');
+                this.switchTab('crazyTime');
             });
 
             // Responsive resize handler
@@ -67,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Start global clock
             this.startGlobalClock();
 
-            // Set initial tab automatically on load
+            // Set initial tab
             this.switchTab('aviator');
 
             return true;
@@ -86,46 +92,46 @@ document.addEventListener('DOMContentLoaded', () => {
         updateIndicatorPosition() {
             if (!this.elements.tabIndicator) return;
 
-            if (this.activeTab === 'aviator' && this.elements.btnAviator) {
-                const width = this.elements.btnAviator.offsetWidth;
+            if (this.activeTab === 'aviator') {
+                const width = this.elements.tabAv.offsetWidth;
                 this.elements.tabIndicator.style.left = '4px';
                 this.elements.tabIndicator.style.width = `${width}px`;
-            } else if (this.activeTab === 'crazytime' && this.elements.btnCrazyTime) {
-                const avWidth = this.elements.btnAviator ? this.elements.btnAviator.offsetWidth : 0;
+            } else if (this.activeTab === 'crazyTime') {
+                const avWidth = this.elements.tabAv.offsetWidth || 0;
                 const offset = avWidth + 8;
-                const width = this.elements.btnCrazyTime.offsetWidth;
+                const width = this.elements.tabCt.offsetWidth;
                 this.elements.tabIndicator.style.left = `${offset}px`;
                 this.elements.tabIndicator.style.width = `${width}px`;
             }
         },
 
-        switchTab(tabName) {
-            if (tabName !== 'aviator' && tabName !== 'crazytime') return;
-            this.activeTab = tabName;
+        switchTab(tab) {
+            if (tab !== 'aviator' && tab !== 'crazyTime') return;
 
-            if (tabName === 'aviator') {
-                // Foolproof inline display styles
-                if (this.elements.viewCrazyTime) this.elements.viewCrazyTime.style.display = 'none';
-                if (this.elements.viewAviator) this.elements.viewAviator.style.display = '';
+            this.activeTab = tab;
 
-                // Highlight Aviator, Dim Crazy Time
-                this.elements.btnAviator?.classList.add('tab-active', 'text-white', 'border-blue-400/50', 'shadow-[0_0_10px_rgba(59,130,246,0.3)]');
-                this.elements.btnAviator?.classList.remove('tab-inactive', 'text-gray-400');
+            if (tab === 'aviator') {
+                // Show Aviator, hide Crazy Time
+                this.elements.viewAv.classList.remove('hidden');
+                this.elements.viewCt.classList.add('hidden');
 
-                this.elements.btnCrazyTime?.classList.remove('tab-active', 'text-white', 'border-purple-400/50', 'shadow-[0_0_10px_rgba(168,85,247,0.3)]');
-                this.elements.btnCrazyTime?.classList.add('tab-inactive', 'text-gray-400');
+                // Update button styles
+                this.elements.tabAv.classList.add('tab-active', 'text-white', 'border-blue-400/50', 'shadow-[0_0_10px_rgba(59,130,246,0.3)]');
+                this.elements.tabAv.classList.remove('tab-inactive', 'text-gray-400');
 
+                this.elements.tabCt.classList.remove('tab-active', 'text-white', 'border-blue-400/50', 'shadow-[0_0_10px_rgba(59,130,246,0.3)]');
+                this.elements.tabCt.classList.add('tab-inactive', 'text-gray-400');
             } else {
-                // Foolproof inline display styles
-                if (this.elements.viewAviator) this.elements.viewAviator.style.display = 'none';
-                if (this.elements.viewCrazyTime) this.elements.viewCrazyTime.style.display = '';
+                // Show Crazy Time, hide Aviator
+                this.elements.viewCt.classList.remove('hidden');
+                this.elements.viewAv.classList.add('hidden');
 
-                // Highlight Crazy Time, Dim Aviator
-                this.elements.btnCrazyTime?.classList.add('tab-active', 'text-white', 'border-purple-400/50', 'shadow-[0_0_10px_rgba(168,85,247,0.3)]');
-                this.elements.btnCrazyTime?.classList.remove('tab-inactive', 'text-gray-400');
+                // Update button styles
+                this.elements.tabCt.classList.add('tab-active', 'text-white', 'border-purple-400/50', 'shadow-[0_0_10px_rgba(168,85,247,0.3)]');
+                this.elements.tabCt.classList.remove('tab-inactive', 'text-gray-400');
 
-                this.elements.btnAviator?.classList.remove('tab-active', 'text-white', 'border-blue-400/50', 'shadow-[0_0_10px_rgba(59,130,246,0.3)]');
-                this.elements.btnAviator?.classList.add('tab-inactive', 'text-gray-400');
+                this.elements.tabAv.classList.remove('tab-active', 'text-white', 'border-blue-400/50', 'shadow-[0_0_10px_rgba(59,130,246,0.3)]');
+                this.elements.tabAv.classList.add('tab-inactive', 'text-gray-400');
             }
 
             this.updateIndicatorPosition();
@@ -136,25 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // AVIATOR ENGINE (Fully Isolated)
     // ==========================================
     const avEngine = {
-        config: {
-            vendorReadList_302130775: [],
-            "trust:cache:timestamp": { timestamp: 1773003820035 },
-            merchantCode: "cv666bdtf6",
-            mc_lang: "BN",
-            loglevel: "SILENT",
-            lang: "BN",
-            hisLang: "BN",
-            "ethereum-https://www.cv666.net": { chainId: "0x1" },
-            currencySymbol: "৳",
-            currencyPosition: "F",
-            currency: "BDT",
-            "binance-https://www.cv666.net": {},
-            ac_lang: "BN",
-            __p_language: "BN",
-            _WS_URL: { url: "wss://socket.738293839.com", timestamp: 1773017676754 },
-            SHELL_imageFormat: "avif",
-            SHELL_deviceId: "4e723874-7df1-4d8e-8ae4-f17c1d6244ba"
-        },
         ws: null,
         isConnected: false,
         isPaused: false,
@@ -181,12 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         init() {
-            // Auto-fill production WebSocket URL on page load
-            if (this.elements.wsUrl) {
+            // Set default WebSocket URL
+            if (this.elements.wsUrl && !this.elements.wsUrl.value.trim()) {
                 this.elements.wsUrl.value = 'wss://socket.738293839.com';
             }
 
-            // Bind event listeners with optional chaining
+            // Bind event listeners
             this.elements.btnConn?.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.connect();
@@ -367,8 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (placeholder) placeholder.remove();
 
             const timestamp = new Date((sig.ts || Date.now() / 1000) * 1000).toLocaleTimeString();
-            const value = sig.value != null
-                ? (typeof sig.value === 'number' ? sig.value.toFixed(2) : sig.value)
+            const value = sig.value != null 
+                ? (typeof sig.value === 'number' ? sig.value.toFixed(2) : sig.value) 
                 : '--';
             const side = sig.side ? String(sig.side).toUpperCase() : (sig.type || 'SIG');
             const note = sig.note || (sig.side ? `${side} @ ${value}` : 'Signal Received');
@@ -416,21 +403,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const animate = () => {
                 if (!this.ctx) return;
-
+                
                 this.ctx.clearRect(0, 0, this.elements.canvas.width, this.elements.canvas.height);
                 this.pulses = this.pulses.filter(p => p.opacity > 0.01);
-
+                
                 this.pulses.forEach(p => {
                     this.ctx.beginPath();
                     this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                     this.ctx.strokeStyle = `rgba(56,189,248,${p.opacity})`;
                     this.ctx.lineWidth = 2;
                     this.ctx.stroke();
-
+                    
                     p.radius += 2;
                     p.opacity -= 0.01;
                 });
-
+                
                 this.canvasAnimationFrame = requestAnimationFrame(animate);
             };
             animate();
@@ -455,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sides = ['cashout', 'cashout', 'auto', 'stop', 'win'];
                 const randomSide = sides[Math.floor(Math.random() * sides.length)];
                 const randomValue = parseFloat((Math.random() * 18 + 1.10).toFixed(2));
-
+                
                 this.renderSignal({
                     type: 'signal',
                     side: randomSide,
@@ -472,25 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // CRAZY TIME ENGINE (Fully Isolated)
     // ==========================================
     const ctEngine = {
-        config: {
-            vendorReadList_302130775: [],
-            "trust:cache:timestamp": { timestamp: 1773003820035 },
-            merchantCode: "cv666bdtf6",
-            mc_lang: "BN",
-            loglevel: "SILENT",
-            lang: "BN",
-            hisLang: "BN",
-            "ethereum-https://www.cv666.net": { chainId: "0x1" },
-            currencySymbol: "৳",
-            currencyPosition: "F",
-            currency: "BDT",
-            "binance-https://www.cv666.net": {},
-            ac_lang: "BN",
-            __p_language: "BN",
-            _WS_URL: { url: "wss://socket.738293839.com", timestamp: 1773017676754 },
-            SHELL_imageFormat: "avif",
-            SHELL_deviceId: "4e723874-7df1-4d8e-8ae4-f17c1d6244ba"
-        },
         ws: null,
         isConnected: false,
         isSimulating: false,
@@ -498,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
         MAX_RECONNECT: 5,
         latestSignal: '',
         predicted: '',
-
+        
         intervals: {
             prediction: null,
             countdown: null,
@@ -516,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
             totalWinners: 0,
             totalAmount: 0,
             spinHistory: [],
-            lastUpdate: 0,
             betsOpenTime: 0,
             resultTime: 0
         },
@@ -548,12 +515,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         init() {
-            // Auto-fill configuration WSS URL properly formatted
-            if (this.elements.wsUrl) {
-                let defaultUrl = this.config._WS_URL.url || 'https://socket.738293839.com';
-                this.elements.wsUrl.value = defaultUrl.replace('http://', 'ws://').replace('https://', 'wss://');
-            }
-
             this.elements.btnConn?.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.connect();
@@ -637,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let channel = 'CrazyTime0000001';
                     const match = fullUrl.match(/game\/([^/]+)/);
                     if (match?.[1]) channel = match[1];
-
+                    
                     this.ws.send(JSON.stringify({ subscribe: { channel } }));
                 };
 
@@ -703,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
         copySignal() {
             if (this.latestSignal) {
                 copyToClipboard(this.latestSignal);
-                showToast(`✅ Signal copied! ${this.config.currencySymbol}`, 'success');
+                showToast('✅ Signal copied! ৳', 'success');
             } else {
                 showToast('⏳ Awaiting signal…', 'warning');
             }
@@ -711,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         startSimulation() {
             if (this.isConnected || this.isSimulating) return;
-
+            
             this.isSimulating = true;
             this.setStatus('Simulation Mode (Demo)', false);
             this.logMsg('🎰 Demo stream started');
@@ -719,13 +680,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const demoData = [
                 { type: 'crazytime.newGame', args: { gameId: 'DEMO-KG-001', gameNumber: '00:00:00', version: 1 } },
                 { type: 'crazytime.betsOpen', args: { gameId: 'DEMO-KG-001', status: 'open' } },
+                { type: 'crazytime.spinHistory', args: { results: [{ result: '2' }, { result: '1' }, { result: '2' }, { result: 'b3' }, { result: 'b1' }, { result: '5' }, { result: '1' }, { result: '10' }] } },
                 { type: 'crazytime.betsClosed', args: { gameId: 'DEMO-KG-001', status: 'closed' } },
                 { type: 'crazytime.result', args: { gameId: 'DEMO-KG-001', gameNumber: '00:00:00', result: '10', totalMultiplier: 10 } },
-                { type: 'crazytime.gameWinners', args: { gameId: 'DEMO-KG-001', totalWinners: 5297, totalAmount: 951052.56, currency: 'BDT', winners: [{ screenName: 'Player1', winnings: 21313.07 }, { screenName: 'Player2', winnings: 17050.45 }] } },
-                { type: 'crazytime.spinHistory', args: { results: [{ result: '2' }, { result: '1' }, { result: '2' }, { result: 'b3', details: { result: 'Tails' } }, { result: 'b1' }, { result: '5' }, { result: '1' }, { result: '10' }] } },
-                { type: 'crazytime.slot.result', args: { gameId: 'DEMO-KG-001', result: 'Slot Win', multiplier: 5 } },
-                { type: 'crazytime.crazybonus.result', args: { gameId: 'DEMO-KG-001', flappers: { Top: '100x', Left: '50x', Right: '25x' } } },
-                { type: 'connection.kickout', args: { reason: 'Inactivity' } }
+                { type: 'crazytime.gameWinners', args: { gameId: 'DEMO-KG-001', totalWinners: 5297, totalAmount: 951052.56, currency: 'BDT', winners: [{ screenName: 'Player1', winnings: 21313.07 }, { screenName: 'Player2', winnings: 17050.45 }] } }
             ];
 
             let index = 0;
@@ -734,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.isSimulating = false;
                     return;
                 }
-
+                
                 this.handleMessage(demoData[index % demoData.length]);
                 index++;
                 this.intervals.simulation = setTimeout(runNextDemo, 6500);
@@ -753,7 +711,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const now = Date.now();
-            this.gameState.lastUpdate = now;
 
             switch (data.type) {
                 case 'crazytime.newGame':
@@ -761,14 +718,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.gameState.gameNumber = data.args.gameNumber || '';
                     this.gameState.status = 'New Game';
                     this.gameState.betsOpenTime = 0;
-                    this.gameState.resultTime = 0;
                     this.gameState.bonusResult = '';
                     this.clearBoxHighlights();
-                    setTimeout(() => {
-                        if (this.gameState.spinHistory.length > 0) {
-                            this.showEarlyPrediction();
-                        }
-                    }, 1000);
                     this.updateDisplay();
                     break;
 
@@ -796,10 +747,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.gameState.status = `Result: ${this.gameState.result}`;
                     if (this.elements.lblStatus) this.elements.lblStatus.className = 'text-blue-400 font-bold mb-4 text-lg';
                     this.gameState.resultTime = now;
-                    if (this.gameState.betsOpenTime > 0) {
-                        this.roundDuration = Math.max(20000, Math.min(60000, now - this.gameState.betsOpenTime));
-                        this.logMsg(`⏱️ Updated round duration: ${this.roundDuration}ms`);
-                    }
                     this.updateDisplay();
                     this.latestSignal = `🎯 [KG SIGNAL] RESULT: ${this.gameState.result.toUpperCase()}`;
                     break;
@@ -814,28 +761,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'crazytime.spinHistory':
                     this.gameState.spinHistory = data.args.results || [];
                     this.updateHistory();
-                    break;
-
-                case 'crazytime.slot.result':
-                    this.gameState.result = data.args.result || '';
-                    this.gameState.multiplier = data.args.multiplier || 0;
-                    this.gameState.status = 'Slot Win';
-                    this.updateDisplay();
-                    break;
-
-                case 'crazytime.crazybonus.result':
-                    this.gameState.bonusResult = data.args.flappers ?
-                        `Bonus: Top=${data.args.flappers.Top || 'N/A'} Left=${data.args.flappers.Left || 'N/A'} Right=${data.args.flappers.Right || 'N/A'}` : '';
-                    this.gameState.status = 'Bonus Result';
-                    this.updateDisplay();
-                    break;
-
-                case 'connection.kickout':
-                    this.logMsg(`⚠️ Kicked out: ${data.args.reason}. Reconnecting...`);
-                    this.disconnect();
-                    if (this.elements.wsUrl && this.elements.wsUrl.value) {
-                        this.attemptReconnect(this.elements.wsUrl.value);
-                    }
                     break;
             }
         },
@@ -852,12 +777,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateWinners(currency) {
             const formatNumber = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
+            
             if (this.elements.totalWins) {
                 this.elements.totalWins.textContent = `Active: ${formatNumber(this.gameState.totalWinners)} Players`;
             }
             if (this.elements.totalAmt) {
-                this.elements.totalAmt.textContent = `Pool: ${this.config.currencySymbol} ${formatNumber(Math.round(this.gameState.totalAmount))} ${currency}`;
+                this.elements.totalAmt.textContent = `Pool: ৳ ${formatNumber(Math.round(this.gameState.totalAmount))} ${currency}`;
             }
 
             if (!this.elements.winList) return;
@@ -876,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="text-white text-xs font-semibold truncate w-24">${winner.screenName || 'Ghost'}</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-emerald-400 font-bold text-xs">${this.config.currencySymbol} ${formatNumber(Math.round(winner.winnings))}</span>
+                        <span class="text-emerald-400 font-bold text-xs">৳ ${formatNumber(Math.round(winner.winnings))}</span>
                         <span class="block text-[8px] text-gray-500 uppercase">${currency}</span>
                     </div>
                 </li>
@@ -906,131 +831,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         },
 
-        activateSignalBox(signal) {
-            this.clearBoxHighlights();
-            const targetId = `ct-sig-${signal}`; // Updated to hit right ID
-            if (!this.elements.signalBoxes) return;
-            const signalBox = this.elements.signalBoxes.querySelector(`#${targetId}`);
-            if (signalBox) {
-                signalBox.classList.add('ct-signal-active');
-            }
-        },
-
-        analyzePatterns(history) {
-            if (history.length < 3) return { mostLikely: null };
-            const last3 = history.slice(-3).map(r => r.result);
-            const numbers = ['1', '2', '5', '10'];
-            const bonuses = ['b1', 'b2', 'b3', 'b4'];
-            const recentNumbers = last3.filter(r => numbers.includes(r)).length;
-            const recentBonuses = last3.filter(r => bonuses.includes(r)).length;
-
-            if (recentNumbers >= 2 && recentBonuses === 0) {
-                return { mostLikely: 'b1' }; // Predict bonus
-            }
-            if (recentBonuses >= 2 && recentNumbers === 0) {
-                return { mostLikely: '2' }; // Predict common number
-            }
-            const last2 = history.slice(-2).map(r => r.result);
-            if (last2[0] === last2[1]) {
-                const different = numbers.concat(bonuses).filter(r => r !== last2[0]);
-                return { mostLikely: different[Math.floor(Math.random() * different.length)] };
-            }
-            return { mostLikely: null };
-        },
-
-        predictNextSignal() {
-            if (this.gameState.spinHistory.length > 0 && this.gameState.betsOpenTime > 0) {
-                const resultCount = {};
-                const recentHistory = this.gameState.spinHistory.slice(-10);
-                // Based on Crazy Time wheel segments
-                const probabilities = { '1': 0.28, '2': 0.26, '5': 0.13, '10': 0.07, 'b1': 0.13, 'b2': 0.07, 'b3': 0.04, 'b4': 0.02 };
-
-                // Weight recent results with base probabilities
-                recentHistory.forEach((result, index) => {
-                    const weight = Math.max(1, 10 - index);
-                    resultCount[result.result] = (resultCount[result.result] || 0) + weight * (probabilities[result.result] || 0.1);
-                });
-
-                const patterns = this.analyzePatterns(recentHistory);
-                if (patterns.mostLikely) {
-                    resultCount[patterns.mostLikely] = (resultCount[patterns.mostLikely] || 0) + 15;
-                }
-
-                let mostFrequent = '';
-                let maxCount = 0;
-                for (const result in resultCount) {
-                    if (resultCount[result] > maxCount) {
-                        maxCount = resultCount[result];
-                        mostFrequent = result;
-                    }
-                }
-
-                const confidence = Math.min(95, (maxCount / recentHistory.length * 100)).toFixed(1);
-                const timeIntoRound = Date.now() - this.gameState.betsOpenTime;
-                const remainingTime = this.roundDuration - timeIntoRound;
-                const signalDisplayLeadTime = 15000;
-
-                if (remainingTime > signalDisplayLeadTime && mostFrequent) {
-                    this.predicted = mostFrequent;
-                    this.activateSignalBox(this.predicted);
-                    const timeToResult = Math.max(0, Math.floor(remainingTime / 1000));
-
-                    if (this.elements.predStatus) this.elements.predStatus.textContent = `Betting Signal: ${mostFrequent.toUpperCase()} likely (Confidence: ${confidence}%)`;
-                    if (this.elements.earlySig) this.elements.earlySig.textContent = `🎯 NEXT ROUND: ${mostFrequent.toUpperCase()} - Place bet now!`;
-
-                } else if (this.predicted) {
-                    this.activateSignalBox(this.predicted);
-                    if (this.elements.predStatus) this.elements.predStatus.textContent = `Betting Signal: ${this.predicted.toUpperCase()} likely (Confidence: ${confidence}%)`;
-                    if (this.elements.earlySig) this.elements.earlySig.textContent = `🎯 NEXT ROUND: ${this.predicted.toUpperCase()} - Get ready!`;
-                } else {
-                    if (this.elements.predStatus) this.elements.predStatus.textContent = 'Betting Signal: Analyzing patterns...';
-                    if (this.elements.earlySig) this.elements.earlySig.textContent = 'Awaiting data...';
-                    this.clearBoxHighlights();
-                }
-            } else {
-                if (this.elements.predStatus) this.elements.predStatus.textContent = 'Betting Signal: Waiting for game data...';
-                if (this.elements.earlySig) this.elements.earlySig.textContent = 'Awaiting data...';
-                this.clearBoxHighlights();
-            }
-        },
-
-        showEarlyPrediction() {
-            if (this.gameState.spinHistory.length > 0) {
-                this.logMsg('🔮 Calculating early prediction for next round');
-                const resultCount = {};
-                const recentHistory = this.gameState.spinHistory.slice(-10);
-                const probabilities = { '1': 0.28, '2': 0.26, '5': 0.13, '10': 0.07, 'b1': 0.13, 'b2': 0.07, 'b3': 0.04, 'b4': 0.02 };
-
-                recentHistory.forEach((result, index) => {
-                    const weight = Math.max(1, 10 - index);
-                    resultCount[result.result] = (resultCount[result.result] || 0) + weight * (probabilities[result.result] || 0.1);
-                });
-
-                const patterns = this.analyzePatterns(recentHistory);
-                if (patterns.mostLikely) {
-                    resultCount[patterns.mostLikely] = (resultCount[patterns.mostLikely] || 0) + 15;
-                }
-
-                let mostFrequent = '';
-                let maxCount = 0;
-                for (const result in resultCount) {
-                    if (resultCount[result] > maxCount) {
-                        maxCount = resultCount[result];
-                        mostFrequent = result;
-                    }
-                }
-
-                if (mostFrequent) {
-                    this.predicted = mostFrequent;
-                    this.activateSignalBox(mostFrequent);
-                    const confidence = Math.min(95, (maxCount / recentHistory.length * 100)).toFixed(1);
-
-                    if (this.elements.predStatus) this.elements.predStatus.textContent = `Early Signal: ${mostFrequent.toUpperCase()} predicted (Confidence: ${confidence}%)`;
-                    if (this.elements.earlySig) this.elements.earlySig.textContent = `🔮 EARLY PREDICTION: Next round likely ${mostFrequent.toUpperCase()}`;
-                }
-            }
-        },
-
         startCountdown(seconds) {
             if (!this.elements.timerCont || !this.elements.timerVal) return;
 
@@ -1057,11 +857,8 @@ document.addEventListener('DOMContentLoaded', () => {
         startPredictionLoop() {
             if (this.intervals.prediction) clearInterval(this.intervals.prediction);
             this.intervals.prediction = setInterval(() => {
-                this.predictNextSignal();
-            }, 5000); // Trigger robust predictions every 5 seconds
-
-            // Initial call
-            this.predictNextSignal();
+                // Prediction logic here
+            }, 5000);
         }
     };
 
