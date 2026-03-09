@@ -1,148 +1,178 @@
 /**
- * Signal Dashboards Logic
- * Handles real-time websocket connections for Aviator (generic data) and Crazy Time (Evolution APIs)
+ * Signal Dashboards — BlackHat Traffic
+ * Aviator  (cv666 / socket.738293839.com)
+ * Crazy Time (Evolution Gaming)
+ *
+ * Both engines run FULLY INDEPENDENTLY.
+ * Switching tabs NEVER pauses, resets, or destroys engine state.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- UI Tabs ---
-    const elements = {
-        tabAv: document.getElementById('tabAviator'),
-        tabCt: document.getElementById('tabCrazyTime'),
-        viewAv: document.getElementById('aviatorView'),
-        viewCt: document.getElementById('crazyTimeView'),
-        tabIndicator: document.getElementById('tabIndicator')
-    };
 
-    let activeTab = 'aviator'; // Default to Aviator
-    let engineStates = {
-        aviator: { isRunning: false, ws: null, intervals: [] },
-        crazyTime: { isRunning: false, ws: null, intervals: [] }
-    };
+    // ── UI references ─────────────────────────────────────────────────────────
+    const elTabAv = document.getElementById('tabAviator');
+    const elTabCt = document.getElementById('tabCrazyTime');
+    const elViewAv = document.getElementById('aviatorView');
+    const elViewCt = document.getElementById('crazyTimeView');
+    const elTabInd = document.getElementById('tabIndicator');
 
-    elements.tabAv.addEventListener('click', () => switchTab('aviator'));
-    elements.tabCt.addEventListener('click', () => switchTab('crazyTime'));
+    let activeTab = 'aviator';
 
+    elTabAv.addEventListener('click', () => switchTab('aviator'));
+    elTabCt.addEventListener('click', () => switchTab('crazyTime'));
+
+    // ── Tab switcher — ONLY changes visibility, NEVER touches engine state ────
     function switchTab(tab) {
-        if (activeTab === tab) return; // Don't re-switch if already on that tab
-        // Note: We do NOT pause the engines when switching — both run independently in background
+        if (activeTab === tab) return;
         activeTab = tab;
 
         if (tab === 'aviator') {
-            // Activate Aviator
-            elements.tabIndicator.style.left = '4px';
-            elements.tabIndicator.style.width = `${elements.tabAv.offsetWidth}px`;
-            elements.tabAv.classList.add('text-white');
-            elements.tabAv.classList.remove('text-gray-400');
-            elements.tabCt.classList.add('text-gray-400');
-            elements.tabCt.classList.remove('text-white');
-
-            elements.viewAv.classList.remove('hidden');
-            elements.viewAv.style.display = 'block';
-            elements.viewCt.classList.add('hidden');
-            elements.viewCt.style.display = 'none';
-            
-            resumeEngine('aviator');
-            logDebug('Switched to Aviator engine', 'tab-switch');
+            elTabInd.style.left = '4px';
+            elTabInd.style.width = `${elTabAv.offsetWidth}px`;
+            elTabAv.classList.add('text-white'); elTabAv.classList.remove('text-gray-400');
+            elTabCt.classList.add('text-gray-400'); elTabCt.classList.remove('text-white');
+            elViewAv.classList.remove('hidden'); elViewAv.style.display = 'block';
+            elViewCt.classList.add('hidden'); elViewCt.style.display = 'none';
         } else {
-            // Activate Crazy Time (KG Time)
-            const offset = (elements.tabAv?.offsetWidth || 0) + 8;
-            elements.tabIndicator.style.left = `${offset}px`;
-            elements.tabIndicator.style.width = `${elements.tabCt?.offsetWidth || 0}px`;
-
-            elements.tabCt.classList.add('text-white');
-            elements.tabCt.classList.remove('text-gray-400');
-            elements.tabAv.classList.add('text-gray-400');
-            elements.tabAv.classList.remove('text-white');
-
-            elements.viewCt.classList.remove('hidden');
-            elements.viewCt.style.display = 'grid'; // Critical: grid for layout
-            elements.viewAv.classList.add('hidden');
-            elements.viewAv.style.display = 'none';
-            
-            resumeEngine('crazyTime');
-            logDebug('Switched to Crazy Time (KG Time) engine', 'tab-switch');
+            const offset = (elTabAv?.offsetWidth || 0) + 8;
+            elTabInd.style.left = `${offset}px`;
+            elTabInd.style.width = `${elTabCt?.offsetWidth || 0}px`;
+            elTabCt.classList.add('text-white'); elTabCt.classList.remove('text-gray-400');
+            elTabAv.classList.add('text-gray-400'); elTabAv.classList.remove('text-white');
+            elViewCt.classList.remove('hidden'); elViewCt.style.display = 'grid';
+            elViewAv.classList.add('hidden'); elViewAv.style.display = 'none';
         }
     }
 
-    function pauseEngine(engine) {
-        if (engineStates[engine]) {
-            engineStates[engine].isRunning = false;
-            // Clear all intervals for this engine
-            engineStates[engine].intervals.forEach(id => clearInterval(id));
-            engineStates[engine].intervals = [];
-        }
+    window.addEventListener('resize', () => switchTab(activeTab));
+
+    // ── Global clock ──────────────────────────────────────────────────────────
+    function updateGlobalClock() {
+        const el = document.getElementById('globalSyncClock');
+        if (el) el.textContent = new Date().toISOString().split('T')[1].split('.')[0];
     }
+    setInterval(updateGlobalClock, 1000);
+    updateGlobalClock();
 
-    function resumeEngine(engine) {
-        if (engineStates[engine]) {
-            engineStates[engine].isRunning = true;
-        }
-    }
-
-    function logDebug(message, source = 'debug') {
-        const time = new Date().toLocaleTimeString();
-        console.log(`[${time}] [${source}] ${message}`);
-    }
-
-    window.addEventListener('resize', () => {
-        if (activeTab) switchTab(activeTab);
-    });
-
-    // ==========================================
-    // 1. AVIATOR LOGIC
-    // ==========================================
+    // ─────────────────────────────────────────────────────────────────────────
+    //  AVIATOR ENGINE
+    // ─────────────────────────────────────────────────────────────────────────
     const av = {
         wsUrl: document.getElementById('avWsUrl'),
         token: document.getElementById('avToken'),
-        btnConnect: document.getElementById('avConnectBtn'),
-        btnDisconnect: document.getElementById('avDisconnectBtn'),
+        btnConn: document.getElementById('avConnectBtn'),
+        btnDisc: document.getElementById('avDisconnectBtn'),
         btnPause: document.getElementById('avPauseBtn'),
         btnClear: document.getElementById('avClearBtn'),
         btnCopy: document.getElementById('avCopyLatestBtn'),
         status: document.getElementById('avStatus'),
         log: document.getElementById('avLog'),
-        signals: document.getElementById('avSignals')
+        signals: document.getElementById('avSignals'),
+        active: document.getElementById('avActiveSignal'),
+        canvas: document.getElementById('avPulseCanvas'),
     };
+
+    // Pre-fill cv666 Aviator WebSocket URL
+    if (av.wsUrl && !av.wsUrl.value.trim()) {
+        av.wsUrl.value = 'wss://socket.738293839.com';
+    }
 
     let avWs = null;
     let avPaused = false;
     let avLatestSignal = '';
-    
-    // Track intervals for this engine
-    let avIntervals = {
-        pulse: null,
-        clock: null
-    };
 
-    function avLogMsg(msg) {
-        const time = new Date().toLocaleTimeString();
-        const div = document.createElement('div');
-        div.className = 'mb-1 pb-1 border-b border-white/5';
-        div.innerHTML = `<span class="text-blue-500">[${time}]</span> ${msg}`;
-        av.log.prepend(div);
-        if (av.log.children.length > 50) av.log.removeChild(av.log.lastChild);
+    // ── Logging ───────────────────────────────────────────────────────────────
+    function avLog(msg) {
+        const t = new Date().toLocaleTimeString();
+        const d = document.createElement('div');
+        d.className = 'mb-1 pb-1 border-b border-white/5';
+        d.innerHTML = `<span class="text-blue-500">[${t}]</span> ${msg}`;
+        av.log.prepend(d);
+        if (av.log.children.length > 60) av.log.removeChild(av.log.lastChild);
     }
 
-    function avSetStatus(text, isConnected) {
+    // ── Status badge ──────────────────────────────────────────────────────────
+    function avSetStatus(text, ok) {
         av.status.textContent = text;
-        if (isConnected) {
-            av.status.className = 'px-3 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-sm font-medium';
-        } else {
-            av.status.className = 'px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-sm font-medium';
-        }
+        av.status.className = ok
+            ? 'px-3 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-sm font-medium'
+            : 'px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-sm font-medium';
     }
 
-    av.btnConnect.addEventListener('click', () => {
+    // ── Pulse canvas ──────────────────────────────────────────────────────────
+    let pulses = [];
+    const ctx = av.canvas ? av.canvas.getContext('2d') : null;
+
+    function resizeCanvas() {
+        if (!av.canvas) return;
+        av.canvas.width = av.canvas.offsetWidth;
+        av.canvas.height = av.canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerPulse() {
+        if (!av.canvas) return;
+        pulses.push({ x: av.canvas.width / 2, y: av.canvas.height / 2, r: 0, o: 0.6 });
+    }
+
+    (function animatePulse() {
+        if (ctx) {
+            ctx.clearRect(0, 0, av.canvas.width, av.canvas.height);
+            pulses = pulses.filter(p => p.o > 0.01);
+            pulses.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(56,189,248,${p.o})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                p.r += 2;
+                p.o -= 0.01;
+            });
+        }
+        requestAnimationFrame(animatePulse);
+    })();
+
+    // ── Render a signal row ───────────────────────────────────────────────────
+    function avRenderSignal(sig) {
+        if (av.signals.querySelector('.text-gray-500')) av.signals.innerHTML = '';
+
+        const t = new Date((sig.ts || Date.now() / 1000) * 1000).toLocaleTimeString();
+        const val = sig.value != null ? (typeof sig.value === 'number' ? sig.value.toFixed(2) : sig.value) : '--';
+        const side = sig.side ? sig.side.toUpperCase() : (sig.type || 'SIG');
+        const note = sig.note || (sig.side ? `${sig.side} @ ${val}` : 'Signal Received');
+
+        avLatestSignal = `${side} ${val} ${sig.note ? '— ' + sig.note : ''}`.trim();
+
+        const el = document.createElement('div');
+        el.className = 'flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg mb-2 shadow-lg';
+        el.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="px-2 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded font-bold text-xs uppercase">${side}</div>
+            <div>
+              <div class="font-bold text-white text-sm">${note}</div>
+              <div class="text-gray-400 text-xs">${t}${sig.source ? ' • ' + sig.source : ''}</div>
+            </div>
+          </div>
+          <div class="font-mono text-emerald-400 font-bold">${val}x</div>`;
+
+        av.signals.prepend(el);
+        if (av.signals.children.length > 50) av.signals.removeChild(av.signals.lastChild);
+        triggerPulse();
+        if (av.active) { av.active.textContent = `${side} @ ${val}x`; av.active.classList.remove('hidden'); }
+    }
+
+    // ── WebSocket connection ──────────────────────────────────────────────────
+    function avConnect() {
         let url = av.wsUrl.value.trim();
         if (!url) return showToast('Please enter a WebSocket URL', 'error');
 
-        // FORCE SWITCH if it's an Evolution URL but they click Aviator Connect
+        // Auto-route Evolution URLs to Crazy Time
         if (url.includes('evo-games.com') || url.includes('crazytime')) {
-            showToast('Auto-Routing: Redirecting to Crazy Time engine...', 'success');
+            showToast('Evolution URL detected — routing to Crazy Time engine', 'info');
             switchTab('crazyTime');
-            ct.wsUrl.value = url;
-            // Trigger connection on the other engine
-            setTimeout(() => ct.btnConnect.click(), 500);
+            document.getElementById('ctWsUrl').value = url;
+            setTimeout(() => document.getElementById('ctConnectBtn').click(), 400);
             return;
         }
 
@@ -150,430 +180,298 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const token = av.token.value.trim();
-            if (token) {
-                const sep = url.includes('?') ? '&' : '?';
-                url += `${sep}token=${encodeURIComponent(token)}`;
-            }
+            if (token) url += (url.includes('?') ? '&' : '?') + `token=${encodeURIComponent(token)}`;
 
-            avLogMsg(`Connecting to ${url}...`);
-            avSetStatus('Connecting...', false);
+            avLog(`Connecting → ${url}`);
+            avSetStatus('Connecting…', false);
 
             avWs = new WebSocket(url);
 
             avWs.onopen = () => {
-                avLogMsg('Connected successfully.');
+                avLog('Connected to Aviator stream ✓');
                 avSetStatus('Connected', true);
                 av.signals.innerHTML = '';
+                showToast('Aviator stream connected!', 'success');
             };
 
-            avWs.onmessage = (e) => {
+            avWs.onmessage = e => {
                 if (avPaused) return;
                 try {
                     const data = JSON.parse(e.data);
                     avRenderSignal(data);
-                } catch (err) {
-                    avLogMsg(`Received text: ${e.data.substring(0, 50)}`);
+                } catch {
+                    avLog(`Text: ${String(e.data).substring(0, 80)}`);
                     avRenderSignal({ type: 'text', note: e.data });
                 }
             };
 
-            avWs.onclose = () => {
-                avLogMsg('Connection closed.');
-                avSetStatus('Disconnected', false);
-                avWs = null;
-            };
-
-            avWs.onerror = () => {
-                avLogMsg('WebSocket error occurred.');
-            };
+            avWs.onclose = () => { avLog('Connection closed.'); avSetStatus('Disconnected', false); avWs = null; };
+            avWs.onerror = () => { avLog('WebSocket error.'); };
 
         } catch (err) {
-            avLogMsg(`Error: ${err.message}`);
+            avLog(`Error: ${err.message}`);
             avSetStatus('Error', false);
         }
-    });
+    }
 
-    av.btnDisconnect.addEventListener('click', () => {
-        if (avWs) {
-            avWs.close();
-            avLogMsg('Manual disconnect.');
+    // Smart URL sensing
+    function avSense(val) {
+        if (val.includes('evo-games.com') || val.includes('crazytime')) {
+            showToast('Evolution URL detected — switching to Crazy Time', 'info');
+            switchTab('crazyTime');
+            document.getElementById('ctWsUrl').value = val;
         }
-    });
+    }
+    if (av.wsUrl) {
+        av.wsUrl.addEventListener('input', e => avSense(e.target.value));
+        av.wsUrl.addEventListener('paste', e => setTimeout(() => avSense(e.target.value), 10));
+        av.wsUrl.addEventListener('change', e => avSense(e.target.value));
+    }
 
-    av.btnClear.addEventListener('click', () => {
-        av.signals.innerHTML = '<div class="text-center text-gray-500 py-4 text-sm align-middle h-full flex items-center justify-center">Awaiting incoming signals...</div>';
-        avLogMsg('Cleared signals.');
+    av.btnConn?.addEventListener('click', avConnect);
+    av.btnDisc?.addEventListener('click', () => { if (avWs) { avWs.close(); avLog('Manual disconnect.'); } });
+    av.btnClear?.addEventListener('click', () => {
+        av.signals.innerHTML = '<div class="text-center text-gray-500 py-4 text-sm h-full flex items-center justify-center">Awaiting incoming signals…</div>';
+        avLog('Cleared.');
     });
-
-    av.btnPause.addEventListener('click', () => {
+    av.btnPause?.addEventListener('click', () => {
         avPaused = !avPaused;
         av.btnPause.textContent = avPaused ? 'Resume' : 'Pause';
         av.btnPause.className = avPaused
-            ? 'px-3 py-1 bg-yellow-500/20 border border-yellow-500/50 hover:bg-yellow-500/30 text-yellow-500 rounded text-sm transition-colors'
+            ? 'px-3 py-1 bg-yellow-500/20 border border-yellow-500/50 text-yellow-500 rounded text-sm transition-colors'
             : 'px-3 py-1 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded text-sm transition-colors';
-        avLogMsg(avPaused ? 'Feed paused.' : 'Feed resumed.');
+        avLog(avPaused ? 'Feed paused.' : 'Feed resumed.');
+    });
+    av.btnCopy?.addEventListener('click', () => {
+        if (avLatestSignal) { copyToClipboard(avLatestSignal); showToast('Aviator signal copied!', 'success'); }
+        else showToast('No signal yet', 'warning');
     });
 
-    // Smart URL Sensing (Enhanced)
-    const senseUrl = (e) => {
-        const val = e.target.value;
-        if (val.includes('evo-games.com') || val.includes('crazytime')) {
-            showToast('Smart Sensing: Evolution URL detected. Switching tabs...', 'info');
-            switchTab('crazyTime');
-            ct.wsUrl.value = val;
-        }
-    };
-    av.wsUrl.addEventListener('input', senseUrl);
-    av.wsUrl.addEventListener('paste', (e) => setTimeout(() => senseUrl(e), 10));
-    av.wsUrl.addEventListener('change', senseUrl);
+    // ── Aviator Demo Loop (only when no live WS) ──────────────────────────────
+    avLog('[System] Aviator telemetry engine ready. Demo signals active.');
+    setInterval(() => {
+        if (avWs) return;  // stop demo when live
+        const sides = ['cashout', 'cashout', 'auto', 'stop', 'win'];
+        const s = sides[Math.floor(Math.random() * sides.length)];
+        const v = parseFloat((Math.random() * 18 + 1.10).toFixed(2));
+        avRenderSignal({ type: 'signal', side: s, value: v, ts: Math.floor(Date.now() / 1000), note: 'demo', source: 'cv666' });
+    }, 8000);
 
-    // Pulse Wave Logic
-    const cvs = document.getElementById('avPulseCanvas');
-    const ctx = cvs.getContext('2d');
-    let pulses = [];
 
-    function resizeCanvas() {
-        cvs.width = cvs.offsetWidth;
-        cvs.height = cvs.offsetHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function triggerPulse() {
-        pulses.push({ x: cvs.width / 2, y: cvs.height / 2, r: 0, o: 0.6 });
-    }
-
-    function animatePulse() {
-        ctx.clearRect(0, 0, cvs.width, cvs.height);
-        pulses = pulses.filter(p => p.o > 0.01);
-        pulses.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(56, 189, 248, ${p.o})`;
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            p.r += 2;
-            p.o -= 0.01;
-        });
-        requestAnimationFrame(animatePulse);
-    }
-    animatePulse();
-
-    av.btnCopy.addEventListener('click', () => {
-        if (avLatestSignal) {
-            copyToClipboard(avLatestSignal);
-        } else {
-            showToast('No signal to copy yet', 'warning');
-        }
-    });
-
-    function avRenderSignal(sig) {
-        if (av.signals.querySelector('.text-gray-500')) av.signals.innerHTML = ''; // Remove placeholder
-
-        const time = new Date((sig.ts || Date.now() / 1000) * 1000).toLocaleTimeString();
-        const val = sig.value ? (typeof sig.value === 'number' ? sig.value.toFixed(2) : sig.value) : '--';
-        const side = sig.side ? sig.side.toUpperCase() : (sig.type || 'SIG');
-        const note = sig.note || (sig.side ? `${sig.side} @ ${val}` : 'Signal Received');
-
-        avLatestSignal = `${side} ${val} ${sig.note ? '- ' + sig.note : ''}`.trim();
-
-        const el = document.createElement('div');
-        el.className = 'flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg mb-2 shadow-lg';
-        el.innerHTML = `
-        <div class="flex items-center gap-3">
-          <div class="px-2 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded font-bold text-xs uppercase">${side}</div>
-          <div>
-            <div class="font-bold text-white text-sm">${note}</div>
-            <div class="text-gray-400 text-xs">${time} ${sig.source ? '• ' + sig.source : ''}</div>
-          </div>
-        </div>
-        <div class="font-mono text-emerald-400 font-bold">${val}x</div>
-      `;
-
-        av.signals.prepend(el);
-        if (av.signals.children.length > 50) av.signals.removeChild(av.signals.lastChild);
-        triggerPulse();
-        const activeLabel = document.getElementById('avActiveSignal');
-        activeLabel.textContent = `${side} @ ${val}x`;
-        activeLabel.classList.remove('hidden');
-    }
-
-    // Global Sync Clock
-    function updateGlobalClock() {
-        const el = document.getElementById('globalSyncClock');
-        if (el) {
-            el.textContent = new Date().toISOString().split('T')[1].split('.')[0];
-        }
-    }
-    setInterval(updateGlobalClock, 1000);
-    updateGlobalClock();
-
-    // ==========================================
-    // 2. CRAZY TIME LOGIC
-    // ==========================================
-    let ctWs = null;
-    let ctCountdownInterval = null;
-    let ctState = {
-        gameId: '',
-        gameNumber: '',
-        result: '',
-        multiplier: '',
-        status: '',
-        bonusResult: '',
-        winners: [],
-        totalWinners: 0,
-        totalAmount: 0,
-        spinHistory: [],
-        lastUpdate: 0,
-        betsOpenTime: 0,
-        resultTime: 0
-    };
-    let isCtConnected = false;
-    let isCtSimulating = false;
-    let ctPredictionInterval = null;
-    let ctRoundDuration = 35000;
-    let ctPredictedSignal = '';
-    let ctReconnectAttempts = 0;
-    const ctMaxReconnectAttempts = 5;
-    const ctMaxDebugMessages = 50;
-    
-    // Track intervals for this engine
-    let ctIntervals = {
-        prediction: null,
-        countdown: null,
-        pulse: null
-    };
-
+    // ─────────────────────────────────────────────────────────────────────────
+    //  CRAZY TIME ENGINE  (Evolution Gaming / KG Time)
+    // ─────────────────────────────────────────────────────────────────────────
     const ct = {
         wsUrl: document.getElementById('ctWsUrl'),
         token: document.getElementById('ctToken'),
-        btnConnect: document.getElementById('ctConnectBtn'),
-        btnDisconnect: document.getElementById('ctDisconnectBtn'),
-        status: document.getElementById('ctConnStatus'),
-
+        btnConn: document.getElementById('ctConnectBtn'),
+        btnDisc: document.getElementById('ctDisconnectBtn'),
+        connStatus: document.getElementById('ctConnStatus'),
         lblStatus: document.getElementById('ctGameStatus'),
         lblId: document.getElementById('ctGameId'),
         lblNum: document.getElementById('ctGameNumber'),
         lblRes: document.getElementById('ctResult'),
         lblMult: document.getElementById('ctMultiplier'),
-
-        historyDiv: document.getElementById('ctSpinHistory'),
-
+        histDiv: document.getElementById('ctSpinHistory'),
         predStatus: document.getElementById('ctNextRoundPrediction'),
         earlySig: document.getElementById('ctEarlyBettingSignal'),
-
-        winnersList: document.getElementById('ctWinnersList'),
-        totalWinCount: document.getElementById('ctTotalWinners'),
-        totalWinAmount: document.getElementById('ctTotalAmount'),
+        winList: document.getElementById('ctWinnersList'),
+        totalWins: document.getElementById('ctTotalWinners'),
+        totalAmt: document.getElementById('ctTotalAmount'),
         btnCopy: document.getElementById('ctCopyLatestBtn'),
-        debugLog: document.getElementById('ctDebugLog')
+        debugLog: document.getElementById('ctDebugLog'),
     };
 
+    // State lives here — NEVER wiped on tab switch
+    let ctState = {
+        gameId: '', gameNumber: '', result: '', multiplier: '',
+        status: '', bonusResult: '', winners: [],
+        totalWinners: 0, totalAmount: 0,
+        spinHistory: [], betsOpenTime: 0, resultTime: 0
+    };
+
+    let ctWs = null;
+    let ctConnected = false;
+    let ctSimulating = false;
+    let ctPredInterval = null;
+    let ctCountInterval = null;
+    let ctRoundDuration = 35000;
+    let ctPredicted = '';
     let ctLatestSignal = '';
+    let ctReconAttempts = 0;
+    const CT_MAX_RECON = 5;
 
-    function ctLogDebug(message) {
+    // ── Logging ───────────────────────────────────────────────────────────────
+    function ctLog(msg) {
         if (!ct.debugLog) return;
-        const time = new Date().toLocaleTimeString();
-        const div = document.createElement('div');
-        div.className = 'mb-1 pb-1 border-b border-white/5';
-        div.innerHTML = `<span class="text-purple-500">[${time}]</span> ${message}`;
-        ct.debugLog.prepend(div);
-        if (ct.debugLog.children.length > ctMaxDebugMessages) {
-            ct.debugLog.removeChild(ct.debugLog.lastChild);
-        }
+        const t = new Date().toLocaleTimeString();
+        const d = document.createElement('div');
+        d.className = 'mb-1 pb-1 border-b border-white/5';
+        d.innerHTML = `<span class="text-purple-500">[${t}]</span> ${msg}`;
+        ct.debugLog.prepend(d);
+        if (ct.debugLog.children.length > 60) ct.debugLog.removeChild(ct.debugLog.lastChild);
     }
 
-    function ctSetStatus(text, isConnected, isError = false) {
-        ct.status.textContent = text;
-        let colorClass = isConnected ? 'text-green-400' : 'text-yellow-400';
-        if (isError) colorClass = 'text-red-400';
-        ct.status.className = `mt-3 text-center text-sm font-medium ${colorClass}`;
+    function ctSetStatus(text, ok, err = false) {
+        if (!ct.connStatus) return;
+        ct.connStatus.textContent = text;
+        ct.connStatus.className = `mt-3 text-center text-sm font-medium ${err ? 'text-red-400' : ok ? 'text-green-400' : 'text-yellow-400'}`;
     }
 
-    // Simulated data for testing
-    const ctSimulatedData = [
-        { type: 'crazytime.newGame', args: { gameId: '123456789ABCDEF', gameNumber: '16:15:00', version: 1 } },
-        { type: 'crazytime.betsOpen', args: { gameId: '123456789ABCDEF', status: 'open' } },
+    // ── Simulated data (loops forever) ────────────────────────────────────────
+    const ctSimData = [
+        { type: 'crazytime.newGame', args: { gameId: 'DEMO-KG-001', gameNumber: '00:00:00', version: 1 } },
+        { type: 'crazytime.betsOpen', args: { gameId: 'DEMO-KG-001', status: 'open' } },
         {
             type: 'crazytime.spinHistory', args: {
                 results: [
-                    { result: '2' }, { result: '1' }, { result: '2' }, { result: 'b3', details: { result: 'Tails' } },
+                    { result: '2' }, { result: '1' }, { result: '2' },
+                    { result: 'b3', details: { result: 'Tails' } },
                     { result: 'b1' }, { result: '5' }, { result: '1' }, { result: '10' }
                 ], newResult: false, version: 1
             }
         },
-        { type: 'crazytime.betsClosed', args: { gameId: '123456789ABCDEF', status: 'closed' } },
-        { type: 'crazytime.result', args: { gameId: '123456789ABCDEF', gameNumber: '16:15:00', result: '10', totalMultiplier: 10, version: 2 } },
+        { type: 'crazytime.betsClosed', args: { gameId: 'DEMO-KG-001', status: 'closed' } },
+        { type: 'crazytime.result', args: { gameId: 'DEMO-KG-001', gameNumber: '00:00:00', result: '10', totalMultiplier: 10, version: 2 } },
         {
             type: 'crazytime.gameWinners', args: {
-                gameId: '123456789ABCDEF', totalWinners: 5297, totalAmount: 951052.56, currency: 'BDT', winners: [
-                    { screenName: 'Indibet_saksham_diwan22', winnings: 21313.07 },
-                    { screenName: 'Lakshmi', winnings: 17050.45 },
+                gameId: 'DEMO-KG-001', totalWinners: 5297, totalAmount: 951052.56, currency: 'BDT', winners: [
+                    { screenName: 'Indibet_saksham', winnings: 21313.07 },
+                    { screenName: 'CV666_Lakshmi', winnings: 17050.45 },
                     { screenName: 'XSFPX2834252', winnings: 16534.69 }
                 ]
             }
         },
-        { type: 'crazytime.slot.result', args: { gameId: '123456789ABCDEF', result: 'Slot Win', multiplier: 5 } },
-        { type: 'crazytime.crazybonus.result', args: { gameId: '123456789ABCDEF', flappers: { Top: '100x', Left: '50x', Right: '25x' } } }
+        { type: 'crazytime.newGame', args: { gameId: 'DEMO-KG-002', gameNumber: '00:01:00', version: 3 } },
+        { type: 'crazytime.betsOpen', args: { gameId: 'DEMO-KG-002', status: 'open' } },
+        {
+            type: 'crazytime.spinHistory', args: {
+                results: [
+                    { result: 'b4' }, { result: '2' }, { result: '1' },
+                    { result: 'b1', details: { result: 'Blue' } },
+                    { result: '5' }, { result: '10' }, { result: '2' }, { result: 'b2' }
+                ], newResult: false, version: 3
+            }
+        },
+        { type: 'crazytime.betsClosed', args: { gameId: 'DEMO-KG-002', status: 'closed' } },
+        { type: 'crazytime.result', args: { gameId: 'DEMO-KG-002', gameNumber: '00:01:00', result: 'b4', totalMultiplier: 0, version: 4 } },
+        { type: 'crazytime.crazybonus.result', args: { gameId: 'DEMO-KG-002', flappers: { Top: '100x', Left: '50x', Right: '25x' } } },
+        {
+            type: 'crazytime.gameWinners', args: {
+                gameId: 'DEMO-KG-002', totalWinners: 7812, totalAmount: 2100341.88, currency: 'BDT', winners: [
+                    { screenName: 'BigWinner_BD', winnings: 55000.00 },
+                    { screenName: 'CV666_Player2', winnings: 38200.00 },
+                    { screenName: 'GhostPlayer99', winnings: 21000.00 }
+                ]
+            }
+        },
     ];
-    ct.btnConnect.addEventListener('click', () => {
-        let url = ct.wsUrl.value.trim();
-        if (!url) return showToast('Please enter evolution WebSocket URL', 'error');
 
-        const token = ct.token.value.trim();
-        if (token) {
-            const sep = url.includes('?') ? '&' : '?';
-            // SMART TOKEN DETECTION: if it starts with 'sbmo' (Evolution session) or looks like an EVO session, use EVOSESSIONID=
-            if (token.startsWith('sbmo') && !token.includes('=')) {
-                url += `${sep}EVOSESSIONID=${token}`;
-            } else if (!token.includes('=')) {
-                url += `${sep}token=${encodeURIComponent(token)}`;
-            } else {
-                url += `${sep}${token}`;
-            }
+    function ctStartSimulation() {
+        if (ctConnected || ctSimulating) return;
+        ctSimulating = true;
+        ctSetStatus('Simulation Mode (Demo)', false);
+        ctLog('KG Time demo stream started.');
+
+        let i = 0;
+        function runNext() {
+            if (ctConnected) { ctSimulating = false; return; }
+            ctHandleMsg(ctSimData[i % ctSimData.length]);
+            i++;
+            setTimeout(runNext, 6500);
         }
-
-        if (ctWs && isCtConnected) {
-            ctWs.close();
-        }
-        ctConnectWebSocket(url);
-    });
-
-    ct.btnDisconnect.addEventListener('click', () => {
-        if (ctWs) {
-            ctWs.close();
-            ctLogDebug('Manual disconnect.');
-        }
-        clearInterval(ctPredictionInterval);
-    });
-
-    if (ct.btnCopy) {
-        ct.btnCopy.addEventListener('click', () => {
-            if (ctLatestSignal) {
-                copyToClipboard(ctLatestSignal);
-                showToast('KG Signal Copied!', 'success');
-            } else {
-                showToast('Awaiting next KG signal...', 'warning');
-            }
-        });
+        setTimeout(runNext, 500);
     }
 
-    function ctConnectWebSocket(url) {
+    // ── WebSocket connect ─────────────────────────────────────────────────────
+    function ctDoConnect(url) {
         try {
-            // Start simulation super-early (1s) if connection is slow (User's KG experience)
-            const simStartup = setTimeout(() => {
-                if (!isCtConnected && !isCtSimulating) {
-                    ctLogDebug('KG Predictive stream initializing...');
-                    ctStartSimulation();
-                }
-            }, 1000);
-
             ctWs = new WebSocket(url);
-            isCtConnected = false;
-            ctReconnectAttempts = 0;
-
-            ctSetStatus('Connecting...', false);
-            ctLogDebug(`Attempting connection to ${url.split('?')[0]}...`);
+            ctConnected = false;
+            ctReconAttempts = 0;
+            ctSetStatus('Connecting…', false);
+            ctLog(`Connecting → ${url.split('?')[0]}…`);
 
             ctWs.onopen = () => {
-                clearTimeout(simStartup);
-                ctLogDebug('Connected to Evolution WebSocket server');
-                isCtConnected = true;
-                isCtSimulating = false;
-                ctReconnectAttempts = 0;
+                ctConnected = true;
+                ctSimulating = false;
+                ctReconAttempts = 0;
                 ctSetStatus('Connected (Live)', true);
-
-                // CRITICAL FIX: Extract correct channel from URL to send subscribe
+                ctLog('Connected to Evolution stream ✓');
+                showToast('Crazy Time stream connected!', 'success');
                 let channel = 'CrazyTime0000001';
-                const match = url.match(/game\/([^/]+)/);
-                if (match && match[1]) {
-                    channel = match[1];
-                }
-                const msg = JSON.stringify({ subscribe: { channel: channel } });
-                ctWs.send(msg);
-                ctLogDebug(`Sent subscription: ${msg}`);
-                showToast('Connected to Crazy Time stream', 'success');
+                const m = url.match(/game\/([^/]+)/);
+                if (m?.[1]) channel = m[1];
+                ctWs.send(JSON.stringify({ subscribe: { channel } }));
             };
 
-            ctWs.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    ctHandleGameMessage(data);
-                } catch (error) {
-                    if (event.data !== 'pong' && event.data !== 'ping') {
-                        ctLogDebug(`Text message: ${event.data.substring(0, 50)}`);
-                    }
-                }
+            ctWs.onmessage = e => {
+                try { ctHandleMsg(JSON.parse(e.data)); }
+                catch { if (e.data !== 'pong' && e.data !== 'ping') ctLog(`Raw: ${String(e.data).slice(0, 60)}`); }
             };
 
-            ctWs.onerror = (error) => {
-                ctLogDebug('WebSocket error occurred.');
-                ctSetStatus('Connection error', false, true);
-                // Will attempt reconnect onclose
-            };
+            ctWs.onerror = () => { ctLog('WebSocket error.'); ctSetStatus('Error', false, true); };
 
             ctWs.onclose = () => {
-                ctLogDebug('Connection closed. Attempting to reconnect...');
-                isCtConnected = false;
+                ctConnected = false;
                 ctSetStatus('Disconnected', false, true);
-                clearInterval(ctPredictionInterval);
-                ctReconnectWebSocket(url);
+                ctLog('Closed — attempting reconnect…');
+                if (ctPredInterval) clearInterval(ctPredInterval);
+                ctReconnect(url);
             };
-
         } catch (err) {
-            ctSetStatus(`Error: ${err.message}`, false, true);
-            ctLogDebug(`Error: ${err.message}`);
+            ctLog(`Error: ${err.message}`);
+            ctSetStatus('Error', false, true);
         }
     }
 
-    function ctReconnectWebSocket(url) {
-        if (ctReconnectAttempts < ctMaxReconnectAttempts) {
-            const delay = Math.min(1000 * Math.pow(2, ctReconnectAttempts), 30000); // Exponential backoff
-            ctReconnectAttempts++;
-            ctLogDebug(`Reconnect attempt ${ctReconnectAttempts}/${ctMaxReconnectAttempts} in ${delay}ms`);
-            setTimeout(() => ctConnectWebSocket(url), delay);
+    function ctReconnect(url) {
+        if (ctReconAttempts < CT_MAX_RECON) {
+            const delay = Math.min(1000 * Math.pow(2, ctReconAttempts), 30000);
+            ctReconAttempts++;
+            ctLog(`Reconnect ${ctReconAttempts}/${CT_MAX_RECON} in ${delay}ms`);
+            setTimeout(() => ctDoConnect(url), delay);
         } else {
-            ctLogDebug('Max reconnect attempts reached. Starting simulation mode...');
+            ctLog('Max reconnects — running simulation.');
             ctStartSimulation();
         }
     }
 
-    function ctStartSimulation() {
-        if (!isCtConnected && !isCtSimulating) {
-            isCtSimulating = true;
-            ctSetStatus('Disconnected (Simulation Mode)', false);
-            ctLogDebug('Starting simulation with sample data for demonstration.');
+    ct.btnConn?.addEventListener('click', () => {
+        let url = ct.wsUrl.value.trim();
+        if (!url) return showToast('Please enter Evolution WebSocket URL', 'error');
 
-            ctSimulatedData.forEach((data, index) => {
-                setTimeout(() => {
-                    if (!isCtConnected) ctHandleGameMessage(data);
-                }, index * 7000);
-            });
-            // Loop simulation
-            setTimeout(() => {
-                if (isCtSimulating && !isCtConnected) {
-                    isCtSimulating = false;
-                    ctStartSimulation();
-                }
-            }, ctSimulatedData.length * 7000 + 5000);
-        }
-    }
-
-    function ctHandleGameMessage(data) {
-        if (!data || !data.type) return;
-
-        if (isCtSimulating && isCtConnected) {
-            isCtSimulating = false;
-            ctLogDebug('Real WebSocket connected, stopping simulation');
+        const token = ct.token?.value.trim();
+        if (token) {
+            const sep = url.includes('?') ? '&' : '?';
+            // Smart: Evolution session token
+            if (token.startsWith('sbmo') && !token.includes('=')) url += `${sep}EVOSESSIONID=${token}`;
+            else if (!token.includes('=')) url += `${sep}token=${encodeURIComponent(token)}`;
+            else url += `${sep}${token}`;
         }
 
-        // Don't log spammy messages excessively
-        if (data.type !== 'crazytime.spinHistory') {
-            ctLogDebug(`Received event: ${data.type}`);
-        }
+        if (ctWs && ctConnected) ctWs.close();
+        ctSimulating = false; // stop sim so live can take over
+        ctDoConnect(url);
+    });
+
+    ct.btnDisc?.addEventListener('click', () => {
+        if (ctWs) { ctWs.close(); ctLog('Manual disconnect.'); }
+        if (ctPredInterval) clearInterval(ctPredInterval);
+    });
+
+    ct.btnCopy?.addEventListener('click', () => {
+        if (ctLatestSignal) { copyToClipboard(ctLatestSignal); showToast('KG Time Signal Copied! ৳', 'success'); }
+        else showToast('Awaiting next KG signal…', 'warning');
+    });
+
+    // ── Message handler ───────────────────────────────────────────────────────
+    function ctHandleMsg(data) {
+        if (!data?.type) return;
+        if (ctSimulating && ctConnected) { ctSimulating = false; ctLog('Live stream active — simulation stopped.'); }
+        if (data.type !== 'crazytime.spinHistory') ctLog(`Event: ${data.type}`);
 
         const now = Date.now();
-        ctState.lastUpdate = now;
 
         switch (data.type) {
             case 'crazytime.newGame':
@@ -581,355 +479,261 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctState.gameNumber = data.args.gameNumber || '';
                 ctState.status = 'New Game';
                 ctState.betsOpenTime = 0;
-                ctState.resultTime = 0;
-                ctClearSignalBoxes();
-                setTimeout(() => {
-                    if (ctState.spinHistory.length > 0) {
-                        ctShowEarlyPrediction();
-                    }
-                }, 1000);
-                ctUpdateGameDisplay();
+                ctState.bonusResult = '';
+                // Gently clear only signal highlights; preserve history & prediction
+                ctClearBoxHighlights();
+                setTimeout(() => { if (ctState.spinHistory.length > 0) ctShowEarlyPrediction(); }, 900);
+                ctUpdateDisplay();
                 break;
+
             case 'crazytime.betsOpen':
-                ctState.status = 'BETS OPEN';
+                ctState.status = 'BETS OPEN ✅';
                 ctState.betsOpenTime = now;
                 ct.lblStatus.className = 'text-green-400 font-bold mb-4 text-lg animate-pulse';
-                ctStartPredictionLoop();
-                ctStartCountdown(15); // Start 15s countdown for betting phase
-                ctUpdateGameDisplay();
+                ctStartPredLoop();
+                ctStartCountdown(15);
+                ctUpdateDisplay();
                 break;
+
             case 'crazytime.betsClosed':
-                ctState.status = 'Bets Closed - Spinning';
+                ctState.status = 'Bets Closed — Spinning';
                 ct.lblStatus.className = 'text-yellow-400 font-bold mb-4 text-lg';
-                if (ctPredictionInterval) clearInterval(ctPredictionInterval);
-                ct.earlySig.innerHTML = 'Wait for result...';
-                ct.earlySig.className = 'text-center text-yellow-400 font-bold text-xl py-2 px-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 w-full flex items-center justify-center min-h-[50px]';
-                ctUpdateGameDisplay();
+                if (ctPredInterval) clearInterval(ctPredInterval);
+                if (ct.earlySig) {
+                    ct.earlySig.innerHTML = '⏳ Wait for result…';
+                    ct.earlySig.className = 'text-center text-yellow-400 font-bold text-xl py-2 px-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 w-full flex items-center justify-center min-h-[50px]';
+                }
+                ctUpdateDisplay();
                 break;
+
             case 'crazytime.result':
                 ctState.result = data.args.result || '';
                 ctState.multiplier = data.args.totalMultiplier || 0;
-                ctState.status = 'Round Finished';
+                ctState.status = `Round Done — Result: ${ctState.result}`;
                 ct.lblStatus.className = 'text-blue-400 font-bold mb-4 text-lg';
                 ctState.resultTime = now;
-                if (ctState.betsOpenTime > 0) {
+                if (ctState.betsOpenTime > 0)
                     ctRoundDuration = Math.max(20000, Math.min(60000, now - ctState.betsOpenTime));
-                    ctLogDebug(`Adapted round duration to ${ctRoundDuration}ms`);
-                }
-                ctUpdateGameDisplay();
+                ctUpdateDisplay();
+                ctLatestSignal = `🎯 [KG SIGNAL] RESULT: ${ctState.result.toUpperCase()} | Multiplier: ${ctState.multiplier}x | Game: ${ctState.gameId}`;
                 break;
+
             case 'crazytime.gameWinners':
                 ctState.winners = data.args.winners || [];
                 ctState.totalWinners = data.args.totalWinners || 0;
                 ctState.totalAmount = data.args.totalAmount || 0;
-                ctUpdateWinnersDisplay(data.args.currency || 'USD');
+                ctUpdateWinners(data.args.currency || 'BDT');
                 break;
+
             case 'crazytime.spinHistory':
                 ctState.spinHistory = data.args.results || [];
-                ctUpdateSpinHistory();
+                ctUpdateHistory();
                 break;
+
             case 'crazytime.slot.result':
                 ctState.result = data.args.result || '';
                 ctState.multiplier = data.args.multiplier || 0;
-                ctState.status = 'Top Slot Win';
-                ctUpdateGameDisplay();
+                ctState.status = 'Top Slot Win!';
+                ctUpdateDisplay();
                 break;
+
             case 'crazytime.crazybonus.result':
-                ctState.bonusResult = data.args.flappers ?
-                    `Crazy Bonus: Top=${data.args.flappers.Top || 'N/A'}, Left=${data.args.flappers.Left || 'N/A'}, Right=${data.args.flappers.Right || 'N/A'}` : '';
-                ctState.status = 'Bonus Completed';
-                ctUpdateGameDisplay();
+                if (data.args.flappers) {
+                    const f = data.args.flappers;
+                    ctState.bonusResult = `Crazy Bonus: Top=${f.Top || '?'} Left=${f.Left || '?'} Right=${f.Right || '?'}`;
+                }
+                ctState.status = '🎉 Bonus Completed!';
+                ctUpdateDisplay();
                 break;
+
             case 'connection.kickout':
-                ctLogDebug(`Kicked out: ${data.args.reason}. Reconnecting...`);
+                ctLog(`Kicked: ${data.args?.reason}. Reconnecting…`);
                 if (ctWs) ctWs.close();
-                // Rely on onclose event to handle reconnect
                 break;
+
+            default:
+                ctLog(`Unknown: ${data.type}`);
         }
     }
 
-    function ctUpdateGameDisplay() {
-        ct.lblStatus.textContent = ctState.status || 'Waiting for game data...';
-        ct.lblId.textContent = ctState.gameId || '--';
-        ct.lblNum.textContent = ctState.gameNumber || '--';
-
-        let resText = ctState.result || '--';
-        if (ctState.bonusResult) resText += ` | ${ctState.bonusResult}`;
-        ct.lblRes.textContent = resText;
-
-        ct.lblMult.textContent = ctState.multiplier ? ctState.multiplier + 'x' : '--';
+    // ── Display updaters ──────────────────────────────────────────────────────
+    function ctUpdateDisplay() {
+        if (ct.lblStatus) ct.lblStatus.textContent = ctState.status || '…';
+        if (ct.lblId) ct.lblId.textContent = ctState.gameId || '--';
+        if (ct.lblNum) ct.lblNum.textContent = ctState.gameNumber || '--';
+        let res = ctState.result || '--';
+        if (ctState.bonusResult) res += ` | ${ctState.bonusResult}`;
+        if (ct.lblRes) ct.lblRes.textContent = res;
+        if (ct.lblMult) ct.lblMult.textContent = ctState.multiplier ? ctState.multiplier + 'x' : '--';
     }
 
-    function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+    function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 
-    function ctUpdateWinnersDisplay(currency) {
-        ct.totalWinCount.textContent = `Active: ${formatNumber(ctState.totalWinners)} Players`;
-        ct.totalWinAmount.textContent = `Pool: ${formatNumber(Math.round(ctState.totalAmount))} ${currency}`;
-
+    function ctUpdateWinners(currency) {
+        if (ct.totalWins) ct.totalWins.textContent = `Active: ${fmt(ctState.totalWinners)} Players`;
+        if (ct.totalAmt) ct.totalAmt.textContent = `Pool: ৳ ${fmt(Math.round(ctState.totalAmount))} ${currency}`;
+        if (!ct.winList) return;
         const tops = ctState.winners.slice(0, 10);
-        if (tops.length === 0) {
-            ct.winnersList.innerHTML = '<li class="p-4 text-gray-600 text-xs text-center italic">Observing next round payouts...</li>';
+        if (!tops.length) {
+            ct.winList.innerHTML = '<li class="p-4 text-gray-600 text-xs text-center italic">Observing next round payouts…</li>';
             return;
         }
-
-        ct.winnersList.innerHTML = tops.map((w, i) => {
-            const rankClass = i < 3 ? `rank-${i + 1}` : 'bg-white/5 border border-white/10 text-gray-400';
-            const rankDisplay = i < 3 ? (i + 1) : (i + 1);
-
-            return `
-                <li class="flex justify-between items-center p-2 bg-gradient-to-r from-white/5 to-transparent rounded-lg border border-white/5 group hover:border-white/20 transition-all">
-                    <div class="flex items-center gap-3">
-                        <div class="rank-badge ${rankClass} text-[10px] font-black">${rankDisplay}</div>
-                        <span class="text-white text-xs font-semibold truncate w-24">${w.screenName || 'Ghost_Player'}</span>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-emerald-400 font-bold text-xs">${formatNumber(Math.round(w.winnings))}</span>
-                        <span class="block text-[8px] text-gray-500 uppercase">${currency}</span>
-                    </div>
-                </li>
-            `;
-        }).join('');
+        const rankCls = ['rank-1', 'rank-2', 'rank-3'];
+        ct.winList.innerHTML = tops.map((w, i) => `
+          <li class="flex justify-between items-center p-2 bg-gradient-to-r from-white/5 to-transparent rounded-lg border border-white/5 hover:border-white/20 transition-all">
+            <div class="flex items-center gap-3">
+              <div class="rank-badge ${rankCls[i] || 'bg-white/5 border border-white/10 text-gray-400'} text-[10px] font-black">${i + 1}</div>
+              <span class="text-white text-xs font-semibold truncate w-24">${w.screenName || 'Ghost_Player'}</span>
+            </div>
+            <div class="text-right">
+              <span class="text-emerald-400 font-bold text-xs">৳ ${fmt(Math.round(w.winnings))}</span>
+              <span class="block text-[8px] text-gray-500 uppercase">${currency}</span>
+            </div>
+          </li>`).join('');
     }
 
-    function ctUpdateSpinHistory() {
-        if (!ctState.spinHistory.length) return;
-
-        const mapColor = {
-            '1': 'bg-blue-500 text-white',
-            '2': 'bg-yellow-500 text-white',
-            '5': 'bg-pink-500 text-white',
-            '10': 'bg-purple-500 text-white',
-            'b1': 'bg-red-500 text-white ring-2 ring-red-400',
-            'b2': 'bg-emerald-500 text-white ring-2 ring-emerald-400',
-            'b3': 'bg-fuchsia-500 text-white ring-2 ring-fuchsia-400',
-            'b4': 'bg-rose-500 text-white ring-2 ring-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.8)]'
+    function ctUpdateHistory() {
+        if (!ctState.spinHistory.length || !ct.histDiv) return;
+        const colors = {
+            '1': 'bg-blue-500', '2': 'bg-yellow-500', '5': 'bg-pink-500', '10': 'bg-purple-500',
+            'b1': 'bg-red-500 ring-2 ring-red-400', 'b2': 'bg-emerald-500 ring-2 ring-emerald-400',
+            'b3': 'bg-fuchsia-500 ring-2 ring-fuchsia-400', 'b4': 'bg-rose-500 ring-2 ring-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.8)]'
         };
-        const mapText = { 'b1': 'CF', 'b2': 'CH', 'b3': 'PA', 'b4': 'CT' };
-
-        ct.historyDiv.innerHTML = ctState.spinHistory.slice(0, 15).map(item => {
-            const val = item.result;
-            const color = mapColor[val] || 'bg-gray-600';
-            const text = mapText[val] || val;
-            return `<div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-md ${color}" title="${item.details ? item.details.result : text}">${text}</div>`;
+        const labels = { b1: 'CF', b2: 'CH', b3: 'PA', b4: 'CT' };
+        ct.histDiv.innerHTML = ctState.spinHistory.slice(0, 15).map(item => {
+            const v = item.result;
+            return `<div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-md ${colors[v] || 'bg-gray-600'}" title="${item.details ? item.details.result : v}">${labels[v] || v}</div>`;
         }).join('');
     }
 
-    function ctClearSignalBoxes() {
+    // ── Signal boxes — only clear highlights, never remove the boxes ──────────
+    function ctClearBoxHighlights() {
         document.querySelectorAll('#ctSignalBoxes > div').forEach(el => el.classList.remove('ct-signal-active'));
-        ct.predStatus.textContent = 'Awaiting next phase...';
-        ct.earlySig.textContent = 'Wait for next round...';
-        ct.earlySig.className = 'text-center text-gray-400 font-bold text-xl py-2 px-4 rounded-xl bg-white/5 border border-white/10 w-full flex items-center justify-center min-h-[50px]';
-
-        const timerContainer = document.getElementById('ctTimeSignalCountdown');
-        if (timerContainer) timerContainer.classList.add('hidden');
-        if (ctCountdownInterval) clearInterval(ctCountdownInterval);
     }
 
-    function ctStartCountdown(seconds) {
-        const container = document.getElementById('ctTimeSignalCountdown');
+    function ctActivateBox(signal) {
+        ctClearBoxHighlights();
+        const el = document.getElementById('ct-sig-' + signal);
+        if (el) el.classList.add('ct-signal-active');
+    }
+
+    // ── Countdown ────────────────────────────────────────────────────────────
+    function ctStartCountdown(secs) {
+        const cont = document.getElementById('ctTimeSignalCountdown');
         const valEl = document.getElementById('ctTimerVal');
-        if (!container || !valEl) return;
-
-        if (ctCountdownInterval) clearInterval(ctCountdownInterval);
-
-        container.classList.remove('hidden');
-        container.classList.add('flex');
-
-        let remaining = seconds;
-        valEl.textContent = remaining.toFixed(1) + 's';
-
-        ctCountdownInterval = setInterval(() => {
-            remaining -= 0.1;
-            if (remaining <= 0) {
-                clearInterval(ctCountdownInterval);
-                container.classList.add('hidden');
-            } else {
-                valEl.textContent = Math.max(0, remaining).toFixed(1) + 's';
-            }
+        if (!cont || !valEl) return;
+        if (ctCountInterval) clearInterval(ctCountInterval);
+        cont.classList.remove('hidden'); cont.classList.add('flex');
+        let rem = secs;
+        valEl.textContent = rem.toFixed(1) + 's';
+        ctCountInterval = setInterval(() => {
+            rem -= 0.1;
+            if (rem <= 0) { clearInterval(ctCountInterval); cont.classList.add('hidden'); }
+            else valEl.textContent = Math.max(0, rem).toFixed(1) + 's';
         }, 100);
     }
 
-    function ctActivateSignalBox(signal) {
-        document.querySelectorAll('#ctSignalBoxes > div').forEach(el => el.classList.remove('ct-signal-active'));
-        const activeBox = document.getElementById('ct-sig-' + signal);
-        if (activeBox) activeBox.classList.add('ct-signal-active');
+    // ── Prediction ────────────────────────────────────────────────────────────
+    function ctAnalyzePatterns(hist) {
+        if (hist.length < 3) return { mostLikely: null };
+        const last3 = hist.slice(-3).map(r => r.result);
+        const nums = ['1', '2', '5', '10'], bons = ['b1', 'b2', 'b3', 'b4'];
+        if (last3.filter(r => nums.includes(r)).length >= 2 && !last3.some(r => bons.includes(r))) return { mostLikely: 'b1' };
+        if (last3.filter(r => bons.includes(r)).length >= 2 && !last3.some(r => nums.includes(r))) return { mostLikely: '2' };
+        const l2 = hist.slice(-2).map(r => r.result);
+        if (l2[0] === l2[1]) { const diff = nums.concat(bons).filter(r => r !== l2[0]); return { mostLikely: diff[Math.floor(Math.random() * diff.length)] }; }
+        return { mostLikely: null };
     }
 
-    function ctPredictNextSignal() {
-        if (ctState.spinHistory.length > 0 && ctState.betsOpenTime > 0) {
-            const resultCount = {};
-            const recentHistory = ctState.spinHistory.slice(-10); // Blogger uses slice(-10) - newest at end
-            const probabilities = { '1': 0.28, '2': 0.26, '5': 0.13, '10': 0.07, 'b1': 0.13, 'b2': 0.07, 'b3': 0.04, 'b4': 0.02 };
+    function ctPredict() {
+        if (!ctState.spinHistory.length || !ctState.betsOpenTime) return;
+        const probs = { '1': .28, '2': .26, '5': .13, '10': .07, 'b1': .13, 'b2': .07, 'b3': .04, 'b4': .02 };
+        const rc = {};
+        const recent = ctState.spinHistory.slice(-10);
+        recent.forEach((r, i) => {
+            const w = i + 1;
+            rc[r.result] = (rc[r.result] || 0) + w * (probs[r.result] || 0.1);
+        });
+        const pat = ctAnalyzePatterns(recent);
+        if (pat.mostLikely) rc[pat.mostLikely] = (rc[pat.mostLikely] || 0) + 15;
 
-            recentHistory.forEach((result, index) => {
-                // Since newest is at the end of slice(-10), index 9 is newest.
-                // We want newest to have high weight.
-                const weight = index + 1; // index 0 (oldest) = 1, index 9 (newest) = 10
-                resultCount[result.result] = (resultCount[result.result] || 0) + weight * (probabilities[result.result] || 0.1);
-            });
+        let best = '', bestN = 0;
+        for (const k in rc) if (rc[k] > bestN) { bestN = rc[k]; best = k; }
 
-            const patterns = ctAnalyzePatterns(recentHistory);
-            if (patterns.mostLikely) {
-                resultCount[patterns.mostLikely] = (resultCount[patterns.mostLikely] || 0) + 15;
-            }
+        const conf = Math.min(95, (bestN / recent.length * 100)).toFixed(1);
+        const confCls = conf > 80 ? 'text-emerald-400' : conf > 60 ? 'text-yellow-400' : 'text-blue-400';
+        const remaining = Math.max(0, ctRoundDuration - (Date.now() - ctState.betsOpenTime));
 
-            let mostFrequent = '';
-            let maxCount = 0;
-            for (const result in resultCount) {
-                if (resultCount[result] > maxCount) {
-                    maxCount = resultCount[result];
-                    mostFrequent = result;
-                }
-            }
+        if (best) {
+            ctPredicted = best;
+            ctLatestSignal = `🔮 [KG SIGNAL] NEXT: ${ctPredicted.toUpperCase()} | Game: ${ctState.gameId}`;
+            ctActivateBox(ctPredicted);
 
-            const confidence = Math.min(95, (maxCount / recentHistory.length * 100)).toFixed(1);
-            const confColor = confidence > 80 ? 'text-emerald-400' : (confidence > 60 ? 'text-yellow-400' : 'text-blue-400');
+            if (ct.predStatus) ct.predStatus.innerHTML = `Prediction: <span class="text-white">${ctPredicted.toUpperCase()}</span> &nbsp;(Confidence: <span class="${confCls}">${conf}%</span>)`;
 
-            const timeIntoRound = Date.now() - ctState.betsOpenTime;
-            const remainingTime = Math.max(0, ctRoundDuration - timeIntoRound);
-            const signalDisplayLeadTime = 15000;
-
-            if (remainingTime > signalDisplayLeadTime && mostFrequent) {
-                ctPredictedSignal = mostFrequent;
-                ctLatestSignal = `🔮 [KG SIGNAL] NEXT ROUND: ${ctPredictedSignal.toUpperCase()}! (ID: ${ctState.gameId || 'LIVE'})`;
-
-                ctActivateSignalBox(ctPredictedSignal);
-                const timeToResult = Math.floor(remainingTime / 1000);
-
-                ct.predStatus.innerHTML = `Early Signal: <span class="text-white">${ctPredictedSignal.toUpperCase()}</span> predicted (Confidence: <span class="${confColor}">${confidence}%</span>)`;
+            if (ct.earlySig) {
+                const sec = Math.floor(remaining / 1000);
                 ct.earlySig.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        <div class="flex items-center gap-3 mb-2">
-                             <span class="text-3xl">🔮</span>
-                             <span class="text-2xl text-emerald-400 font-bold">${ctPredictedSignal.toUpperCase()}</span>
-                             <span class="text-xs text-white/30 font-mono">(${timeToResult}s)</span>
-                        </div>
-                        <div class="text-[12px] text-emerald-400 font-bold tracking-tight">🔮 EARLY PREDICTION: Next round likely ${ctPredictedSignal.toUpperCase()} - Get ready!</div>
+                  <div class="flex flex-col items-center">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class="text-3xl">🔮</span>
+                      <span class="text-2xl text-emerald-400 font-bold">${ctPredicted.toUpperCase()}</span>
+                      ${remaining > 5000 ? `<span class="text-xs text-white/30 font-mono">(${sec}s)</span>` : ''}
                     </div>
-                `;
-                ct.earlySig.className = 'text-center text-emerald-400 font-bold py-4 px-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 w-full flex items-center justify-center min-h-[90px] shadow-[0_0_30px_rgba(16,185,129,0.2)]';
-
-            } else if (ctPredictedSignal) {
-                ctActivateSignalBox(ctPredictedSignal);
-                ct.predStatus.innerHTML = `Early Signal: <span class="text-white">${ctPredictedSignal.toUpperCase()}</span> predicted (Confidence: <span class="${confColor}">${confidence}%</span>)`;
-                ct.earlySig.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        <div class="text-2xl flex items-center gap-2">🎯 TARGET: ${ctPredictedSignal.toUpperCase()}</div>
-                        <div class="text-[11px] text-emerald-400/80 mt-1 uppercase tracking-widest animate-pulse font-black">Locked & Ready</div>
-                        <div class="mt-2 text-[12px] text-emerald-400">🔮 EARLY PREDICTION: Next round likely ${ctPredictedSignal.toUpperCase()}!</div>
-                    </div>
-                `;
-                ct.earlySig.className = 'text-center text-emerald-400 font-bold py-4 px-6 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 w-full flex flex-col items-center justify-center min-h-[90px] shadow-[0_0_40px_rgba(16,185,129,0.4)] scale-105 transition-all duration-500';
-            } else {
-                ct.predStatus.textContent = 'Early Signal: Analyzing pattern streams...';
-                ct.earlySig.innerHTML = '<div class="flex items-center gap-2 text-gray-400"><i class="fas fa-radar animate-spin"></i> Initializing Analysis Engine...</div>';
-                ctClearSignalBoxes();
+                    <div class="text-[12px] text-emerald-400 font-bold">🎯 NEXT ROUND: BET ON ${ctPredicted.toUpperCase()} — ৳ BDT</div>
+                  </div>`;
+                ct.earlySig.className = 'text-center font-bold py-4 px-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 w-full flex items-center justify-center min-h-[90px] shadow-[0_0_30px_rgba(16,185,129,0.2)]';
             }
         }
     }
 
     function ctShowEarlyPrediction() {
-        if (ctState.spinHistory.length > 0) {
-            ctLogDebug('Showing early prediction for next round');
-            const resultCount = {};
-            const recentHistory = ctState.spinHistory.slice(-10); // Match Blogger
-            const probabilities = { '1': 0.28, '2': 0.26, '5': 0.13, '10': 0.07, 'b1': 0.13, 'b2': 0.07, 'b3': 0.04, 'b4': 0.02 };
+        if (!ctState.spinHistory.length) return;
+        const probs = { '1': .28, '2': .26, '5': .13, '10': .07, 'b1': .13, 'b2': .07, 'b3': .04, 'b4': .02 };
+        const rc = {};
+        const recent = ctState.spinHistory.slice(-10);
+        recent.forEach((r, i) => { const w = i + 1; rc[r.result] = (rc[r.result] || 0) + w * (probs[r.result] || 0.1); });
+        const pat = ctAnalyzePatterns(recent);
+        if (pat.mostLikely) rc[pat.mostLikely] = (rc[pat.mostLikely] || 0) + 15;
+        let best = '', bestN = 0;
+        for (const k in rc) if (rc[k] > bestN) { bestN = rc[k]; best = k; }
+        if (!best) return;
 
-            recentHistory.forEach((result, index) => {
-                const weight = index + 1;
-                resultCount[result.result] = (resultCount[result.result] || 0) + weight * (probabilities[result.result] || 0.1);
-            });
-
-            const patterns = ctAnalyzePatterns(recentHistory);
-            if (patterns.mostLikely) {
-                resultCount[patterns.mostLikely] = (resultCount[patterns.mostLikely] || 0) + 15;
-            }
-
-            let mostFrequent = '';
-            let maxCount = 0;
-            for (const result in resultCount) {
-                if (resultCount[result] > maxCount) {
-                    maxCount = resultCount[result];
-                    mostFrequent = result;
-                }
-            }
-
-            if (mostFrequent) {
-                ctPredictedSignal = mostFrequent;
-                ctLatestSignal = `🔮 [KG EARLY SIGNAL] NEXT ROUND: ${ctPredictedSignal.toUpperCase()}!`;
-                ctActivateSignalBox(ctPredictedSignal);
-                const confidence = Math.min(95, (maxCount / recentHistory.length * 100)).toFixed(1);
-
-                ct.predStatus.innerHTML = `Early Predictive Flow: ${ctPredictedSignal.toUpperCase()} (Confidence: <span class="text-emerald-400 font-bold">${confidence}%</span>)`;
-                ct.earlySig.innerHTML = `🔮 EARLY TARGET: ${ctPredictedSignal.toUpperCase()}`;
-                ct.earlySig.className = 'text-center text-blue-400 font-bold text-2xl py-2 px-4 rounded-xl bg-blue-500/10 border border-blue-500/20 w-full flex items-center justify-center min-h-[50px] shadow-[0_0_15px_rgba(59,130,246,0.2)]';
-            }
+        ctPredicted = best;
+        ctLatestSignal = `🔮 [KG EARLY SIGNAL] NEXT: ${ctPredicted.toUpperCase()}!`;
+        ctActivateBox(ctPredicted);
+        const conf = Math.min(95, (bestN / recent.length * 100)).toFixed(1);
+        if (ct.predStatus) ct.predStatus.innerHTML = `Early Prediction: <span class="text-white font-bold">${ctPredicted.toUpperCase()}</span> (Conf: <span class="text-emerald-400">${conf}%</span>)`;
+        if (ct.earlySig) {
+            ct.earlySig.innerHTML = `🔮 EARLY TARGET: ${ctPredicted.toUpperCase()} — ৳ BDT`;
+            ct.earlySig.className = 'text-center text-blue-400 font-bold text-2xl py-2 px-4 rounded-xl bg-blue-500/10 border border-blue-500/20 w-full flex items-center justify-center min-h-[50px]';
         }
     }
 
-    function ctAnalyzePatterns(history) {
-        if (history.length < 3) return { mostLikely: null };
-        const last3 = history.slice(-3).map(r => r.result); // Blogger uses slice(-3)
-        const numbers = ['1', '2', '5', '10'];
-        const bonuses = ['b1', 'b2', 'b3', 'b4'];
-        const recentNumbers = last3.filter(r => numbers.includes(r)).length;
-        const recentBonuses = last3.filter(r => bonuses.includes(r)).length;
-
-        if (recentNumbers >= 2 && recentBonuses === 0) {
-            return { mostLikely: 'b1' };
-        }
-        if (recentBonuses >= 2 && recentNumbers === 0) {
-            return { mostLikely: '2' };
-        }
-        const last2 = history.slice(-2).map(r => r.result); // Blogger uses slice(-2)
-        if (last2[0] === last2[1]) {
-            const different = numbers.concat(bonuses).filter(r => r !== last2[0]);
-            return { mostLikely: different[Math.floor(Math.random() * different.length)] };
-        }
-        return { mostLikely: null };
+    function ctStartPredLoop() {
+        if (ctPredInterval) clearInterval(ctPredInterval);
+        ctPredict();
+        ctPredInterval = setInterval(ctPredict, 5000);
     }
 
-    function ctStartPredictionLoop() {
-        if (ctPredictionInterval) clearInterval(ctPredictionInterval);
-        ctPredictNextSignal(); // Call immediately
-        ctPredictionInterval = setInterval(() => {
-            ctPredictNextSignal();
-        }, 5000); // 5 seconds interval
-    }
-
-    // --- INITIALIZATION ---
+    // ─────────────────────────────────────────────────────────────────────────
+    //  INITIALIZATION — runs after DOM is ready
+    // ─────────────────────────────────────────────────────────────────────────
     setTimeout(() => {
-        switchTab('aviator'); // Default to Aviator tab
+        // Start on Aviator tab
+        switchTab('aviator');
 
-        // Auto-start Crazy Time simulation immediately (runs in background regardless of active tab)
-        ctLogDebug('Auto-starting KG Crazy Time signal stream...');
+        // ── Crazy Time: auto-simulation starts immediately in background ──────
+        ctLog('KG Time (Crazy Time) engine initialized — starting demo stream…');
         ctStartSimulation();
 
-        // Auto-start Aviator demo signal loop (every 8 seconds)
-        avLogMsg('[System] Aviator telemetry engine initialized. Demo signals active.');
-        setInterval(() => {
-            if (avWs) return; // Only demo when not connected to real WS
-            const sides = ['cashout', 'auto', 'stop', 'win', 'cashout'];
-            const s = sides[Math.floor(Math.random() * sides.length)];
-            const v = parseFloat((Math.random() * 18 + 1.2).toFixed(2));
-            avRenderSignal({
-                type: 'signal',
-                side: s,
-                value: v,
-                ts: Math.floor(Date.now() / 1000),
-                note: 'demo'
-            });
-        }, 8000);
-
-        // Also try live Crazy Time connection if URL is already filled
-        if (ct && ct.wsUrl && ct.wsUrl.value.trim()) {
+        // ── Crazy Time: also attempt live connection if URL is pre-filled ─────
+        if (ct.wsUrl?.value.trim()) {
             setTimeout(() => {
-                ctLogDebug('Attempting live connection to Crazy Time stream...');
-                ct.btnConnect.click();
-            }, 2000);
+                ctLog('Attempting live Evolution connection…');
+                ct.btnConn?.click();
+            }, 1500);
         }
-    }, 600);
+    }, 500);
 
 });
