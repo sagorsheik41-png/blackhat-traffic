@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BlackHat Signal Pro — Aviator & Crazy Time</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #080e1a;
+            --card: #0d1526;
+            --card2: #111c30;
+            --av: #f97316;
+            --av-dim: #3d1a00;
+            --ct: #8b5cf6;
+            --ct-dim: #200d40;
+            --green: #10b981;
+            --red: #ef4444;
+            --muted: #64748b;
+            --border: rgba(255, 255, 255, 0.06);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        /* ── TOP NAV ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: .5px;
+            background: linear-gradient(90deg, var(--av), var(--ct));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-live {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .5
+            }
+        }
+
+        /* ── TAB SWITCHER ── */
+        .tabs {
+            display: flex;
+            gap: 0;
+            padding: 24px 24px 0;
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            border-radius: 14px 14px 0 0;
+            transition: all .2s;
+            position: relative;
+        }
+
+        .tab-btn.aviator {
+            background: linear-gradient(135deg, var(--av-dim), #1a0a00);
+            color: var(--av);
+            border: 1px solid rgba(249, 115, 22, .25);
+            border-bottom: none;
+        }
+
+        .tab-btn.aviator.active {
+            background: linear-gradient(135deg, #7c2d00, #c2410c);
+            color: #fff;
+            box-shadow: 0 -4px 20px rgba(249, 115, 22, .4);
+        }
+
+        .tab-btn.crazytime {
+            background: linear-gradient(135deg, var(--ct-dim), #100820);
+            color: var(--ct);
+            border: 1px solid rgba(139, 92, 246, .25);
+            border-bottom: none;
+        }
+
+        .tab-btn.crazytime.active {
+            background: linear-gradient(135deg, #4c1d95, #7c3aed);
+            color: #fff;
+            box-shadow: 0 -4px 20px rgba(139, 92, 246, .4);
+        }
+
+        .tab-sep {
+            width: 6px;
+        }
+
+        /* ── PANELS ── */
+        .panels {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px 32px;
+        }
+
+        .panel-wrap {
+            display: none;
+            animation: fadein .3s ease;
+        }
+
+        .panel-wrap.active {
+            display: block;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0;
+                transform: translateY(6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .game-panel {
+            background: var(--card);
+            border-radius: 0 14px 14px 14px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-av {
+            border-color: rgba(249, 115, 22, .2);
+        }
+
+        .panel-ct {
+            border-color: rgba(139, 92, 246, .2);
+        }
+
+        /* ── GRID ── */
+        .grid2 {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 16px;
+        }
+
+        @media(max-width:860px) {
+            .grid2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── CONNECTION BOX ── */
+        .conn-box {
+            background: var(--card2);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .conn-box label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .conn-box input {
+            background: #07111e;
+            border: 1px solid var(--border);
+            color: #e2e8f0;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            width: 100%;
+            outline: none;
+        }
+
+        .conn-box input:focus {
+            border-color: rgba(255, 255, 255, .2);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all .18s;
+            letter-spacing: .3px;
+        }
+
+        .btn-av {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(249, 115, 22, .4);
+        }
+
+        .btn-av:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(249, 115, 22, .55);
+        }
+
+        .btn-av:active {
+            transform: translateY(0);
+        }
+
+        .btn-ct {
+            background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, .4);
+        }
+
+        .btn-ct:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(139, 92, 246, .55);
+        }
+
+        .btn-ct:active {
+            transform: translateY(0);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .btn-ghost:hover {
+            border-color: rgba(255, 255, 255, .2);
+            color: #e2e8f0;
+        }
+
+        .btn-copy-av {
+            background: linear-gradient(90deg, #f97316, #fb923c);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(249, 115, 22, .35);
+            transition: all .18s;
+        }
+
+        .btn-copy-av:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-copy-ct {
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, .35);
+            transition: all .18s;
+        }
+
+        .btn-copy-ct:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ── STATUS ── */
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            margin-right: 6px;
+        }
+
+        .status-dot.on {
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+        }
+
+        /* ── SIGNAL LIST ── */
+        .signal-list {
+            max-height: 240px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .signal-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .signal-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .08);
+            border-radius: 4px;
+        }
+
+        .sig-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid var(--border);
+        }
+
+        .sig-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .sig-badge.av {
+            background: rgba(249, 115, 22, .15);
+            color: var(--av);
+            border: 1px solid rgba(249, 115, 22, .2);
+        }
+
+        .sig-badge.ct {
+            background: rgba(139, 92, 246, .15);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, .2);
+        }
+
+        .sig-meta {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .sig-val {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* ── CHART MOCK ── */
+        .chart-bar {
+            height: 160px;
+            border-radius: 10px;
+            background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .01) 0 2px, transparent 2px 8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, .08);
+            border: 1px solid var(--border);
+            transition: all .2s;
+            letter-spacing: 1px;
+        }
+
+        .chart-bar.flash-av {
+            color: var(--av);
+            background: rgba(249, 115, 22, .05);
+            border-color: rgba(249, 115, 22, .2);
+        }
+
+        .chart-bar.flash-ct {
+            color: #a78bfa;
+            background: rgba(139, 92, 246, .05);
+            border-color: rgba(139, 92, 246, .2);
+        }
+
+        /* ── LOG ── */
+        .log-box {
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .log-box::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .log-box::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .06);
+            border-radius: 4px;
+        }
+
+        /* ── CRAZY TIME SPECIFIC ── */
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .ct-box {
+            border: 2px solid var(--border);
+            padding: 12px 6px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, .02);
+            transition: all .25s;
+        }
+
+        .ct-box.active {
+            border-color: var(--ct);
+            background: rgba(139, 92, 246, .12);
+            color: #c4b5fd;
+            transform: scale(1.05);
+            box-shadow: 0 0 16px rgba(139, 92, 246, .25);
+        }
+
+        .ct-history {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .ct-chip {
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, .15);
+            color: #a5b4fc;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .prediction-banner {
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(139, 92, 246, .1);
+            border: 1px solid rgba(139, 92, 246, .25);
+            color: #c4b5fd;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* ── INFO CARDS ── */
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .info-card .label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .info-card .value {
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="logo">⚡ BlackHat Signal Pro</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <div style="font-size:12px;color:var(--muted);">cv666 • BDT ৳</div>
+            <div class="badge-live">● LIVE</div>
+        </div>
+    </div>
+
+    <!-- TAB BUTTONS -->
+    <div class="tabs">
+        <button class="tab-btn aviator active" onclick="switchTab('aviator')">
+            ✈️ &nbsp;Aviator Signal
+        </button>
+        <div class="tab-sep"></div>
+        <button class="tab-btn crazytime" onclick="switchTab('crazytime')">
+            🎡 &nbsp;Crazy Time Signal
+        </button>
+    </div>
+
+    <!-- PANELS -->
+    <div class="panels">
+
+        <!-- ══════════════ AVIATOR PANEL ══════════════ -->
+        <div class="panel-wrap active" id="panel-aviator">
+            <div class="game-panel panel-av">
+                <div class="grid2">
+
+                    <!-- LEFT: Chart + Signals -->
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <div class="chart-bar" id="av-chart">⟵ রিয়েলটাইম সিগন্যাল ⟶</div>
+
+                        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;">
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <button class="btn btn-ghost" onclick="avClear()">Clear</button>
+                                <button class="btn btn-ghost" id="av-pause" onclick="avPause()">Pause</button>
+                                <span style="font-size:12px;"><span class="status-dot" id="av-dot"></span><span
+                                        id="av-status">Disconnected</span></span>
+                            </div>
+                            <button class="btn-copy-av" onclick="avCopyLatest()">📋 Copy Latest Signal</button>
+                        </div>
+
+                        <div class="signal-list" id="av-signals"></div>
+                    </div>
+
+                    <!-- RIGHT: Config + Log -->
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <div class="conn-box">
+                            <div class="section-title">✈️ Aviator — Connection</div>
+                            <label>WebSocket / API URL</label>
+                            <input id="av-url" type="url"
+                                placeholder="wss://socket.738293839.com/aviator or https://..." />
+                            <label>Auth Token (optional)</label>
+                            <input id="av-token" type="text" placeholder="Bearer token or API key" />
+                            <div class="btn-row">
+                                <button class="btn btn-av" onclick="avConnect()">🔌 Connect</button>
+                                <button class="btn btn-ghost" onclick="avDisconnect()">Disconnect</button>
+                            </div>
+                            <div style="font-size:11px;color:var(--muted);">
+                                Format: <code>{"type":"signal","side":"cashout","value":2.57}</code>
+                            </div>
+                        </div>
+
+                        <div class="conn-box">
+                            <div class="section-title">Quick Presets</div>
+                            <div class="btn-row">
+                                <button class="btn btn-ghost" onclick="avPreset('wss://demo.signals.example/ws')">Demo
+                                    WS</button>
+                                <button class="btn btn-ghost"
+                                    onclick="avPreset('https://demo.signals.example/api/latest')">Demo HTTP</button>
+                            </div>
+                        </div>
+
+                        <div class="conn-box" style="flex:1;">
+                            <div class="section-title">Log</div>
+                            <div class="log-box" id="av-log"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ CRAZY TIME PANEL ══════════════ -->
+        <div class="panel-wrap" id="panel-crazytime">
+            <div class="game-panel panel-ct">
+                <div class="grid2">
+
+                    <!-- LEFT: Game data + signals -->
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+
+                        <div class="info-row">
+                            <div class="info-card">
+                                <div class="label">Status</div>
+                                <div class="value" id="ct-gameStatus" style="color:var(--ct);">Waiting...</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="label">Result</div>
+                                <div class="value" id="ct-result">—</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="label">Multiplier</div>
+                                <div class="value" id="ct-multiplier">—</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="label">Game #</div>
+                                <div class="value" id="ct-gameNumber" style="font-size:12px;">—</div>
+                            </div>
+                        </div>
+
+                        <div class="conn-box">
+                            <div class="section-title">🎡 Next Round Betting Signal</div>
+                            <div class="signal-grid">
+                                <div class="ct-box" id="signal-1">1</div>
+                                <div class="ct-box" id="signal-2">2</div>
+                                <div class="ct-box" id="signal-5">5</div>
+                                <div class="ct-box" id="signal-10">10</div>
+                                <div class="ct-box" id="signal-b1">Coin Flip</div>
+                                <div class="ct-box" id="signal-b2">Cash Hunt</div>
+                                <div class="ct-box" id="signal-b3">Pachinko</div>
+                                <div class="ct-box" id="signal-b4">Crazy Time</div>
+                            </div>
+                            <div class="prediction-banner" id="ct-prediction">Analyzing live data...</div>
+                            <div style="font-size:13px;font-weight:700;color:#a78bfa;margin-top:6px;" id="ct-early">
+                            </div>
+                        </div>
+
+                        <div class="conn-box">
+                            <div class="section-title">Spin History</div>
+                            <div class="ct-history" id="ct-history"></div>
+                        </div>
+
+                        <div class="conn-box">
+                            <div class="section-title">Top Winners</div>
+                            <ul id="ct-winners"
+                                style="list-style:none;display:flex;flex-direction:column;gap:4px;font-size:13px;"></ul>
+                            <div style="font-size:11px;color:var(--muted);margin-top:6px;">
+                                <span id="ct-totalWinners"></span> &nbsp;|&nbsp; <span id="ct-totalAmount"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Config + Log -->
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <div class="conn-box">
+                            <div class="section-title">🎡 Crazy Time — Connection</div>
+                            <label>WebSocket URL</label>
+                            <input id="ct-url" type="url"
+                                value="wss://babylonbetst.evo-games.com/public/crazytime/player/game/CrazyTime0000001/socket?messageFormat=json"
+                                placeholder="wss://..." />
+                            <div class="btn-row">
+                                <button class="btn btn-ct" onclick="ctConnect()">🔌 Connect</button>
+                                <button class="btn btn-ghost" onclick="ctDisconnect()">Disconnect</button>
+                            </div>
+                            <div style="font-size:11px;"><span class="status-dot" id="ct-dot"></span><span
+                                    id="ct-connStatus">Disconnected</span></div>
+                        </div>
+
+                        <div class="conn-box" style="flex:1;">
+                            <div class="section-title">Debug Log</div>
+                            <div class="log-box" id="ct-log"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panels -->
+
+    <script>
+        /* ═══════════════════════════════════════════
+           TAB SWITCHER
+        ═══════════════════════════════════════════ */
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.panel-wrap').forEach(p => p.classList.remove('active'));
+            document.querySelector('.tab-btn.' + tab).classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+        }
+
+        /* ═══════════════════════════════════════════
+           AVIATOR ENGINE
+        ═══════════════════════════════════════════ */
+        (function () {
+            let ws = null, pollTimer = null, paused = false, latestText = '';
+
+            function log(t) {
+                const el = document.getElementById('av-log');
+                const d = new Date().toLocaleTimeString();
+                el.innerHTML = `<div style="padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03)">[${d}] ${esc(t)}</div>` + el.innerHTML;
+            }
+            function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+            function setStatus(s, on = false) {
+                document.getElementById('av-status').textContent = s;
+                document.getElementById('av-dot').className = 'status-dot' + (on ? ' on' : '');
+            }
+            function flash(sig) {
+                const c = document.getElementById('av-chart');
+                c.textContent = sig.side ? (sig.side.toUpperCase() + ' @ ' + (sig.value || '—')) : (sig.note || 'Signal');
+                c.classList.remove('flash-av', 'flash-ct');
+                void c.offsetWidth;
+                c.classList.add('flash-av');
+                setTimeout(() => c.classList.remove('flash-av'), 2000);
+            }
+            function renderSig(sig) {
+                const el = document.createElement('div');
+                el.className = 'sig-row';
+                const t = new Date((sig.ts || Date.now() / 1000) * 1000).toLocaleTimeString();
+                const label = sig.side ? sig.side.toUpperCase() : (sig.type || 'SIG');
+                const val = sig.value != null ? Number(sig.value).toFixed(2) : '—';
+                el.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><span class="sig-badge av">${esc(label)}</span><div><div style="font-weight:600">${esc(sig.note || label + ' @ ' + val)}</div><div class="sig-meta">${t}</div></div></div><div class="sig-val" style="color:var(--av)">${esc(val)}</div>`;
+                const list = document.getElementById('av-signals');
+                list.prepend(el);
+                while (list.children.length > 60) list.removeChild(list.lastChild);
+            }
+            function normalize(obj) {
+                return { type: obj.type || 'signal', side: obj.side || obj.action || obj.signal || '', value: obj.value || obj.multiplier || obj.rate || obj.cashout, ts: obj.ts || Math.floor(Date.now() / 1000), note: obj.note || obj.msg || obj.message, source: obj.source || 'remote' };
+            }
+            function copyFmt(sig) {
+                const v = sig.value != null ? Number(sig.value).toFixed(2) : '';
+                return `${(sig.side || sig.type || 'SIGNAL').toUpperCase()} ${v}${sig.note ? ' — ' + sig.note : ''}`;
+            }
+            function handle(raw) {
+                if (paused) return;
+                log('Raw: ' + String(raw).slice(0, 120));
+                let obj;
+                try { obj = JSON.parse(raw); } catch {
+                    const m = String(raw).match(/([A-Za-z]+)[:@ ]\s*([0-9.]+)?/);
+                    obj = m ? { type: 'signal', side: m[1], value: m[2] ? parseFloat(m[2]) : undefined, note: String(raw), ts: Math.floor(Date.now() / 1000) } : { type: 'raw', note: String(raw), ts: Math.floor(Date.now() / 1000) };
+                }
+                const sig = normalize(obj);
+                latestText = copyFmt(sig);
+                renderSig(sig);
+                flash(sig);
+            }
+            function closeAll() {
+                if (ws) { ws.close(); ws = null; }
+                if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+                setStatus('Disconnected');
+            }
+            function connectWS(url) {
+                closeAll();
+                const token = document.getElementById('av-token').value.trim();
+                log('Connecting → ' + url); setStatus('Connecting...');
+                let u = url;
+                if (token) u += (url.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token);
+                ws = new WebSocket(u);
+                ws.onopen = () => { setStatus('Connected', true); log('WebSocket open'); };
+                ws.onmessage = ev => handle(ev.data);
+                ws.onclose = () => { setStatus('Disconnected'); log('WebSocket closed'); ws = null; };
+                ws.onerror = () => log('WebSocket error');
+            }
+            function connectHTTP(url) {
+                closeAll();
+                log('HTTP polling → ' + url); setStatus('Polling...', true);
+                pollTimer = setInterval(async () => {
+                    try {
+                        const h = {}; if (document.getElementById('av-token').value.trim()) h['Authorization'] = document.getElementById('av-token').value.trim();
+                        const r = await fetch(url, { headers: h });
+                        if (!r.ok) { log('HTTP ' + r.status); return; }
+                        const d = await r.json();
+                        (Array.isArray(d) ? d : [d]).forEach(x => handle(JSON.stringify(x)));
+                    } catch (e) { log('Poll error: ' + e.message); }
+                }, 3000);
+            }
+            // Demo auto-signals
+            let demoIv = setInterval(() => {
+                if (ws || pollTimer) return;
+                const sides = ['cashout', 'auto', 'stop', 'win'];
+                const s = sides[Math.floor(Math.random() * sides.length)];
+                const v = (Math.random() * 15 + 1).toFixed(2);
+                handle(JSON.stringify({ type: 'signal', side: s, value: parseFloat(v), ts: Math.floor(Date.now() / 1000), note: 'demo' }));
+            }, 9000);
+
+            // Expose to global
+            window.avConnect = function () {
+                const url = document.getElementById('av-url').value.trim();
+                if (!url) { alert('URL দিন (wss:// or https://)'); return; }
+                url.startsWith('ws') ? connectWS(url) : connectHTTP(url);
+            };
+            window.avDisconnect = function () { closeAll(); log('Manual disconnect'); };
+            window.avPause = function () {
+                paused = !paused;
+                document.getElementById('av-pause').textContent = paused ? 'Resume' : 'Pause';
+                log(paused ? 'Paused' : 'Resumed');
+            };
+            window.avClear = function () { document.getElementById('av-signals').innerHTML = ''; log('Cleared'); };
+            window.avCopyLatest = function () {
+                if (!latestText) { log('No signal yet'); return; }
+                navigator.clipboard.writeText(latestText).then(() => log('Copied: ' + latestText));
+            };
+            window.avPreset = function (url) { document.getElementById('av-url').value = url; log('Preset: ' + url); };
+
+            setTimeout(() => log('Tip: WebSocket / API URL ফিল্ড-এ endpoint দিন, তারপর Connect করুন।'), 600);
+        })();
+
+        /* ═══════════════════════════════════════════
+           CRAZY TIME ENGINE
+        ═══════════════════════════════════════════ */
+        (function () {
+            let ws = null, isConnected = false, isSimulating = false;
+            let predictionIv = null, reconnAttempts = 0;
+            const MAX_RECONN = 5;
+            let roundDuration = 35000, predictedSignal = '';
+            let gameState = { gameId: '', gameNumber: '', result: '', multiplier: '', status: '', bonusResult: '', winners: [], totalWinners: 0, totalAmount: 0, spinHistory: [], betsOpenTime: 0, resultTime: 0 };
+
+            const simData = [
+                { type: 'crazytime.newGame', args: { gameId: 'demo001', gameNumber: '20:00:00', version: 1 } },
+                { type: 'crazytime.betsOpen', args: { gameId: 'demo001', status: 'open' } },
+                { type: 'crazytime.betsClosed', args: { gameId: 'demo001', status: 'closed' } },
+                { type: 'crazytime.result', args: { gameId: 'demo001', gameNumber: '20:00:00', result: '2', totalMultiplier: 0, version: 2 } },
+                { type: 'crazytime.gameWinners', args: { gameId: 'demo001', totalWinners: 1234, totalAmount: 98765.43, winners: [{ screenName: 'Player_A', winnings: 5000 }, { screenName: 'Player_B', winnings: 3200 }] } },
+                { type: 'crazytime.spinHistory', args: { results: [{ result: '2' }, { result: '1' }, { result: 'b3', details: { result: 'Tails' } }, { result: '5' }, { result: 'b1' }], newResult: false, version: 2 } },
+            ];
+
+            function log(t) {
+                const el = document.getElementById('ct-log');
+                el.innerHTML = `<div style="padding:2px 0;">[${new Date().toLocaleTimeString()}] ${t}</div>` + el.innerHTML;
+            }
+            function setStatus(s, on = false) {
+                document.getElementById('ct-connStatus').textContent = s;
+                document.getElementById('ct-dot').className = 'status-dot' + (on ? ' on' : '');
+            }
+            function updateDisplay() {
+                document.getElementById('ct-gameStatus').textContent = gameState.status || 'Waiting...';
+                document.getElementById('ct-result').textContent = gameState.result || '—';
+                document.getElementById('ct-multiplier').textContent = gameState.multiplier || '—';
+                document.getElementById('ct-gameNumber').textContent = gameState.gameNumber || '—';
+                document.getElementById('ct-gameStatus').style.color =
+                    gameState.status === 'Bets Open' ? 'var(--green)' : gameState.status === 'Result' ? 'var(--av)' : 'var(--ct)';
+            }
+            function updateWinners() {
+                document.getElementById('ct-winners').innerHTML = gameState.winners.slice(0, 3).map(w =>
+                    `<li style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="color:#e2e8f0">${w.screenName || 'Unknown'}</span><span style="color:var(--green)">৳${(w.winnings || 0).toFixed(2)}</span></li>`
+                ).join('');
+                document.getElementById('ct-totalWinners').textContent = `Winners: ${gameState.totalWinners}`;
+                document.getElementById('ct-totalAmount').textContent = `Total: ৳${(gameState.totalAmount || 0).toFixed(2)}`;
+            }
+            function updateHistory() {
+                document.getElementById('ct-history').innerHTML = gameState.spinHistory.slice(0, 12).map(r => {
+                    const txt = r.details ? `${r.result}(${r.details.result || ''})` : r.result;
+                    return `<span class="ct-chip">${txt || '?'}</span>`;
+                }).join('');
+            }
+            function clearBoxes() { document.querySelectorAll('.ct-box').forEach(b => b.classList.remove('active')); }
+            function activateBox(sig) {
+                clearBoxes();
+                const el = document.getElementById('signal-' + sig);
+                if (el) el.classList.add('active');
+            }
+            function analyzePatterns(hist) {
+                if (hist.length < 3) return { mostLikely: null };
+                const last3 = hist.slice(-3).map(r => r.result);
+                const nums = ['1', '2', '5', '10'], bon = ['b1', 'b2', 'b3', 'b4'];
+                if (last3.filter(r => nums.includes(r)).length >= 2 && last3.filter(r => bon.includes(r)).length === 0) return { mostLikely: 'b1' };
+                if (last3.filter(r => bon.includes(r)).length >= 2 && last3.filter(r => nums.includes(r)).length === 0) return { mostLikely: '2' };
+                const l2 = hist.slice(-2).map(r => r.result);
+                if (l2[0] === l2[1]) { const d = nums.concat(bon).filter(r => r !== l2[0]); return { mostLikely: d[Math.floor(Math.random() * d.length)] }; }
+                return { mostLikely: null };
+            }
+            function predict() {
+                if (gameState.spinHistory.length === 0 || gameState.betsOpenTime === 0) {
+                    document.getElementById('ct-prediction').textContent = 'Analyzing live data...';
+                    document.getElementById('ct-early').textContent = '';
+                    clearBoxes(); return;
+                }
+                const rc = {}, probs = { '1': .28, '2': .26, '5': .13, '10': .07, 'b1': .13, 'b2': .07, 'b3': .04, 'b4': .02 };
+                const recent = gameState.spinHistory.slice(-10);
+                recent.forEach((r, i) => { const w = Math.max(1, 10 - i); rc[r.result] = (rc[r.result] || 0) + w * (probs[r.result] || 0.1); });
+                const pat = analyzePatterns(recent);
+                if (pat.mostLikely) rc[pat.mostLikely] = (rc[pat.mostLikely] || 0) + 15;
+                let best = '', bestN = 0;
+                for (const k in rc) if (rc[k] > bestN) { bestN = rc[k]; best = k; }
+                const conf = Math.min(95, (bestN / recent.length * 100)).toFixed(1);
+                const remaining = roundDuration - (Date.now() - gameState.betsOpenTime);
+                if (best) {
+                    predictedSignal = best;
+                    activateBox(best);
+                    document.getElementById('ct-prediction').textContent = `🎯 Signal: ${best} — Confidence ${conf}%`;
+                    document.getElementById('ct-early').textContent = remaining > 5000 ? `⏱ Place bet on ${best} now! (${Math.floor(remaining / 1000)}s remaining)` : ` Best: ${best}`;
+                }
+            }
+            function handleMsg(data) {
+                log(`${data.type}`);
+                const now = Date.now();
+                switch (data.type) {
+                    case 'crazytime.newGame':
+                        gameState.gameId = data.args.gameId || ''; gameState.gameNumber = data.args.gameNumber || '';
+                        gameState.status = 'New Game'; gameState.betsOpenTime = 0; clearBoxes(); updateDisplay();
+                        setTimeout(() => { if (gameState.spinHistory.length > 0) predict(); }, 1000); break;
+                    case 'crazytime.betsOpen':
+                        gameState.status = 'Bets Open'; gameState.betsOpenTime = now;
+                        if (predictionIv) clearInterval(predictionIv);
+                        predictionIv = setInterval(predict, 5000); predict(); updateDisplay(); break;
+                    case 'crazytime.betsClosed':
+                        gameState.status = 'Bets Closed'; updateDisplay(); break;
+                    case 'crazytime.result':
+                        gameState.result = data.args.result || ''; gameState.multiplier = data.args.totalMultiplier || 0;
+                        gameState.status = 'Result'; gameState.resultTime = now;
+                        if (gameState.betsOpenTime > 0) roundDuration = Math.max(20000, Math.min(60000, now - gameState.betsOpenTime));
+                        updateDisplay(); break;
+                    case 'crazytime.gameWinners':
+                        gameState.winners = data.args.winners || []; gameState.totalWinners = data.args.totalWinners || 0;
+                        gameState.totalAmount = data.args.totalAmount || 0; updateWinners(); break;
+                    case 'crazytime.spinHistory':
+                        gameState.spinHistory = data.args.results || []; updateHistory(); break;
+                    case 'crazytime.slot.result':
+                        gameState.result = data.args.result || ''; gameState.multiplier = data.args.multiplier || 0;
+                        gameState.status = 'Slot Win'; updateDisplay(); break;
+                    case 'crazytime.crazybonus.result':
+                        gameState.status = 'Bonus Result'; updateDisplay(); break;
+                    case 'connection.kickout':
+                        log('Kicked: ' + data.args.reason); if (ws) ws.close(); reconnect(); break;
+                    default: log('Unknown: ' + data.type);
+                }
+            }
+            function doConnect() {
+                const url = document.getElementById('ct-url').value.trim();
+                if (!url.startsWith('wss://')) { setStatus('Invalid URL (need wss://)'); return; }
+                if (ws && isConnected) ws.close();
+                ws = new WebSocket(url); isConnected = false; reconnAttempts = 0;
+                setStatus('Connecting...'); log('Connecting → ' + url.slice(0, 60) + '...');
+                ws.onopen = () => { isConnected = true; isSimulating = false; reconnAttempts = 0; setStatus('Connected (Live)', true); log('WebSocket open'); ws.send(JSON.stringify({ subscribe: { channel: 'CrazyTime0000001' } })); };
+                ws.onmessage = ev => { try { handleMsg(JSON.parse(ev.data)); } catch (e) { log('Parse error: ' + e.message); } };
+                ws.onerror = () => { log('Error'); setStatus('Error'); reconnect(); };
+                ws.onclose = () => { isConnected = false; setStatus('Disconnected'); log('Closed'); reconnect(); };
+            }
+            function reconnect() {
+                if (reconnAttempts < MAX_RECONN) {
+                    const d = Math.min(1000 * Math.pow(2, reconnAttempts), 30000);
+                    reconnAttempts++; log(`Reconnect ${reconnAttempts}/${MAX_RECONN} in ${d}ms`);
+                    setTimeout(doConnect, d);
+                } else { log('Max reconnects. Running simulation...'); startSim(); }
+            }
+            function startSim() {
+                if (isConnected || isSimulating) return;
+                isSimulating = true; setStatus('Simulation Mode');
+                simData.forEach((d, i) => setTimeout(() => { if (!isConnected) handleMsg(d); }, i * 6000));
+            }
+
+            window.ctConnect = function () { reconnAttempts = 0; doConnect(); setTimeout(startSim, 12000); };
+            window.ctDisconnect = function () { if (ws) ws.close(); if (predictionIv) clearInterval(predictionIv); setStatus('Disconnected'); log('Disconnected'); };
+
+            // Auto-start simulation
+            setTimeout(startSim, 2000);
+        })();
+    </script>
+</body>
+
+</html>
