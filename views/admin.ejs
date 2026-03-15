@@ -37,6 +37,14 @@
         <button onclick="switchTab('ad-manager')" id="tab-ad-manager"
             class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">Ad
             Manager</button>
+        <button onclick="switchTab('videos')" id="tab-videos"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">🎬 Videos</button>
+        <button onclick="switchTab('blog')" id="tab-blog"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">📰 Blog</button>
+        <button onclick="switchTab('affiliates')" id="tab-affiliates"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">🔗 Affiliates</button>
+        <button onclick="switchTab('vid-analytics')" id="tab-vid-analytics"
+            class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 hover:text-white">📊 Vid Analytics</button>
     </div>
 
     <!-- Tab: Overview -->
@@ -411,7 +419,552 @@
             </div>
         </div>
     </div>
+
+    <!-- ═══ Tab: Video Management ═══ -->
+    <div id="pane-videos" class="tab-pane hidden space-y-6">
+        <div class="glass p-6 rounded-2xl border border-white/5">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest">🎬 Video Management</h2>
+                <button onclick="openVideoModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition">
+                    <i class="fas fa-plus mr-1"></i> Add Video
+                </button>
+            </div>
+            <div class="mb-4 flex gap-3">
+                <input type="text" id="videoSearchInput" placeholder="Search videos..." oninput="filterVideoTable()" class="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-indigo-500 outline-none">
+                <a href="/videos" target="_blank" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-bold rounded-xl transition flex items-center gap-2">
+                    <i class="fas fa-external-link-alt"></i> View Site
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="videoTable">
+                    <thead>
+                        <tr class="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <th class="pb-3 px-3">Thumbnail</th>
+                            <th class="pb-3 px-3">Title / Category</th>
+                            <th class="pb-3 px-3 text-center">Views</th>
+                            <th class="pb-3 px-3 text-center">Redirects</th>
+                            <th class="pb-3 px-3 text-center">Status</th>
+                            <th class="pb-3 px-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="videoTableBody" class="divide-y divide-white/5">
+                        <tr><td colspan="6" class="text-center text-gray-500 py-8"><i class="fas fa-spinner fa-spin"></i> Loading videos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Tab: Blog Management ═══ -->
+    <div id="pane-blog" class="tab-pane hidden space-y-6">
+        <div class="glass p-6 rounded-2xl border border-white/5">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest">📰 Blog Management</h2>
+                <button onclick="openBlogModal()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl transition">
+                    <i class="fas fa-plus mr-1"></i> New Post
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <th class="pb-3 px-3">Title</th>
+                            <th class="pb-3 px-3 text-center">Views</th>
+                            <th class="pb-3 px-3 text-center">Status</th>
+                            <th class="pb-3 px-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blogTableBody" class="divide-y divide-white/5">
+                        <tr><td colspan="4" class="text-center text-gray-500 py-8"><i class="fas fa-spinner fa-spin"></i> Loading posts...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Tab: Affiliate Management ═══ -->
+    <div id="pane-affiliates" class="tab-pane hidden space-y-6">
+        <div class="glass p-6 rounded-2xl border border-white/5">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-sm font-black text-white uppercase tracking-widest">🔗 Affiliate & Offer Management</h2>
+                <button onclick="openAffiliateModal()" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold rounded-xl transition">
+                    <i class="fas fa-plus mr-1"></i> Add Offer
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <th class="pb-3 px-3">Title / Type</th>
+                            <th class="pb-3 px-3">URL</th>
+                            <th class="pb-3 px-3 text-center">Clicks</th>
+                            <th class="pb-3 px-3 text-center">Active</th>
+                            <th class="pb-3 px-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="affiliateTableBody" class="divide-y divide-white/5">
+                        <tr><td colspan="5" class="text-center text-gray-500 py-8"><i class="fas fa-spinner fa-spin"></i> Loading affiliates...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Tab: Video Analytics ═══ -->
+    <div id="pane-vid-analytics" class="tab-pane hidden space-y-6">
+        <!-- Stats cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="vidAnalyticsCards">
+            <div class="glass p-5 rounded-2xl border border-white/5 text-center"><div class="text-2xl font-black text-indigo-400 mb-1" id="va-views">—</div><div class="text-[10px] text-gray-500 uppercase font-bold">Total Views</div></div>
+            <div class="glass p-5 rounded-2xl border border-white/5 text-center"><div class="text-2xl font-black text-purple-400 mb-1" id="va-popups">—</div><div class="text-[10px] text-gray-500 uppercase font-bold">Popup Clicks</div></div>
+            <div class="glass p-5 rounded-2xl border border-white/5 text-center"><div class="text-2xl font-black text-green-400 mb-1" id="va-redirects">—</div><div class="text-[10px] text-gray-500 uppercase font-bold">Redirects</div></div>
+            <div class="glass p-5 rounded-2xl border border-white/5 text-center"><div class="text-2xl font-black text-yellow-400 mb-1" id="va-rate">—</div><div class="text-[10px] text-gray-500 uppercase font-bold">Conversion %</div></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Top Videos -->
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <h3 class="text-sm font-black text-white uppercase tracking-widest mb-4">🔥 Top Videos</h3>
+                <div id="va-top-videos" class="space-y-2"></div>
+            </div>
+            <!-- Top Countries -->
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <h3 class="text-sm font-black text-white uppercase tracking-widest mb-4">🌎 Top Countries</h3>
+                <div id="va-top-countries" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<!-- ── Video Modal ── -->
+<div id="videoModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="glass p-6 rounded-3xl border border-white/10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-5">
+      <h3 class="text-lg font-black text-white" id="videoModalTitle">Add Video</h3>
+      <button onclick="closeVideoModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="videoForm" class="space-y-4" onsubmit="saveVideo(event)">
+      <input type="hidden" id="videoId">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2 space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Title *</label>
+          <input type="text" id="vTitle" required class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none" placeholder="Video title">
+        </div>
+        <div class="md:col-span-2 space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">TeraBox Link *</label>
+          <input type="url" id="vTeraboxLink" required class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none" placeholder="https://terabox.com/...">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Thumbnail URL</label>
+          <input type="url" id="vThumbnail" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none" placeholder="https://...">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Preview Video URL (10-20s)</label>
+          <input type="url" id="vPreviewVideoUrl" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none" placeholder="https://...">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Category</label>
+          <select id="vCategory" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+            <option value="">— None —</option>
+          </select>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Tags (comma-separated)</label>
+          <input type="text" id="vTags" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none" placeholder="action, thriller, 2024">
+        </div>
+        <div class="md:col-span-2 space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Description</label>
+          <textarea id="vDescription" rows="3" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none" placeholder="Short description..."></textarea>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">SEO Title</label>
+          <input type="text" id="vSeoTitle" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">SEO Description</label>
+          <input type="text" id="vSeoDescription" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+        </div>
+        <div class="flex gap-6">
+          <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="vIsFeatured" class="w-4 h-4 rounded"> Featured
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="vIsTrending" class="w-4 h-4 rounded"> Trending
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="vIsPublished" class="w-4 h-4 rounded" checked> Published
+          </label>
+        </div>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="button" onclick="closeVideoModal()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition border border-white/10">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition">Save Video</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Blog Modal ── -->
+<div id="blogModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="glass p-6 rounded-3xl border border-white/10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-5">
+      <h3 class="text-lg font-black text-white" id="blogModalTitle">New Blog Post</h3>
+      <button onclick="closeBlogModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="blogForm" class="space-y-4" onsubmit="saveBlog(event)">
+      <input type="hidden" id="blogPostId">
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Title *</label>
+        <input type="text" id="bTitle" required class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Featured Image URL</label>
+        <input type="url" id="bFeaturedImage" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Content (HTML supported)</label>
+        <textarea id="bContent" rows="8" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none font-mono text-xs" placeholder="Write your blog post content here... HTML tags are supported."></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Meta Description</label>
+          <input type="text" id="bMetaDescription" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">SEO Keywords (comma-sep)</label>
+          <input type="text" id="bSeoKeywords" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+        </div>
+      </div>
+      <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+        <input type="checkbox" id="bIsPublished" checked class="w-4 h-4 rounded"> Published
+      </label>
+      <div class="flex gap-3 pt-2">
+        <button type="button" onclick="closeBlogModal()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition border border-white/10">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition">Save Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Affiliate Modal ── -->
+<div id="affiliateModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="glass p-6 rounded-3xl border border-white/10 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-5">
+      <h3 class="text-lg font-black text-white" id="affiliateModalTitle">Add Affiliate Offer</h3>
+      <button onclick="closeAffiliateModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="affiliateForm" class="space-y-4" onsubmit="saveAffiliate(event)">
+      <input type="hidden" id="affiliateId">
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Title *</label>
+        <input type="text" id="aTitle" required class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Type</label>
+          <select id="aType" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+            <option value="offer">Offer</option>
+            <option value="app">App Download</option>
+            <option value="banner">Banner Ad</option>
+            <option value="cpa">CPA Campaign</option>
+          </select>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Display Order</label>
+          <input type="number" id="aDisplayOrder" value="0" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Affiliate URL *</label>
+        <input type="url" id="aUrl" required class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none" placeholder="https://...">
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Image / Logo URL</label>
+        <input type="url" id="aImageUrl" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Description</label>
+        <textarea id="aDescription" rows="2" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none"></textarea>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold text-gray-500 uppercase">Target Countries (comma-sep, e.g. US,SA,IN)</label>
+        <input type="text" id="aTargetCountries" placeholder="US, SA, AE, IN" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none">
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="button" onclick="closeAffiliateModal()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition border border-white/10">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl transition">Save Offer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ─── Video Management ────────────────────────────────────────────
+let allVideos = [];
+let allCategories = [];
+
+async function loadVideos() {
+    try {
+        const [vRes, cRes] = await Promise.all([
+            fetch('/api/admin/videos'),
+            fetch('/api/admin/videos/categories')
+        ]);
+        const vData = await vRes.json();
+        const cData = await cRes.json();
+        allVideos = vData.videos || [];
+        allCategories = cData.categories || [];
+        renderVideoTable(allVideos);
+        // Populate category dropdown
+        const sel = document.getElementById('vCategory');
+        sel.innerHTML = '<option value="">— None —</option>';
+        allCategories.forEach(c => {
+            sel.innerHTML += `<option value="${c._id}">${c.icon || ''} ${c.name}</option>`;
+        });
+    } catch(e) { console.error('loadVideos', e); }
+}
+
+function renderVideoTable(videos) {
+    const tbody = document.getElementById('videoTableBody');
+    if (!videos || videos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-gray-500 py-8">No videos yet. Add your first video!</td></tr>';
+        return;
+    }
+    tbody.innerHTML = videos.map(v => `
+        <tr class="hover:bg-white/5 transition">
+            <td class="py-3 px-3"><img src="${v.thumbnail || ''}" onerror="this.style.display='none'" class="w-16 h-10 object-cover rounded-lg" alt="">${!v.thumbnail ? '<div class="w-16 h-10 bg-indigo-900/30 rounded-lg flex items-center justify-center"><i class="fas fa-film text-xs text-indigo-400"></i></div>' : ''}</td>
+            <td class="py-3 px-3">
+                <div class="text-xs font-bold text-white line-clamp-1">${v.title}</div>
+                <div class="text-[10px] text-gray-500">${v.category?.name || 'No category'} ${v.isFeatured ? '⭐' : ''} ${v.isTrending ? '🔥' : ''}</div>
+            </td>
+            <td class="py-3 px-3 text-center text-xs text-indigo-300">${(v.stats?.views || 0).toLocaleString()}</td>
+            <td class="py-3 px-3 text-center text-xs text-green-300">${(v.stats?.redirectClicks || 0).toLocaleString()}</td>
+            <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${v.isPublished ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">${v.isPublished ? 'Live' : 'Draft'}</span></td>
+            <td class="py-3 px-3 text-right">
+                <a href="/videos/${v.slug}" target="_blank" class="p-1.5 text-gray-400 hover:text-cyan-400 transition" title="View"><i class="fas fa-external-link-alt text-xs"></i></a>
+                <button onclick="editVideo('${v._id}')" class="p-1.5 text-gray-400 hover:text-indigo-400 transition" title="Edit"><i class="fas fa-edit text-xs"></i></button>
+                <button onclick="deleteVideo('${v._id}')" class="p-1.5 text-gray-400 hover:text-red-400 transition" title="Delete"><i class="fas fa-trash text-xs"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function filterVideoTable() {
+    const q = document.getElementById('videoSearchInput').value.toLowerCase();
+    renderVideoTable(allVideos.filter(v => v.title.toLowerCase().includes(q)));
+}
+
+function openVideoModal(v) {
+    document.getElementById('videoModalTitle').textContent = v ? 'Edit Video' : 'Add Video';
+    document.getElementById('videoId').value = v?._id || '';
+    document.getElementById('vTitle').value = v?.title || '';
+    document.getElementById('vTeraboxLink').value = v?.teraboxLink || '';
+    document.getElementById('vThumbnail').value = v?.thumbnail || '';
+    document.getElementById('vPreviewVideoUrl').value = v?.previewVideoUrl || '';
+    document.getElementById('vCategory').value = v?.category?._id || '';
+    document.getElementById('vTags').value = (v?.tags || []).join(', ');
+    document.getElementById('vDescription').value = v?.description || '';
+    document.getElementById('vSeoTitle').value = v?.seoTitle || '';
+    document.getElementById('vSeoDescription').value = v?.seoDescription || '';
+    document.getElementById('vIsFeatured').checked = !!v?.isFeatured;
+    document.getElementById('vIsTrending').checked = !!v?.isTrending;
+    document.getElementById('vIsPublished').checked = v ? !!v.isPublished : true;
+    document.getElementById('videoModal').classList.remove('hidden');
+}
+function closeVideoModal() { document.getElementById('videoModal').classList.add('hidden'); }
+function editVideo(id) { openVideoModal(allVideos.find(v => v._id === id)); }
+async function deleteVideo(id) {
+    if (!confirm('Delete this video and its analytics?')) return;
+    await fetch(`/api/admin/videos/${id}`, { method: 'DELETE' });
+    loadVideos();
+}
+async function saveVideo(e) {
+    e.preventDefault();
+    const id = document.getElementById('videoId').value;
+    const body = {
+        title: document.getElementById('vTitle').value,
+        teraboxLink: document.getElementById('vTeraboxLink').value,
+        thumbnail: document.getElementById('vThumbnail').value,
+        previewVideoUrl: document.getElementById('vPreviewVideoUrl').value,
+        category: document.getElementById('vCategory').value,
+        tags: document.getElementById('vTags').value,
+        description: document.getElementById('vDescription').value,
+        seoTitle: document.getElementById('vSeoTitle').value,
+        seoDescription: document.getElementById('vSeoDescription').value,
+        isFeatured: document.getElementById('vIsFeatured').checked,
+        isTrending: document.getElementById('vIsTrending').checked,
+        isPublished: document.getElementById('vIsPublished').checked,
+    };
+    const url = id ? `/api/admin/videos/${id}` : '/api/admin/videos';
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.success) { closeVideoModal(); loadVideos(); if(typeof showToast !== 'undefined') showToast('Video saved!', 'success'); }
+    else if(typeof showToast !== 'undefined') showToast(data.error || 'Error', 'error');
+}
+
+// ─── Blog Management ─────────────────────────────────────────────
+let allPosts = [];
+async function loadBlog() {
+    try {
+        const res = await fetch('/api/admin/blog');
+        const data = await res.json();
+        allPosts = data.posts || [];
+        const tbody = document.getElementById('blogTableBody');
+        tbody.innerHTML = allPosts.map(p => `
+            <tr class="hover:bg-white/5 transition">
+                <td class="py-3 px-3"><div class="text-xs font-bold text-white line-clamp-1">${p.title}</div><div class="text-[10px] text-gray-500">${new Date(p.createdAt).toLocaleDateString()}</div></td>
+                <td class="py-3 px-3 text-center text-xs text-indigo-300">${(p.views || 0).toLocaleString()}</td>
+                <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${p.isPublished ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">${p.isPublished ? 'Published' : 'Draft'}</span></td>
+                <td class="py-3 px-3 text-right">
+                    <a href="/blog/${p.slug}" target="_blank" class="p-1.5 text-gray-400 hover:text-cyan-400 transition"><i class="fas fa-external-link-alt text-xs"></i></a>
+                    <button onclick="editBlog('${p._id}')" class="p-1.5 text-gray-400 hover:text-indigo-400 transition"><i class="fas fa-edit text-xs"></i></button>
+                    <button onclick="deleteBlog('${p._id}')" class="p-1.5 text-gray-400 hover:text-red-400 transition"><i class="fas fa-trash text-xs"></i></button>
+                </td>
+            </tr>
+        `).join('') || '<tr><td colspan="4" class="text-center text-gray-500 py-8">No posts yet.</td></tr>';
+    } catch(e) { console.error('loadBlog', e); }
+}
+function openBlogModal(p) {
+    document.getElementById('blogModalTitle').textContent = p ? 'Edit Post' : 'New Blog Post';
+    document.getElementById('blogPostId').value = p?._id || '';
+    document.getElementById('bTitle').value = p?.title || '';
+    document.getElementById('bFeaturedImage').value = p?.featuredImage || '';
+    document.getElementById('bContent').value = p?.content || '';
+    document.getElementById('bMetaDescription').value = p?.metaDescription || '';
+    document.getElementById('bSeoKeywords').value = (p?.seoKeywords || []).join(', ');
+    document.getElementById('bIsPublished').checked = p ? !!p.isPublished : true;
+    document.getElementById('blogModal').classList.remove('hidden');
+}
+function closeBlogModal() { document.getElementById('blogModal').classList.add('hidden'); }
+function editBlog(id) { openBlogModal(allPosts.find(p => p._id === id)); }
+async function deleteBlog(id) {
+    if (!confirm('Delete this blog post?')) return;
+    await fetch(`/api/admin/blog/${id}`, { method: 'DELETE' });
+    loadBlog();
+}
+async function saveBlog(e) {
+    e.preventDefault();
+    const id = document.getElementById('blogPostId').value;
+    const body = {
+        title: document.getElementById('bTitle').value,
+        featuredImage: document.getElementById('bFeaturedImage').value,
+        content: document.getElementById('bContent').value,
+        metaDescription: document.getElementById('bMetaDescription').value,
+        seoKeywords: document.getElementById('bSeoKeywords').value,
+        isPublished: document.getElementById('bIsPublished').checked,
+    };
+    const url = id ? `/api/admin/blog/${id}` : '/api/admin/blog';
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.success) { closeBlogModal(); loadBlog(); if(typeof showToast !== 'undefined') showToast('Post saved!', 'success'); }
+    else if(typeof showToast !== 'undefined') showToast(data.error || 'Error', 'error');
+}
+
+// ─── Affiliate Management ────────────────────────────────────────
+let allAffiliates = [];
+async function loadAffiliates() {
+    try {
+        const res = await fetch('/api/admin/affiliates');
+        const data = await res.json();
+        allAffiliates = data.affiliates || [];
+        const tbody = document.getElementById('affiliateTableBody');
+        tbody.innerHTML = allAffiliates.map(a => `
+            <tr class="hover:bg-white/5 transition">
+                <td class="py-3 px-3"><div class="text-xs font-bold text-white">${a.title}</div><div class="text-[10px] text-orange-400 uppercase font-bold">${a.type}</div></td>
+                <td class="py-3 px-3 text-xs text-gray-400 max-w-[180px] truncate">${a.url}</td>
+                <td class="py-3 px-3 text-center text-xs text-green-300">${(a.clicks || 0).toLocaleString()}</td>
+                <td class="py-3 px-3 text-center">
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${a.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}">${a.isActive ? 'Active' : 'Off'}</span>
+                </td>
+                <td class="py-3 px-3 text-right">
+                    <button onclick="editAffiliate('${a._id}')" class="p-1.5 text-gray-400 hover:text-indigo-400 transition"><i class="fas fa-edit text-xs"></i></button>
+                    <button onclick="toggleAffiliate('${a._id}')" class="p-1.5 text-gray-400 hover:text-yellow-400 transition"><i class="fas fa-toggle-on text-xs"></i></button>
+                    <button onclick="deleteAffiliate('${a._id}')" class="p-1.5 text-gray-400 hover:text-red-400 transition"><i class="fas fa-trash text-xs"></i></button>
+                </td>
+            </tr>
+        `).join('') || '<tr><td colspan="5" class="text-center text-gray-500 py-8">No affiliates yet.</td></tr>';
+    } catch(e) { console.error('loadAffiliates', e); }
+}
+function openAffiliateModal(a) {
+    document.getElementById('affiliateModalTitle').textContent = a ? 'Edit Offer' : 'Add Affiliate Offer';
+    document.getElementById('affiliateId').value = a?._id || '';
+    document.getElementById('aTitle').value = a?.title || '';
+    document.getElementById('aType').value = a?.type || 'offer';
+    document.getElementById('aUrl').value = a?.url || '';
+    document.getElementById('aImageUrl').value = a?.imageUrl || '';
+    document.getElementById('aDescription').value = a?.description || '';
+    document.getElementById('aTargetCountries').value = (a?.targetCountries || []).join(', ');
+    document.getElementById('aDisplayOrder').value = a?.displayOrder || 0;
+    document.getElementById('affiliateModal').classList.remove('hidden');
+}
+function closeAffiliateModal() { document.getElementById('affiliateModal').classList.add('hidden'); }
+function editAffiliate(id) { openAffiliateModal(allAffiliates.find(a => a._id === id)); }
+async function toggleAffiliate(id) {
+    await fetch(`/api/admin/affiliates/${id}/toggle`, { method: 'POST' });
+    loadAffiliates();
+}
+async function deleteAffiliate(id) {
+    if (!confirm('Delete affiliate?')) return;
+    await fetch(`/api/admin/affiliates/${id}`, { method: 'DELETE' });
+    loadAffiliates();
+}
+async function saveAffiliate(e) {
+    e.preventDefault();
+    const id = document.getElementById('affiliateId').value;
+    const body = {
+        title: document.getElementById('aTitle').value,
+        type: document.getElementById('aType').value,
+        url: document.getElementById('aUrl').value,
+        imageUrl: document.getElementById('aImageUrl').value,
+        description: document.getElementById('aDescription').value,
+        targetCountries: document.getElementById('aTargetCountries').value,
+        displayOrder: document.getElementById('aDisplayOrder').value,
+    };
+    const url = id ? `/api/admin/affiliates/${id}` : '/api/admin/affiliates';
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.success) { closeAffiliateModal(); loadAffiliates(); if(typeof showToast !== 'undefined') showToast('Affiliate saved!', 'success'); }
+    else if(typeof showToast !== 'undefined') showToast(data.error || 'Error', 'error');
+}
+
+// ─── Video Analytics ─────────────────────────────────────────────
+async function loadVideoAnalytics() {
+    try {
+        const res = await fetch('/api/admin/videos/analytics/summary');
+        const data = await res.json();
+        if (!data.success) return;
+        document.getElementById('va-views').textContent = (data.totalViews || 0).toLocaleString();
+        document.getElementById('va-popups').textContent = (data.totalPopupClicks || 0).toLocaleString();
+        document.getElementById('va-redirects').textContent = (data.totalRedirects || 0).toLocaleString();
+        document.getElementById('va-rate').textContent = (data.conversionRate || 0) + '%';
+        document.getElementById('va-top-videos').innerHTML = (data.topVideos || []).map((v,i) =>
+            `<div class="flex items-center gap-3 p-2 rounded-xl bg-white/4 border border-white/5">
+                <span class="text-xs font-black text-gray-500 w-5">${i+1}</span>
+                <div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">${v.title}</div></div>
+                <div class="text-xs text-indigo-300 font-bold">${(v.stats?.views||0).toLocaleString()} views</div>
+            </div>`
+        ).join('') || '<p class="text-gray-500 text-xs">No data yet.</p>';
+        document.getElementById('va-top-countries').innerHTML = (data.topCountries || []).map((c,i) =>
+            `<div class="flex items-center gap-3 p-2 rounded-xl bg-white/4 border border-white/5">
+                <span class="text-xs font-black text-gray-500 w-5">${i+1}</span>
+                <div class="flex-1 text-xs font-bold text-white">${c._id || 'Unknown'}</div>
+                <div class="text-xs text-purple-300 font-bold">${c.count.toLocaleString()}</div>
+            </div>`
+        ).join('') || '<p class="text-gray-500 text-xs">No data yet.</p>';
+    } catch(e) { console.error('loadVideoAnalytics', e); }
+}
+
+// ─── Hook into existing tab switch ───────────────────────────────
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tabId) {
+    if (typeof _origSwitchTab === 'function') _origSwitchTab(tabId);
+    if (tabId === 'videos' && allVideos.length === 0) loadVideos();
+    if (tabId === 'blog' && allPosts.length === 0) loadBlog();
+    if (tabId === 'affiliates' && allAffiliates.length === 0) loadAffiliates();
+    if (tabId === 'vid-analytics') loadVideoAnalytics();
+};
+</script>
 
 <!-- Edit User Modal -->
 <div id="editUserModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm items-center justify-center p-4">

@@ -65,6 +65,14 @@ const linkToolsRoutes = require('./routes/tools/linkTools');
 const calculatorRoutes = require('./routes/tools/calculator');
 const cryptoMiningRoutes = require('./routes/tools/cryptoMining');
 
+// Video Platform routes
+const videoRoutes = require('./routes/videos');
+const blogRoutes = require('./routes/blog');
+const sitemapRoutes = require('./routes/sitemap');
+const adminVideosApi = require('./routes/api/adminVideos');
+const adminBlogApi = require('./routes/api/adminBlog');
+const adminAffiliatesApi = require('./routes/api/adminAffiliates');
+
 const app = express();
 const server = http.createServer(app);
 
@@ -96,6 +104,7 @@ app.use(helmet({
             imgSrc: ["'self'", "data:", "https:", "http:"],
             connectSrc: ["'self'", "wss:", "ws:", "https:"],
             frameSrc: ["'self'", "https:", "http:"],
+            mediaSrc: ["'self'", "https:", "http:", "blob:"],
         },
     },
 }));
@@ -202,6 +211,16 @@ app.get('/inquiry', (req, res) => {
 // Inquiry Form API
 app.use('/api/inquiry', inquiryRoutes);
 
+// ─── Video Platform Routes ────────────────────────────────────
+app.use('/videos', videoRoutes);
+app.use('/blog', blogRoutes);
+app.use('/sitemap.xml', sitemapRoutes);
+
+// Video Platform Admin APIs
+app.use('/api/admin/videos', adminVideosApi);
+app.use('/api/admin/blog', adminBlogApi);
+app.use('/api/admin/affiliates', adminAffiliatesApi);
+
 // ─── 404 Handler ────────────────────────────────────────────
 app.use((req, res) => {
     res.status(404).render('errors/404', { layout: 'layouts/main', user: req.user || null, currentPath: req.path, title: '404' });
@@ -224,6 +243,9 @@ async function connectDB() {
         });
         console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
         seedAdmin();
+        // Seed video categories
+        const Category = require('./models/Category');
+        Category.seedDefaults();
     } catch (err) {
         console.warn(`⚠️  MongoDB unavailable: ${err.message}`);
         console.warn('   Server running without database. Auth/data features disabled.');

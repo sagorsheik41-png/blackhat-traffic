@@ -211,6 +211,17 @@
           <span class="ml-auto text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-bold">ULT</span>
         </a>
 
+        <div class="text-xs text-gray-500 font-bold uppercase tracking-wider px-3 py-2 mt-4">Video Platform</div>
+
+        <a href="/videos"
+          class="sidebar-link <%= currentPath.startsWith('/videos') ? 'active' : '' %>">
+          <i class="fas fa-film"></i> Video Library
+        </a>
+        <a href="/blog"
+          class="sidebar-link <%= currentPath.startsWith('/blog') ? 'active' : '' %>">
+          <i class="fas fa-newspaper"></i> Blog
+        </a>
+
         <% if (user && user.role==='admin' ) { %>
           <div class="text-xs text-gray-500 font-bold uppercase tracking-wider px-3 py-2 mt-4">Admin</div>
           <a href="/admin" class="sidebar-link <%= currentPath.startsWith('/admin') ? 'active' : '' %>">

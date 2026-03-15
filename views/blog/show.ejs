@@ -1,0 +1,109 @@
+<style>
+  .article-body { max-width:760px;margin:0 auto; }
+  .article-body h1,.article-body h2,.article-body h3 { color:#f1f5f9;font-weight:800;margin:1.5em 0 0.5em; }
+  .article-body p { color:#94a3b8;line-height:1.85;margin:1em 0; }
+  .article-body a { color:#818cf8;text-decoration:underline; }
+  .article-body img { max-width:100%;border-radius:12px;margin:20px 0; }
+  .article-body ul,.article-body ol { color:#94a3b8;padding-left:24px;margin:1em 0;line-height:1.8; }
+  .article-body code { background:rgba(99,102,241,0.12);color:#a5b4fc;padding:2px 6px;border-radius:5px;font-size:0.9em; }
+  .article-body pre { background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;overflow-x:auto; }
+  .article-body blockquote { border-left:3px solid #4f46e5;padding:12px 20px;margin:20px 0;background:rgba(99,102,241,0.06);border-radius:0 10px 10px 0; }
+  .related-post-card { background:rgba(30,41,59,0.85);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;transition:all 0.3s; }
+  .related-post-card:hover { border-color:rgba(99,102,241,0.3);transform:translateY(-3px); }
+</style>
+
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-xs text-gray-500 mb-6">
+  <a href="/videos" class="hover:text-indigo-400 transition">🎬 Videos</a>
+  <span>/</span>
+  <a href="/blog" class="hover:text-indigo-400 transition">📰 Blog</a>
+  <span>/</span>
+  <span class="text-gray-400 truncate"><%= post.title %></span>
+</nav>
+
+<div class="article-body">
+  <!-- Hero Image -->
+  <% if (post.featuredImage) { %>
+  <img src="<%= post.featuredImage %>" alt="<%= post.title %>" class="w-full rounded-2xl mb-6 shadow-2xl" style="max-height:420px;object-fit:cover;">
+  <% } %>
+
+  <!-- Meta -->
+  <div class="flex flex-wrap items-center gap-3 mb-4">
+    <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider">📰 Blog</span>
+    <span class="text-xs text-gray-500">
+      <i class="fas fa-calendar mr-1"></i> <%= post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '' %>
+    </span>
+    <span class="text-xs text-gray-500">
+      <i class="fas fa-user mr-1"></i> <%= post.authorName || 'Admin' %>
+    </span>
+    <span class="text-xs text-gray-500">
+      <i class="fas fa-eye mr-1"></i> <%= (post.views || 0).toLocaleString() %> views
+    </span>
+  </div>
+
+  <!-- Title -->
+  <h1 style="font-size:2rem;font-weight:900;color:#f1f5f9;line-height:1.25;margin-bottom:24px;"><%= post.title %></h1>
+
+  <!-- Content -->
+  <div class="prose-content" style="color:#94a3b8;line-height:1.85;font-size:15px;">
+    <%- post.content %>
+  </div>
+
+  <!-- Keywords -->
+  <% if (post.seoKeywords && post.seoKeywords.length > 0) { %>
+  <div class="mt-8 pt-6 border-t border-white/5">
+    <span class="text-xs text-gray-500 mr-2">Tags:</span>
+    <% post.seoKeywords.forEach(kw => { %>
+    <a href="/blog?search=<%= kw %>" class="inline-block px-3 py-1 text-xs rounded-full bg-white/5 text-gray-400 hover:bg-indigo-500/15 hover:text-indigo-400 transition mr-1 mb-1"><%= kw %></a>
+    <% }) %>
+  </div>
+  <% } %>
+</div>
+
+<!-- Related Posts -->
+<% if (relatedPosts && relatedPosts.length > 0) { %>
+<section class="mt-12 pt-8 border-t border-white/5">
+  <h3 class="text-white font-bold text-lg mb-6">More Articles</h3>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <% relatedPosts.forEach(r => { %>
+    <a href="/blog/<%= r.slug %>" class="related-post-card block">
+      <% if (r.featuredImage) { %>
+        <img src="<%= r.featuredImage %>" alt="<%= r.title %>" class="w-full h-32 object-cover">
+      <% } %>
+      <div class="p-4">
+        <h4 class="text-white font-bold text-sm line-clamp-2 mb-1"><%= r.title %></h4>
+        <p class="text-gray-500 text-xs"><%= r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '' %></p>
+        <span class="text-indigo-400 text-xs font-semibold mt-2 inline-block">Read more →</span>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- Back & CTA -->
+<div class="mt-10 flex flex-wrap gap-4 items-center">
+  <a href="/blog" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-semibold transition">
+    ← Back to Blog
+  </a>
+  <a href="/videos" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition">
+    <i class="fas fa-film mr-1"></i> Browse Videos
+  </a>
+</div>
+
+<!-- Blog article structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "<%= post.title.replace(/"/g,'&quot;') %>",
+  "description": "<%= (post.metaDescription || post.excerpt || '').replace(/"/g,'&quot;').substring(0,200) %>",
+  "image": "<%= post.featuredImage || '' %>",
+  "datePublished": "<%= post.createdAt ? new Date(post.createdAt).toISOString() : '' %>",
+  "dateModified": "<%= post.updatedAt ? new Date(post.updatedAt).toISOString() : '' %>",
+  "author": {
+    "@type": "Person",
+    "name": "<%= post.authorName || 'Admin' %>"
+  }
+}
+</script>

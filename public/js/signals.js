@@ -18,119 +18,49 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
-    // UI CONTROLLER (Tab Management Only)
+    // 1. TABS: BOXED UI SWITCHING LOGIC
     // ==========================================
-    const UIController = {
-        activeTab: 'aviator',
-        elements: {
-            btnAviator: null,
-            btnCrazyTime: null,
-            viewAviator: null,
-            viewCrazyTime: null,
-            tabIndicator: null,
-            globalClock: null
-        },
+    const btnAviator = document.getElementById('btnAviator');
+    const btnCrazyTime = document.getElementById('btnCrazyTime');
+    const viewAviator = document.getElementById('viewAviator');
+    const viewCrazyTime = document.getElementById('viewCrazyTime');
+    const avWsInput = document.getElementById('ws-url-input');
+    const ctWsInput = document.getElementById('ct-ws-url-input');
 
-        init() {
-            // Grab element references explicitly with strict checking
-            this.elements.btnAviator = document.getElementById('btn-tab-aviator');
-            this.elements.btnCrazyTime = document.getElementById('btn-tab-crazytime');
-            this.elements.viewAviator = document.getElementById('wrapper-aviator');
-            this.elements.viewCrazyTime = document.getElementById('wrapper-crazytime');
-            this.elements.tabIndicator = document.getElementById('tabIndicator');
-            this.elements.globalClock = document.getElementById('globalSyncClock');
+    // Force Production WebSocket URL for both
+    const prodUrl = 'wss://socket.738293839.com';
+    if (avWsInput) avWsInput.value = prodUrl;
+    if (ctWsInput) ctWsInput.value = prodUrl;
 
-            // Explicit console warnings if missing (Bulletproof Targeting)
-            if (!this.elements.btnAviator) console.warn("[UIController] Aviator tab button ('btn-tab-aviator') not found");
-            if (!this.elements.btnCrazyTime) console.warn("[UIController] Crazy Time tab button ('btn-tab-crazytime') not found");
-            if (!this.elements.viewAviator) console.warn("[UIController] Aviator wrapper container ('wrapper-aviator') not found");
-            if (!this.elements.viewCrazyTime) console.warn("[UIController] Crazy Time wrapper container ('wrapper-crazytime') not found");
+    const switchTab = (tab) => {
+        const isAviator = tab === 'aviator';
+        if (viewAviator) viewAviator.classList.toggle('hidden', !isAviator);
+        if (viewCrazyTime) viewCrazyTime.classList.toggle('hidden', isAviator);
 
-            // Bind tab click handlers safely with optional chaining
-            this.elements.btnAviator?.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.switchTab('aviator');
-            });
-
-            this.elements.btnCrazyTime?.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.switchTab('crazytime');
-            });
-
-            // Responsive resize handler
-            window.addEventListener('resize', () => {
-                this.updateIndicatorPosition();
-            });
-
-            // Start global clock
-            this.startGlobalClock();
-
-            // Set initial tab automatically on load
-            this.switchTab('aviator');
-
-            return true;
-        },
-
-        startGlobalClock() {
-            if (!this.elements.globalClock) return;
-            const updateClock = () => {
-                const now = new Date();
-                this.elements.globalClock.textContent = now.toISOString().split('T')[1].split('.')[0];
-            };
-            updateClock();
-            setInterval(updateClock, 1000);
-        },
-
-        updateIndicatorPosition() {
-            if (!this.elements.tabIndicator) return;
-
-            if (this.activeTab === 'aviator' && this.elements.btnAviator) {
-                const width = this.elements.btnAviator.offsetWidth;
-                this.elements.tabIndicator.style.left = '4px';
-                this.elements.tabIndicator.style.width = `${width}px`;
-            } else if (this.activeTab === 'crazytime' && this.elements.btnCrazyTime) {
-                const avWidth = this.elements.btnAviator ? this.elements.btnAviator.offsetWidth : 0;
-                const offset = avWidth + 8;
-                const width = this.elements.btnCrazyTime.offsetWidth;
-                this.elements.tabIndicator.style.left = `${offset}px`;
-                this.elements.tabIndicator.style.width = `${width}px`;
-            }
-        },
-
-        switchTab(tabName) {
-            if (tabName !== 'aviator' && tabName !== 'crazytime') return;
-            this.activeTab = tabName;
-
-            if (tabName === 'aviator') {
-                // Foolproof inline display styles
-                if (this.elements.viewCrazyTime) this.elements.viewCrazyTime.style.display = 'none';
-                if (this.elements.viewAviator) this.elements.viewAviator.style.display = '';
-
-                // Highlight Aviator, Dim Crazy Time
-                this.elements.btnAviator?.classList.add('tab-active', 'text-white', 'border-blue-400/50', 'shadow-[0_0_10px_rgba(59,130,246,0.3)]');
-                this.elements.btnAviator?.classList.remove('tab-inactive', 'text-gray-400');
-
-                this.elements.btnCrazyTime?.classList.remove('tab-active', 'text-white', 'border-purple-400/50', 'shadow-[0_0_10px_rgba(168,85,247,0.3)]');
-                this.elements.btnCrazyTime?.classList.add('tab-inactive', 'text-gray-400');
-
-            } else {
-                // Foolproof inline display styles
-                if (this.elements.viewAviator) this.elements.viewAviator.style.display = 'none';
-                if (this.elements.viewCrazyTime) this.elements.viewCrazyTime.style.display = '';
-
-                // Highlight Crazy Time, Dim Aviator
-                this.elements.btnCrazyTime?.classList.add('tab-active', 'text-white', 'border-purple-400/50', 'shadow-[0_0_10px_rgba(168,85,247,0.3)]');
-                this.elements.btnCrazyTime?.classList.remove('tab-inactive', 'text-gray-400');
-
-                this.elements.btnAviator?.classList.remove('tab-active', 'text-white', 'border-blue-400/50', 'shadow-[0_0_10px_rgba(59,130,246,0.3)]');
-                this.elements.btnAviator?.classList.add('tab-inactive', 'text-gray-400');
-            }
-
-            this.updateIndicatorPosition();
-        }
+        if (btnAviator) btnAviator.classList.toggle('active', isAviator);
+        if (btnCrazyTime) btnCrazyTime.classList.toggle('active', !isAviator);
     };
+
+    if (btnAviator) btnAviator.addEventListener('click', () => switchTab('aviator'));
+    if (btnCrazyTime) btnCrazyTime.addEventListener('click', () => switchTab('crazytime'));
+
+    // Force Init Tab State
+    switchTab('aviator');
+
+    // Start global clock
+    const globalClock = document.getElementById('globalSyncClock');
+    if (globalClock) {
+        const updateClock = () => {
+            const now = new Date();
+            globalClock.textContent = now.toISOString().split('T')[1].split('.')[0];
+        };
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+
+    // Force Init Tab State
+    switchTab('aviator');
+
 
     // ==========================================
     // AVIATOR ENGINE (Fully Isolated)
@@ -166,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Element references (av* only)
         elements: {
-            wsUrl: document.getElementById('avWsUrl'),
+            wsUrl: document.getElementById('ws-url-input'),
             token: document.getElementById('avToken'),
             btnConn: document.getElementById('avConnectBtn'),
             btnDisc: document.getElementById('avDisconnectBtn'),
@@ -181,11 +111,21 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         init() {
-            // Auto-fill production WebSocket URL on page load
-            if (this.elements.wsUrl) {
-                this.elements.wsUrl.value = 'wss://socket.738293839.com';
+            // Production URLs are forced at global DOM level
+            
+            // Validate all required elements exist
+            const missingElements = [];
+            Object.entries(this.elements).forEach(([key, el]) => {
+                if (!el) {
+                    missingElements.push(`${key} (${key === 'wsUrl' ? 'ws-url-input' : key === 'token' ? 'avToken' : key})`);
+                }
+            });
+            
+            if (missingElements.length > 0) {
+                console.warn('[AV] Missing elements:', missingElements);
+                this.logMsg(`⚠️ Missing elements: ${missingElements.join(', ')}`);
             }
-
+            
             // Bind event listeners with optional chaining
             this.elements.btnConn?.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -246,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
         routeUrlIfNeeded(url) {
             if (url.includes('evo-games.com') || url.includes('crazytime')) {
                 showToast('Evolution URL detected — switching to Crazy Time...', 'info');
-                UIController.switchTab('crazyTime');
+                switchTab('crazytime');
+                // Ensure ctEngine recognizes the change
                 if (ctEngine.elements.wsUrl) {
                     ctEngine.elements.wsUrl.value = url;
                 }
@@ -361,10 +302,16 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         renderSignal(sig) {
-            if (!this.elements.signals) return;
+            if (!this.elements.signals) {
+                console.warn('[AV] signals element not found');
+                return;
+            }
 
+            // Remove placeholder if exists
             const placeholder = this.elements.signals.querySelector('.text-gray-500');
-            if (placeholder) placeholder.remove();
+            if (placeholder && placeholder.classList.contains('text-center')) {
+                placeholder.remove();
+            }
 
             const timestamp = new Date((sig.ts || Date.now() / 1000) * 1000).toLocaleTimeString();
             const value = sig.value != null
@@ -399,6 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.elements.active.textContent = `${side} @ ${value}x`;
                 this.elements.active.classList.remove('hidden');
             }
+            
+            console.log('[AV] Signal rendered:', side, value);
         },
 
         initCanvas() {
@@ -449,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startDemoLoop() {
             if (this.demoInterval) clearInterval(this.demoInterval);
 
-            this.demoInterval = setInterval(() => {
+            const generateSignal = () => {
                 if (this.isConnected) return;
 
                 const sides = ['cashout', 'cashout', 'auto', 'stop', 'win'];
@@ -464,7 +413,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     note: 'demo',
                     source: 'cv666'
                 });
-            }, 8000);
+            };
+
+            // Generate first signal immediately
+            generateSignal();
+            
+            // Then generate every 8 seconds
+            this.demoInterval = setInterval(generateSignal, 8000);
+            this.logMsg('▶️ Demo loop started (8s interval)');
         }
     };
 
@@ -524,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         roundDuration: 35000,
 
         elements: {
-            wsUrl: document.getElementById('ctWsUrl'),
+            wsUrl: document.getElementById('ct-ws-url-input'),
             token: document.getElementById('ctToken'),
             btnConn: document.getElementById('ctConnectBtn'),
             btnDisc: document.getElementById('ctDisconnectBtn'),
@@ -548,12 +504,21 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         init() {
-            // Auto-fill configuration WSS URL properly formatted
-            if (this.elements.wsUrl) {
-                let defaultUrl = this.config._WS_URL.url || 'https://socket.738293839.com';
-                this.elements.wsUrl.value = defaultUrl.replace('http://', 'ws://').replace('https://', 'wss://');
+            // Production URLs are forced at global DOM level
+            
+            // Validate all required elements exist
+            const missingElements = [];
+            Object.entries(this.elements).forEach(([key, el]) => {
+                if (!el) {
+                    missingElements.push(`${key} (${key === 'wsUrl' ? 'ct-ws-url-input' : key === 'token' ? 'ctToken' : key})`);
+                }
+            });
+            
+            if (missingElements.length > 0) {
+                console.warn('[CT] Missing elements:', missingElements);
+                this.logMsg(`⚠️ Missing elements: ${missingElements.join(', ')}`);
             }
-
+            
             this.elements.btnConn?.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.connect();
@@ -1068,7 +1033,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // INITIALIZATION (Critical Order)
     // ==========================================
-    UIController.init();
     avEngine.init();
     ctEngine.init();
 

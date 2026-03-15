@@ -1,6 +1,55 @@
+<style>
+    .main-box {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .tab-btn {
+        padding: 12px 24px;
+        cursor: pointer;
+        border: 1px solid #334155;
+        border-bottom: none;
+        background: #1e293b;
+        color: #94a3b8;
+        border-radius: 8px 8px 0 0;
+        margin-right: 4px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .tab-btn:hover {
+        color: white;
+    }
+
+    .tab-btn.active {
+        color: white;
+        z-index: 10;
+    }
+
+    #btnAviator.active {
+        background: #f97316;
+        /* Orange-500 */
+        border-color: #f97316;
+    }
+
+    #btnCrazyTime.active {
+        background: #8b5cf6;
+        /* Purple-500 */
+        border-color: #8b5cf6;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+</style>
+
 <div class="px-4 py-8 max-w-7xl mx-auto min-h-screen">
-    <!-- Header & Tabs -->
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <div class="flex items-center gap-6">
             <div>
                 <h1
@@ -19,430 +68,437 @@
                 <span id="globalSyncClock" class="text-xl font-mono font-bold text-white tabular-nums">00:00:00</span>
             </div>
         </div>
-
-        <div class="glass-header rounded-xl p-1 flex relative">
-            <div id="tabIndicator"
-                class="absolute h-[calc(100%-8px)] top-1 left-1 rounded-lg bg-primary/20 border border-primary/50 shadow-[0_0_15px_rgba(56,189,248,0.3)] transition-all duration-300 pointer-events-none">
-            </div>
-            <button id="btn-tab-aviator"
-                class="px-6 py-2 rounded-lg text-sm font-medium transition-all text-white border border-blue-400/50 shadow-[0_0_10px_rgba(59,130,246,0.3)] z-10 tab-active">Aviator</button>
-            <button id="btn-tab-crazytime"
-                class="px-6 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 border border-transparent hover:text-white z-10 tab-inactive">Crazy
-                Time</button>
-        </div>
     </div>
 
-    <!-- AVIATOR DASHBOARD -->
-    <div id="wrapper-aviator" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Signal Area -->
-        <div class="lg:col-span-2 glass-panel border border-white/10 rounded-2xl p-6 flex flex-col h-[600px]">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-white"><i class="fas fa-plane-departure text-blue-400 mr-2"></i> Live
-                    Feed</h2>
-                <div class="flex gap-2">
-                    <button id="avClearBtn"
-                        class="px-3 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-sm text-gray-300 transition-colors">Clear</button>
-                    <button id="avPauseBtn"
-                        class="px-3 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-sm text-gray-300 transition-colors">Pause</button>
-                    <span id="avStatus"
-                        class="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-sm font-medium">Disconnected</span>
-                </div>
-            </div>
+    <!-- Tabs Container -->
+    <div class="flex relative z-10" style="margin-bottom: -1px;">
+        <button id="btnAviator" class="tab-btn active"><i class="fas fa-plane"></i> Aviator Signal</button>
+        <button id="btnCrazyTime" class="tab-btn"><i class="fas fa-dharmachakra"></i> Crazy Time Signal</button>
+    </div>
 
-            <!-- Mock Chart Area -->
-            <div
-                class="flex-1 bg-gray-900/50 rounded-xl border border-white/5 flex items-center justify-center mb-4 relative overflow-hidden backdrop-blur-sm group">
-                <!-- Animated Background Grid -->
-                <div class="absolute inset-0 opacity-10 animate-grid-flow"
-                    style="background-image: linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px); background-size: 40px 40px;">
-                </div>
-                <!-- Dynamic Pulse Wave -->
-                <canvas id="avPulseCanvas" class="absolute inset-0 pointer-events-none opacity-40"></canvas>
+    <!-- MAIN BOX WRAPPER -->
+    <div class="main-box relative z-0">
 
-                <div class="text-center z-10 relative group-hover:scale-105 transition-transform duration-500">
+        <!-- AVIATOR DASHBOARD -->
+        <div id="viewAviator" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Signal Area -->
+            <div class="lg:col-span-2 glass-panel border border-white/10 rounded-2xl p-6 flex flex-col h-[600px]">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-white"><i class="fas fa-plane-departure text-blue-400 mr-2"></i>
+                        Live
+                        Feed</h2>
+                    <div class="flex gap-2">
+                        <button id="avClearBtn"
+                            class="px-3 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-sm text-gray-300 transition-colors">Clear</button>
+                        <button id="avPauseBtn"
+                            class="px-3 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-sm text-gray-300 transition-colors">Pause</button>
+                        <span id="avStatus"
+                            class="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-sm font-medium">Disconnected</span>
+                    </div>
+                </div>
+
+                <!-- Mock Chart Area -->
+                <div
+                    class="flex-1 bg-gray-900/50 rounded-xl border border-white/5 flex items-center justify-center mb-4 relative overflow-hidden backdrop-blur-sm group">
+                    <!-- Animated Background Grid -->
+                    <div class="absolute inset-0 opacity-10 animate-grid-flow"
+                        style="background-image: linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px); background-size: 40px 40px;">
+                    </div>
+                    <!-- Dynamic Pulse Wave -->
+                    <canvas id="avPulseCanvas" class="absolute inset-0 pointer-events-none opacity-40"></canvas>
+
+                    <div class="text-center z-10 relative group-hover:scale-105 transition-transform duration-500">
+                        <div
+                            class="inline-block p-4 rounded-full bg-blue-500/10 border border-blue-500/20 mb-3 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+                            <i class="fas fa-chart-line text-4xl text-blue-400 animate-pulse"></i>
+                        </div>
+                        <p class="text-blue-100/60 font-medium tracking-wide">Realtime Telemetry visualization</p>
+                        <div id="avActiveSignal" class="mt-2 text-2xl font-bold text-white hidden">--</div>
+                    </div>
+                </div>
+
+                <!-- Signals Feed -->
+                <div class="h-48 bg-black/40 rounded-xl border border-white/5 p-2 overflow-y-auto custom-scrollbar"
+                    id="avSignals">
                     <div
-                        class="inline-block p-4 rounded-full bg-blue-500/10 border border-blue-500/20 mb-3 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-                        <i class="fas fa-chart-line text-4xl text-blue-400 animate-pulse"></i>
-                    </div>
-                    <p class="text-blue-100/60 font-medium tracking-wide">Realtime Telemetry visualization</p>
-                    <div id="avActiveSignal" class="mt-2 text-2xl font-bold text-white hidden">--</div>
+                        class="text-center text-gray-500 py-4 text-sm align-middle h-full flex items-center justify-center">
+                        Awaiting incoming signals...</div>
                 </div>
+
+                <button id="avCopyLatestBtn"
+                    class="mt-4 w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white rounded-xl font-bold shadow-[0_0_15px_rgba(249,115,22,0.5)] transition-all">Copy
+                    Latest Signal</button>
             </div>
 
-            <!-- Signals Feed -->
-            <div class="h-48 bg-black/40 rounded-xl border border-white/5 p-2 overflow-y-auto custom-scrollbar"
-                id="avSignals">
-                <div
-                    class="text-center text-gray-500 py-4 text-sm align-middle h-full flex items-center justify-center">
-                    Awaiting incoming signals...</div>
-            </div>
+            <!-- Aviator Sidebar -->
+            <div class="flex flex-col gap-6">
+                <!-- Connection Config -->
+                <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-link text-blue-400 mr-2"></i>
+                        Connection
+                    </h3>
 
-            <button id="avCopyLatestBtn"
-                class="mt-4 w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white rounded-xl font-bold shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all">Copy
-                Latest Signal</button>
-        </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">WebSocket
+                                /
+                                API URL</label>
+                            <input type="url" id="ws-url-input"
+                                class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                                placeholder="wss://demo.signals.example/ws">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Auth
+                                Token (Optional)</label>
+                            <input type="text" id="avToken"
+                                class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                                placeholder="Bearer...">
+                        </div>
 
-        <!-- Aviator Sidebar -->
-        <div class="flex flex-col gap-6">
-            <!-- Connection Config -->
-            <div class="glass-panel border border-white/10 rounded-2xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-link text-blue-400 mr-2"></i> Connection
-                </h3>
-
-                <div class="space-y-4">
-                    <div>
-                        <label
-                            class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">WebSocket /
-                            API URL</label>
-                        <input type="url" id="avWsUrl"
-                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
-                            placeholder="wss://demo.signals.example/ws">
+                        <div class="flex gap-3 pt-2">
+                            <button id="avConnectBtn"
+                                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg font-medium transition-colors shadow-[0_0_15px_rgba(249,115,22,0.4)]">Connect</button>
+                            <button id="avDisconnectBtn"
+                                class="flex-1 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 py-2 rounded-lg font-medium transition-colors">Disconnect</button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Connecting transmits your IP. Ensure you are using a
+                            secure
+                            WSS proxy if operating stealthily.</p>
                     </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Auth
-                            Token (Optional)</label>
-                        <input type="text" id="avToken"
-                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
-                            placeholder="Bearer...">
-                    </div>
-
-                    <div class="flex gap-3 pt-2">
-                        <button id="avConnectBtn"
-                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium transition-colors">Connect</button>
-                        <button id="avDisconnectBtn"
-                            class="flex-1 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 py-2 rounded-lg font-medium transition-colors">Disconnect</button>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Connecting transmits your IP. Ensure you are using a secure
-                        WSS proxy if operating stealthily.</p>
                 </div>
-            </div>
 
-            <!-- System Log -->
-            <div class="glass-panel border border-white/10 rounded-2xl p-6 flex-1 flex flex-col">
-                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-terminal text-blue-400 mr-2"></i> System
-                    Log</h3>
-                <div id="avLog"
-                    class="flex-1 bg-black/50 rounded-lg border border-white/5 p-3 text-xs font-mono text-gray-400 overflow-y-auto h-48 custom-scrollbar">
-                    <div class="text-gray-600">[System] Initialized Aviator telemetry engine.</div>
+                <!-- System Log -->
+                <div class="glass-panel border border-white/10 rounded-2xl p-6 flex flex-col max-h-64 overflow-hidden">
+                    <h3 class="text-lg font-bold text-white mb-3"><i class="fas fa-terminal text-blue-400 mr-2"></i>System Log</h3>
+                    <div id="avLog"
+                        class="flex-1 bg-black/50 rounded-lg border border-white/5 p-3 text-xs font-mono text-gray-400 overflow-y-auto custom-scrollbar" style="height:160px;max-height:160px;">
+                        <div class="text-gray-600">[System] Initialized Aviator telemetry engine.</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <!-- CRAZY TIME DASHBOARD (Hidden by Default) -->
-    <div id="wrapper-crazytime" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Area -->
-        <div class="lg:col-span-2 flex flex-col gap-6">
+        <!-- CRAZY TIME DASHBOARD (Hidden by Default) -->
+        <div id="viewCrazyTime" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Area -->
+            <div class="lg:col-span-2 flex flex-col gap-6">
 
-            <!-- Top Row: Game Status & Betting Signal -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Game Status -->
-                <div class="glass-panel border border-white/10 rounded-2xl p-6 relative overflow-hidden">
-                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
-                    <div class="flex justify-between items-start mb-1">
-                        <h2 class="text-xl font-bold text-white">Current Modus</h2>
-                        <span
-                            class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-[9px] font-black text-red-500 uppercase animate-pulse">
-                            <i class="fas fa-clock"></i> Time Critical
-                        </span>
-                    </div>
-                    <p id="ctGameStatus" class="text-green-400 font-bold mb-4 text-lg">Waiting for connection...</p>
-
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between items-center py-1 border-b border-white/5">
-                            <span class="text-gray-400 text-[10px] uppercase tracking-widest font-black">Game ID</span>
-                            <span id="ctGameId" class="text-white font-mono text-xs opacity-60">--</span>
-                        </div>
-                        <div class="flex flex-col items-center py-3 bg-white/5 rounded-xl border border-white/5 mt-2">
-                            <span class="text-gray-400 text-[10px] uppercase tracking-widest font-black mb-1">Crazy Time
-                                Signal Number</span>
-                            <span id="ctGameNumber"
-                                class="text-2xl font-black text-white font-mono tracking-tighter">--:--:--</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Result</span>
-                            <span id="ctResult" class="text-white font-bold">--</span>
-                        </div>
-                        <div class="flex justify-between">
+                <!-- Top Row: Game Status & Betting Signal -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Game Status -->
+                    <div class="glass-panel border border-white/10 rounded-2xl p-6 relative overflow-hidden">
+                        <div class="absolute -right-6 -top-6 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h2 class="text-xl font-bold text-white">Current Modus</h2>
                             <span
-                                class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Multiplier</span>
-                            <span id="ctMultiplier" class="text-white font-bold">--</span>
+                                class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-[9px] font-black text-red-500 uppercase animate-pulse">
+                                <i class="fas fa-clock"></i> Time Critical
+                            </span>
+                        </div>
+                        <p id="ctGameStatus" class="text-green-400 font-bold mb-4 text-lg">Waiting for connection...</p>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between items-center py-1 border-b border-white/5">
+                                <span class="text-gray-400 text-[10px] uppercase tracking-widest font-black">Game
+                                    ID</span>
+                                <span id="ctGameId" class="text-white font-mono text-xs opacity-60">--</span>
+                            </div>
+                            <div
+                                class="flex flex-col items-center py-3 bg-white/5 rounded-xl border border-white/5 mt-2">
+                                <span class="text-gray-400 text-[10px] uppercase tracking-widest font-black mb-1">Crazy
+                                    Time
+                                    Signal Number</span>
+                                <span id="ctGameNumber"
+                                    class="text-2xl font-black text-white font-mono tracking-tighter">--:--:--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span
+                                    class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Result</span>
+                                <span id="ctResult" class="text-white font-bold">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span
+                                    class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Multiplier</span>
+                                <span id="ctMultiplier" class="text-white font-bold">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Betting Prediction -->
+                    <div
+                        class="glass-panel border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-white/5 to-emerald-500/5 mt-0 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+                        <h2 class="text-xl font-bold text-white mb-4"><i
+                                class="fas fa-crosshairs text-emerald-400 mr-2"></i> Predicted Modus</h2>
+
+                        <div class="flex justify-center mb-4">
+                            <div id="ctEarlyBettingSignal"
+                                class="text-center text-emerald-400 font-bold text-xl py-2 px-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 w-full min-h-[50px] flex items-center justify-center">
+                                Awaiting data...
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mb-4 px-2">
+                            <p id="ctNextRoundPrediction" class="text-xs text-gray-400 min-h-[16px]">Analysis
+                                requires at least 3 spins.</p>
+                            <div id="ctTimeSignalCountdown"
+                                class="hidden items-center gap-2 px-3 py-1 bg-emerald-500/20 border border-emerald-500/40 rounded-full">
+                                <i class="fas fa-stopwatch text-emerald-400 text-[10px] animate-spin-slow"></i>
+                                <span class="text-[11px] font-black text-white font-mono" id="ctTimerVal">15.0s</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-2" id="ctSignalBoxes">
+                            <div id="ct-sig-1"
+                                class="text-center py-2 rounded-lg bg-blue-500/20 border border-blue-500/40 text-blue-200 font-bold text-sm transition-all shadow-sm">
+                                1</div>
+                            <div id="ct-sig-2"
+                                class="text-center py-2 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 font-bold text-sm transition-all shadow-sm">
+                                2</div>
+                            <div id="ct-sig-5"
+                                class="text-center py-2 rounded-lg bg-pink-500/20 border border-pink-500/40 text-pink-200 font-bold text-sm transition-all shadow-sm">
+                                5</div>
+                            <div id="ct-sig-10"
+                                class="text-center py-2 rounded-lg bg-purple-500/20 border border-purple-500/40 text-purple-200 font-bold text-sm transition-all shadow-sm">
+                                10</div>
+
+                            <div id="ct-sig-b1"
+                                class="text-center py-1.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
+                                Coin Flip</div>
+                            <div id="ct-sig-b2"
+                                class="text-center py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
+                                Cash Hunt</div>
+                            <div id="ct-sig-b3"
+                                class="text-center py-1.5 rounded-lg bg-fuchsia-500/20 border border-fuchsia-500/40 text-fuchsia-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
+                                Pachinko</div>
+                            <div id="ct-sig-b4"
+                                class="text-center py-1.5 rounded-lg bg-rose-500/30 border border-rose-500/60 text-white font-bold text-[10px] leading-tight flex items-center justify-center shadow-[0_0_10px_rgba(244,63,94,0.3)]">
+                                Crazy Time</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Betting Prediction -->
-                <div
-                    class="glass-panel border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-white/5 to-emerald-500/5 mt-0 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-                    <h2 class="text-xl font-bold text-white mb-4"><i
-                            class="fas fa-crosshairs text-emerald-400 mr-2"></i> Predicted Modus</h2>
+                <!-- Spin History -->
+                <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-history text-purple-400 mr-2"></i>
+                        Spin
+                        History</h3>
+                    <div id="ctSpinHistory" class="flex flex-wrap gap-3">
+                        <div class="text-gray-500 text-sm">No recent spins captured.</div>
+                    </div>
 
-                    <div class="flex justify-center mb-4">
-                        <div id="ctEarlyBettingSignal"
-                            class="text-center text-emerald-400 font-bold text-xl py-2 px-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 w-full min-h-[50px] flex items-center justify-center">
-                            Awaiting data...
+                    <button id="ctCopyLatestBtn"
+                        class="mt-6 w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl font-black text-lg shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all transform hover:scale-[1.02] active:scale-95 border border-white/10">
+                        <i class="fas fa-copy mr-2"></i> Copy KG Time Signal
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Crazy Time Sidebar -->
+            <div class="flex flex-col gap-6">
+
+                <!-- Connection Config -->
+                <div class="glass-panel border border-white/10 rounded-2xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-link text-purple-400 mr-2"></i>
+                        Connection
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">WebSocket
+                                /
+                                API URL</label>
+                            <input type="url" id="ct-ws-url-input"
+                                class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                                placeholder="wss://babylonbetst.evo-games.com/...">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Auth
+                                Token (Optional)</label>
+                            <input type="text" id="ctToken"
+                                class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
+                                placeholder="Bearer... / EVOSESSIONID=">
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button id="ctConnectBtn"
+                                class="flex-[2] bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg font-medium transition-colors shadow-[0_0_15px_rgba(168,85,247,0.4)]">Connect</button>
+                            <button id="ctDisconnectBtn"
+                                class="flex-1 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 py-2 rounded-lg font-medium transition-colors">Disconnect</button>
                         </div>
                     </div>
+                    <p id="ctConnStatus" class="mt-3 text-center text-sm font-medium text-red-400">Disconnected</p>
+                </div>
 
-                    <div class="flex items-center justify-between mb-4 px-2">
-                        <p id="ctNextRoundPrediction" class="text-xs text-gray-400 min-h-[16px]">Analysis
-                            requires at least 3 spins.</p>
-                        <div id="ctTimeSignalCountdown"
-                            class="hidden items-center gap-2 px-3 py-1 bg-emerald-500/20 border border-emerald-500/40 rounded-full">
-                            <i class="fas fa-stopwatch text-emerald-400 text-[10px] animate-spin-slow"></i>
-                            <span class="text-[11px] font-black text-white font-mono" id="ctTimerVal">15.0s</span>
-                        </div>
+                <!-- Top Winners Leaderboard -->
+                <div class="glass-panel border border-white/10 rounded-2xl p-6 flex-1 relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full blur-3xl group-hover:bg-yellow-500/10 transition-colors">
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2 flex items-center">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center mr-3 border border-yellow-500/30">
+                            <i class="fas fa-trophy text-yellow-400 text-sm"></i>
+                        </span>
+                        Top Winners
+                    </h3>
+
+                    <div
+                        class="flex justify-between items-center text-[10px] text-gray-500 mb-4 pb-2 border-b border-white/5 uppercase font-bold tracking-widest">
+                        <span id="ctTotalWinners">Active: 0 Players</span>
+                        <span id="ctTotalAmount" class="text-emerald-400">Pool: 0 BDT</span>
                     </div>
 
-                    <div class="grid grid-cols-4 gap-2" id="ctSignalBoxes">
-                        <div id="ct-sig-1"
-                            class="text-center py-2 rounded-lg bg-blue-500/20 border border-blue-500/40 text-blue-200 font-bold text-sm transition-all shadow-sm">
-                            1</div>
-                        <div id="ct-sig-2"
-                            class="text-center py-2 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 font-bold text-sm transition-all shadow-sm">
-                            2</div>
-                        <div id="ct-sig-5"
-                            class="text-center py-2 rounded-lg bg-pink-500/20 border border-pink-500/40 text-pink-200 font-bold text-sm transition-all shadow-sm">
-                            5</div>
-                        <div id="ct-sig-10"
-                            class="text-center py-2 rounded-lg bg-purple-500/20 border border-purple-500/40 text-purple-200 font-bold text-sm transition-all shadow-sm">
-                            10</div>
-
-                        <div id="ct-sig-b1"
-                            class="text-center py-1.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
-                            Coin Flip</div>
-                        <div id="ct-sig-b2"
-                            class="text-center py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
-                            Cash Hunt</div>
-                        <div id="ct-sig-b3"
-                            class="text-center py-1.5 rounded-lg bg-fuchsia-500/20 border border-fuchsia-500/40 text-fuchsia-200 font-bold text-[10px] leading-tight flex items-center justify-center shadow-sm">
-                            Pachinko</div>
-                        <div id="ct-sig-b4"
-                            class="text-center py-1.5 rounded-lg bg-rose-500/30 border border-rose-500/60 text-white font-bold text-[10px] leading-tight flex items-center justify-center shadow-[0_0_10px_rgba(244,63,94,0.3)]">
-                            Crazy Time</div>
+                    <div class="custom-scrollbar overflow-y-auto max-h-[250px] pr-1">
+                        <ul id="ctWinnersList" class="space-y-2">
+                            <li class="p-3 text-gray-600 text-xs text-center italic">Observing next round payouts...
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </div>
 
-            <!-- Spin History -->
-            <div class="glass-panel border border-white/10 rounded-2xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-history text-purple-400 mr-2"></i> Spin
-                    History</h3>
-                <div id="ctSpinHistory" class="flex flex-wrap gap-3">
-                    <div class="text-gray-500 text-sm">No recent spins captured.</div>
-                </div>
-
-                <button id="ctCopyLatestBtn"
-                    class="mt-6 w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl font-black text-lg shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all transform hover:scale-[1.02] active:scale-95 border border-white/10">
-                    <i class="fas fa-copy mr-2"></i> Copy KG Time Signal
-                </button>
-            </div>
-
-        </div>
-
-        <!-- Crazy Time Sidebar -->
-        <div class="flex flex-col gap-6">
-
-            <!-- Connection Config -->
-            <div class="glass-panel border border-white/10 rounded-2xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-link text-purple-400 mr-2"></i>
-                    Connection
-                </h3>
-
-                <div class="space-y-4">
-                    <div>
-                        <label
-                            class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">WebSocket /
-                            API URL</label>
-                        <input type="url" id="ctWsUrl"
-                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
-                            placeholder="wss://babylonbetst.evo-games.com/...">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">Auth
-                            Token (Optional)</label>
-                        <input type="text" id="ctToken"
-                            class="glass-input w-full px-3 py-2 rounded-lg border border-white/10 text-white text-sm"
-                            placeholder="Bearer... / EVOSESSIONID=">
-                    </div>
-
-                    <div class="flex gap-3 pt-2">
-                        <button id="ctConnectBtn"
-                            class="flex-[2] bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg font-medium transition-colors shadow-[0_0_15px_rgba(168,85,247,0.4)]">Connect</button>
-                        <button id="ctDisconnectBtn"
-                            class="flex-1 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 py-2 rounded-lg font-medium transition-colors">Disconnect</button>
+                <!-- System Log -->
+                <div class="glass-panel border border-white/10 rounded-2xl p-6 flex flex-col max-h-64 overflow-hidden">
+                    <h3 class="text-lg font-bold text-white mb-3"><i class="fas fa-terminal text-purple-400 mr-2"></i>System Debug Log</h3>
+                    <div id="ctDebugLog"
+                        class="flex-1 bg-black/50 rounded-lg border border-white/5 p-3 text-xs font-mono text-gray-400 overflow-y-auto custom-scrollbar" style="height:160px;max-height:160px;">
+                        <div class="text-gray-600">[System] Initialized Crazy Time telemetry engine.</div>
                     </div>
                 </div>
-                <p id="ctConnStatus" class="mt-3 text-center text-sm font-medium text-red-400">Disconnected</p>
+
             </div>
-
-            <!-- Top Winners Leaderboard -->
-            <div class="glass-panel border border-white/10 rounded-2xl p-6 flex-1 relative overflow-hidden group">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full blur-3xl group-hover:bg-yellow-500/10 transition-colors">
-                </div>
-                <h3 class="text-lg font-bold text-white mb-2 flex items-center">
-                    <span
-                        class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center mr-3 border border-yellow-500/30">
-                        <i class="fas fa-trophy text-yellow-400 text-sm"></i>
-                    </span>
-                    Top Winners
-                </h3>
-
-                <div
-                    class="flex justify-between items-center text-[10px] text-gray-500 mb-4 pb-2 border-b border-white/5 uppercase font-bold tracking-widest">
-                    <span id="ctTotalWinners">Active: 0 Players</span>
-                    <span id="ctTotalAmount" class="text-emerald-400">Pool: 0 BDT</span>
-                </div>
-
-                <div class="custom-scrollbar overflow-y-auto max-h-[250px] pr-1">
-                    <ul id="ctWinnersList" class="space-y-2">
-                        <li class="p-3 text-gray-600 text-xs text-center italic">Observing next round payouts...</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- System Log -->
-            <div class="glass-panel border border-white/10 rounded-2xl p-6 flex-1 flex flex-col">
-                <h3 class="text-lg font-bold text-white mb-4"><i class="fas fa-terminal text-purple-400 mr-2"></i>
-                    System Debug Log</h3>
-                <div id="ctDebugLog"
-                    class="flex-1 bg-black/50 rounded-lg border border-white/5 p-3 text-xs font-mono text-gray-400 overflow-y-auto min-h-[12rem] h-48 custom-scrollbar">
-                    <div class="text-gray-600">[System] Initialized Crazy Time telemetry engine.</div>
-                </div>
-            </div>
-
         </div>
     </div>
-</div>
 
-<style>
-    /* Premium Animations */
-    @keyframes gridFlow {
-        from {
-            background-position: 0 0;
+    <style>
+        /* Premium Animations */
+        @keyframes gridFlow {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 40px 40px;
+            }
         }
 
-        to {
-            background-position: 40px 40px;
+        .animate-grid-flow {
+            animation: gridFlow 4s linear infinite;
         }
-    }
 
-    .animate-grid-flow {
-        animation: gridFlow 4s linear infinite;
-    }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    .glass-panel {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
 
-    .glass-panel:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Custom animations & highlights for CT Signal Boxes */
-    .ct-signal-active {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px currentColor !important;
-        filter: brightness(1.3) contrast(1.1);
-        z-index: 10;
-        animation: boxBreathing 2s ease-in-out infinite;
-    }
-
-    /* Tab Button States */
-    .tab-active {
-        background: rgba(59, 130, 246, 0.1) !important;
-        border: 1px solid rgba(59, 130, 246, 0.5) !important;
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.3) !important;
-    }
-
-    .tab-active.tab-active-ct {
-        background: rgba(168, 85, 247, 0.1) !important;
-        border: 1px solid rgba(168, 85, 247, 0.5) !important;
-        box-shadow: 0 0 10px rgba(168, 85, 247, 0.3) !important;
-    }
-
-    .tab-inactive {
-        background: transparent !important;
-        border: 1px solid transparent !important;
-        box-shadow: none !important;
-    }
-
-    @keyframes boxBreathing {
-
-        0%,
-        100% {
+        /* Custom animations & highlights for CT Signal Boxes */
+        .ct-signal-active {
             transform: scale(1.05);
-            opacity: 0.9;
+            box-shadow: 0 0 20px currentColor !important;
+            filter: brightness(1.3) contrast(1.1);
+            z-index: 10;
+            animation: boxBreathing 2s ease-in-out infinite;
         }
 
-        50% {
-            transform: scale(1.08);
-            opacity: 1;
+        /* Tab Button States */
+        .tab-active {
+            background: rgba(59, 130, 246, 0.1) !important;
+            border: 1px solid rgba(59, 130, 246, 0.5) !important;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3) !important;
         }
-    }
 
-    /* Winner Rank Styling */
-    .rank-badge {
-        width: 1.5rem;
-        height: 1.5rem;
-        font-size: 0.6rem;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 0.375rem;
-    }
+        .tab-active.tab-active-ct {
+            background: rgba(168, 85, 247, 0.1) !important;
+            border: 1px solid rgba(168, 85, 247, 0.5) !important;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3) !important;
+        }
 
-    .rank-1 {
-        background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%);
-        color: #fff;
-        box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
-    }
+        .tab-inactive {
+            background: transparent !important;
+            border: 1px solid transparent !important;
+            box-shadow: none !important;
+        }
 
-    .rank-2 {
-        background: linear-gradient(135deg, #94a3b8 0%, #334155 100%);
-        color: #fff;
-        box-shadow: 0 0 10px rgba(148, 163, 184, 0.4);
-    }
+        @keyframes boxBreathing {
 
-    .rank-3 {
-        background: linear-gradient(135deg, #d97706 0%, #78350f 100%);
-        color: #fff;
-        box-shadow: 0 0 10px rgba(217, 119, 6, 0.4);
-    }
+            0%,
+            100% {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
 
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
-    }
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
 
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
-    }
+        /* Winner Rank Styling */
+        .rank-badge {
+            width: 1.5rem;
+            height: 1.5rem;
+            font-size: 0.6rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+        }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-    }
+        .rank-1 {
+            background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+        }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.2);
-    }
+        .rank-2 {
+            background: linear-gradient(135deg, #94a3b8 0%, #334155 100%);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(148, 163, 184, 0.4);
+        }
 
-    .ct-signal-active {
-        background-color: rgba(16, 185, 129, 0.4) !important;
-        border-color: rgba(16, 185, 129, 0.8) !important;
-        color: #fff !important;
-        box-shadow: 0 0 20px rgba(16, 185, 129, 0.6) !important;
-        transform: scale(1.05);
-        z-index: 10;
-    }
-</style>
+        .rank-3 {
+            background: linear-gradient(135deg, #d97706 0%, #78350f 100%);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(217, 119, 6, 0.4);
+        }
 
-<!-- Load module-specific script -->
-<script src="/js/signals.js?v=2.0"></script>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ct-signal-active {
+            border-color: #f59e0b !important;
+            /* Amber */
+            background-color: rgba(245, 158, 11, 0.2) !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+            transform: scale(1.05);
+            color: #fcd34d !important;
+        }
+    </style>
+
+    <!-- Load module-specific script -->
+    <script src="/js/signals.js?v=7.0-final"></script>

@@ -1,0 +1,236 @@
+<%
+// SEO Meta
+const pageTitle = typeof title !== 'undefined' ? title : 'Video Library';
+const pageDesc = typeof metaDescription !== 'undefined' ? metaDescription : '';
+%>
+
+<!-- SEO override in head -->
+<% /* Uses layout main.ejs which injects title dynamically */ %>
+
+<style>
+  .vid-hero { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); }
+  .vid-card { background: rgba(30,41,59,0.85); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
+  .vid-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(79,70,229,0.25); border-color: rgba(99,102,241,0.4); }
+  .vid-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+  .vid-card .no-thumb { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg,#1e1b4b,#312e81); display:flex;align-items:center;justify-content:center; }
+  .cat-badge { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; background:rgba(99,102,241,0.18);color:#a5b4fc; }
+  .section-title { font-size:1.3rem;font-weight:800;color:#f1f5f9;letter-spacing:-0.3px; }
+  .featured-slide { position:relative;border-radius:18px;overflow:hidden;aspect-ratio:16/9; }
+  .featured-slide img { width:100%;height:100%;object-fit:cover; }
+  .featured-slide .overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:20px; }
+  .trending-badge { background:linear-gradient(90deg,#f59e0b,#ef4444);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:0.5px; }
+  .play-btn { width:48px;height:48px;border-radius:50%;background:rgba(99,102,241,0.9);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;border:3px solid rgba(255,255,255,0.3);transition:all 0.2s; }
+  .play-btn:hover { background:#6366f1;transform:scale(1.1); }
+  .search-bar { background:rgba(30,41,59,0.9);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#f1f5f9; }
+  .search-bar:focus { outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+  .cat-tab { padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);color:#94a3b8;transition:all 0.2s; }
+  .cat-tab:hover,.cat-tab.active { background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-color:transparent; }
+  .blog-card { background:rgba(30,41,59,0.8);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;transition:all 0.3s ease; }
+  .blog-card:hover { transform:translateY(-3px);border-color:rgba(99,102,241,0.3); }
+  .aff-card { background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:12px;transition:all 0.2s; }
+  .aff-card:hover { border-color:rgba(249,115,22,0.5);background:rgba(249,115,22,0.12); }
+</style>
+
+<!-- Video Library Header -->
+<div class="vid-hero rounded-2xl p-8 mb-8 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10" style="background:url('https://source.unsplash.com/1600x400/?cinema,dark') center/cover;"></div>
+  <div class="relative z-10">
+    <h1 class="text-3xl font-black text-white mb-2">🎬 Video Library</h1>
+    <p class="text-slate-400 mb-6">Watch previews & download full content securely via TeraBox</p>
+    <!-- Search Bar -->
+    <form method="GET" action="/videos" class="flex gap-3 max-w-xl">
+      <input type="text" name="search" value="<%= searchQuery %>" placeholder="Search videos, movies, apps..." class="search-bar flex-1 px-4 py-3 text-sm">
+      <button type="submit" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors">
+        <i class="fas fa-search"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Featured Videos Slider -->
+<% if (featuredVideos && featuredVideos.length > 0) { %>
+<section class="mb-10">
+  <h2 class="section-title mb-4"><i class="fas fa-star text-yellow-400 mr-2"></i>Featured</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <% featuredVideos.slice(0, 3).forEach((v, i) => { %>
+    <a href="/videos/<%= v.slug %>" class="featured-slide block <%= i === 0 ? 'lg:col-span-2 lg:row-span-1' : '' %>">
+      <% if (v.thumbnail) { %>
+        <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy">
+      <% } else { %>
+        <div class="no-thumb" style="aspect-ratio:16/9;background:linear-gradient(135deg,#1e1b4b,#312e81);">
+          <i class="fas fa-play-circle text-indigo-400 text-6xl opacity-40"></i>
+        </div>
+      <% } %>
+      <div class="overlay">
+        <% if (v.isTrending) { %><span class="trending-badge mb-2 self-start">🔥 TRENDING</span><% } %>
+        <% if (v.category) { %><span class="cat-badge mb-2 self-start"><%= v.category.icon %> <%= v.category.name %></span><% } %>
+        <h3 class="text-white font-bold text-base leading-tight line-clamp-2"><%= v.title %></h3>
+        <div class="flex items-center gap-3 mt-2 text-xs text-gray-300">
+          <span><i class="fas fa-eye mr-1"></i><%= (v.stats?.views || 0).toLocaleString() %> views</span>
+          <span><i class="fas fa-download mr-1"></i><%= (v.stats?.redirectClicks || 0).toLocaleString() %> downloads</span>
+        </div>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- Category Filter Tabs -->
+<section class="mb-6">
+  <div class="flex gap-2 flex-wrap">
+    <a href="/videos" class="cat-tab <%= !currentCategory ? 'active' : '' %>">All</a>
+    <% categories.forEach(cat => { %>
+    <a href="/videos?category=<%= cat._id %>" class="cat-tab <%= currentCategory == cat._id.toString() ? 'active' : '' %>">
+      <%= cat.icon %> <%= cat.name %>
+    </a>
+    <% }) %>
+  </div>
+</section>
+
+<!-- Trending Videos -->
+<% if (trendingVideos && trendingVideos.length > 0 && !currentCategory && !searchQuery) { %>
+<section class="mb-10">
+  <h2 class="section-title mb-4"><i class="fas fa-fire text-orange-400 mr-2"></i>Trending Now</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <% trendingVideos.forEach(v => { %>
+    <a href="/videos/<%= v.slug %>" class="vid-card block">
+      <div class="relative">
+        <% if (v.thumbnail) { %>
+          <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy">
+        <% } else { %>
+          <div class="no-thumb"><i class="fas fa-film text-indigo-400 text-4xl opacity-30"></i></div>
+        <% } %>
+        <span class="trending-badge absolute top-2 left-2">🔥</span>
+        <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/30">
+          <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+        </div>
+      </div>
+      <div class="p-3">
+        <h3 class="text-white font-semibold text-sm line-clamp-2 mb-1"><%= v.title %></h3>
+        <div class="text-xs text-gray-500"><%= (v.stats?.views || 0).toLocaleString() %> views</div>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- Latest Videos Grid -->
+<section class="mb-10">
+  <h2 class="section-title mb-4">
+    <i class="fas fa-clock text-indigo-400 mr-2"></i>
+    <%= searchQuery ? `Results for "${searchQuery}"` : 'Latest Videos' %>
+  </h2>
+  <% if (videos.length === 0) { %>
+    <div class="text-center py-20 text-gray-500">
+      <i class="fas fa-video-slash text-5xl mb-4 opacity-30"></i>
+      <p class="text-lg">No videos found<% if (searchQuery) { %> for "<%= searchQuery %>"<% } %>.</p>
+      <a href="/videos" class="mt-4 inline-block px-6 py-2 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 transition">Clear Search</a>
+    </div>
+  <% } else { %>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <% videos.forEach(v => { %>
+    <a href="/videos/<%= v.slug %>" class="vid-card block">
+      <div class="relative">
+        <% if (v.thumbnail) { %>
+          <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy">
+        <% } else { %>
+          <div class="no-thumb"><i class="fas fa-film text-indigo-400 text-4xl opacity-30"></i></div>
+        <% } %>
+        <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/30">
+          <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+        </div>
+        <% if (v.isFeatured) { %><span class="absolute top-2 right-2 text-xs bg-yellow-500/90 text-black font-bold px-2 py-0.5 rounded-full">⭐ Featured</span><% } %>
+      </div>
+      <div class="p-3">
+        <% if (v.category) { %><span class="cat-badge mb-2"><%= v.category.icon %> <%= v.category.name %></span><% } %>
+        <h3 class="text-white font-semibold text-sm line-clamp-2 mt-1 mb-1"><%= v.title %></h3>
+        <div class="flex items-center gap-2 text-xs text-gray-500">
+          <span><i class="fas fa-eye mr-1"></i><%= (v.stats?.views || 0).toLocaleString() %></span>
+          <span class="ml-auto"><i class="fas fa-download mr-1"></i><%= (v.stats?.redirectClicks || 0).toLocaleString() %></span>
+        </div>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+  <div class="flex justify-center gap-2 mt-8">
+    <% for (let p = 1; p <= totalPages; p++) { %>
+    <a href="/videos?page=<%= p %><% if (currentCategory) { %>&category=<%= currentCategory %><% } %><% if (searchQuery) { %>&search=<%= searchQuery %><% } %>"
+       class="px-4 py-2 rounded-xl text-sm font-semibold transition-all
+       <%= p === currentPage ? 'bg-indigo-600 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10' %>">
+      <%= p %>
+    </a>
+    <% } %>
+  </div>
+  <% } %>
+  <% } %>
+</section>
+
+<!-- Blog Highlights -->
+<% if (blogHighlights && blogHighlights.length > 0) { %>
+<section class="mb-10">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="section-title"><i class="fas fa-newspaper text-cyan-400 mr-2"></i>From the Blog</h2>
+    <a href="/blog" class="text-indigo-400 hover:text-indigo-300 text-sm font-semibold transition">View all →</a>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <% blogHighlights.forEach(post => { %>
+    <a href="/blog/<%= post.slug %>" class="blog-card block">
+      <% if (post.featuredImage) { %>
+        <img src="<%= post.featuredImage %>" alt="<%= post.title %>" class="w-full h-36 object-cover" loading="lazy">
+      <% } %>
+      <div class="p-4">
+        <h3 class="text-white font-bold text-sm line-clamp-2 mb-2"><%= post.title %></h3>
+        <p class="text-gray-400 text-xs line-clamp-3"><%= post.excerpt %></p>
+        <div class="text-xs text-indigo-400 mt-3 font-semibold">Read more →</div>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- Affiliate Offers (if any) -->
+<% if (affiliates && affiliates.length > 0) { %>
+<section class="mb-6">
+  <h2 class="section-title mb-4"><i class="fas fa-gift text-orange-400 mr-2"></i>Recommended Offers</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <% affiliates.forEach(aff => { %>
+    <a href="<%= aff.url %>" target="_blank" rel="noopener noreferrer" class="aff-card p-4 block"
+       onclick="fetch('/api/admin/affiliates/click/<%= aff._id %>',{method:'POST'}).catch(()=>{})">
+      <% if (aff.imageUrl) { %><img src="<%= aff.imageUrl %>" alt="<%= aff.title %>" class="h-10 w-auto mb-2 object-contain"><% } %>
+      <div class="text-orange-300 font-bold text-xs"><%= aff.title %></div>
+      <div class="text-gray-500 text-xs mt-1 line-clamp-2"><%= aff.description %></div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- Schema.org VideoObject structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Video Library",
+  "itemListElement": [
+    <% videos.slice(0,5).forEach((v, i) => { %>
+    {
+      "@type": "ListItem",
+      "position": <%= i + 1 %>,
+      "item": {
+        "@type": "VideoObject",
+        "name": "<%= v.title.replace(/"/g,'&quot;') %>",
+        "thumbnailUrl": "<%= v.thumbnail || '' %>",
+        "uploadDate": "<%= v.releaseDate ? new Date(v.releaseDate).toISOString() : '' %>",
+        "url": "<%= process.env.SITE_URL || 'http://localhost:3000' %>/videos/<%= v.slug %>"
+      }
+    }<%= i < Math.min(videos.length, 5) - 1 ? ',' : '' %>
+    <% }) %>
+  ]
+}
+</script>

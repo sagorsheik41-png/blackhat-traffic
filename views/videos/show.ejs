@@ -1,0 +1,202 @@
+<style>
+  .player-wrapper { background:#000;border-radius:16px;overflow:hidden;position:relative;aspect-ratio:16/9;max-width:860px;margin:0 auto; }
+  .preview-video { width:100%;height:100%;object-fit:contain;display:block; }
+  .preview-overlay { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);pointer-events:none; }
+  .preview-label { font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.6);text-transform:uppercase;background:rgba(0,0,0,0.5);padding:4px 12px;border-radius:20px; }
+  /* TeraBox Popup */
+  #terabox-popup { position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px); }
+  .popup-box { background:linear-gradient(145deg,#1e1b4b,#1e293b);border:1px solid rgba(99,102,241,0.3);border-radius:24px;padding:40px;max-width:480px;width:90%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04);animation:popupIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+  @keyframes popupIn { from { transform:scale(0.7) translateY(40px);opacity:0; } to { transform:scale(1) translateY(0);opacity:1; } }
+  .tb-logo { width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#4338ca,#7c3aed);display:flex;align-items:center;justify-content:center;margin:0 auto 20px; }
+  .continue-btn { display:inline-flex;align-items:center;gap:10px;padding:14px 36px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:16px;font-weight:800;border-radius:14px;border:none;cursor:pointer;transition:all 0.2s;width:100%;justify-content:center;margin-top:6px; }
+  .continue-btn:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,70,229,0.4); }
+  .close-popup { position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#94a3b8;font-size:16px;border:none;transition:all 0.2s; }
+  .close-popup:hover { background:rgba(255,255,255,0.1);color:#fff; }
+  /* Video info */
+  .vid-info { max-width:860px;margin:0 auto; }
+  .tag-pill { display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid rgba(99,102,241,0.2); }
+  .stat-chip { display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:10px;font-size:12px;background:rgba(255,255,255,0.05);color:#94a3b8; }
+  .related-card { background:rgba(30,41,59,0.85);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;transition:all 0.3s; cursor:pointer;}
+  .related-card:hover { transform:translateY(-3px);border-color:rgba(99,102,241,0.3); }
+  .related-card img { width:100%;aspect-ratio:16/9;object-fit:cover; }
+  .no-thumb-sm { width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1e1b4b,#312e81);display:flex;align-items:center;justify-content:center; }
+</style>
+
+<!-- body data attributes used by video-player.js -->
+<% /* Override body data attrs via inline script */ %>
+<script>
+  document.body.dataset.videoId = "<%= video._id %>";
+  document.body.dataset.teraboxLink = "<%= teraboxLink %>";
+</script>
+
+<div class="max-w-screen-xl mx-auto">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- ── Left column: player + info ── -->
+    <div class="lg:col-span-2">
+
+      <!-- Preview Player -->
+      <div class="player-wrapper mb-4 shadow-2xl shadow-indigo-900/30">
+        <% if (video.previewVideoUrl) { %>
+          <video id="preview-video" class="preview-video" preload="metadata" controlsList="nodownload">
+            <source src="<%= video.previewVideoUrl %>" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+          <div class="preview-overlay">
+            <button onclick="document.getElementById('preview-video').play();this.parentElement.style.display='none'" 
+                    style="pointer-events:auto;width:72px;height:72px;border-radius:50%;background:rgba(99,102,241,0.9);border:4px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;cursor:pointer;transition:all 0.2s;"
+                    onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+              <i class="fas fa-play ml-2"></i>
+            </button>
+            <span class="preview-label mt-4">Preview — 15 sec</span>
+          </div>
+        <% } else { %>
+          <!-- No preview video: show thumbnail with direct redirect button -->
+          <div style="width:100%;height:100%;position:relative;min-height:300px;">
+            <% if (video.thumbnail) { %>
+              <img src="<%= video.thumbnail %>" alt="<%= video.title %>" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <% } else { %>
+              <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e1b4b,#4f46e5);display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-film text-white text-8xl opacity-20"></i>
+              </div>
+            <% } %>
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+              <p class="text-white font-semibold text-lg">No preview available</p>
+              <button onclick="document.getElementById('terabox-popup').classList.remove('hidden');document.getElementById('terabox-popup').classList.add('flex');"
+                      class="continue-btn" style="width:auto;">
+                <i class="fas fa-cloud-download-alt"></i> Watch Full Video on TeraBox
+              </button>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- TeraBox Popup Modal -->
+      <div id="terabox-popup" class="hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Continue Watching">
+        <div class="popup-box relative">
+          <button id="popup-close-btn" class="close-popup" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="tb-logo mb-4">
+            <i class="fas fa-cloud text-white text-3xl"></i>
+          </div>
+          <div class="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-2">Secure Download Platform</div>
+          <h2 class="text-2xl font-black text-white mb-2"><%= popupMessage %></h2>
+          <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+            The full video is hosted securely on TeraBox for the best streaming & download experience. Click below to continue watching for free.
+          </p>
+          <button id="continue-btn" class="continue-btn">
+            <i class="fas fa-play-circle"></i> Continue Watching
+          </button>
+          <p class="text-xs text-gray-600 mt-4">Opens in a new tab · Free · No registration required</p>
+          <!-- Affiliate offers inside popup -->
+          <% if (affiliates && affiliates.length > 0) { %>
+          <div class="mt-5 pt-5 border-t border-white/5">
+            <p class="text-xs text-gray-500 mb-3">Sponsored Offers</p>
+            <div class="flex gap-3 justify-center flex-wrap">
+              <% affiliates.slice(0,2).forEach(aff => { %>
+              <a href="<%= aff.url %>" target="_blank" rel="noopener" 
+                 class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-orange-300 bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500/20 transition"
+                 onclick="fetch('/api/admin/affiliates/click/<%= aff._id %>',{method:'POST'}).catch(()=>{})">
+                <i class="fas fa-gift"></i> <%= aff.title %>
+              </a>
+              <% }) %>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Video Info -->
+      <div class="vid-info mt-6">
+        <!-- Category & Tags -->
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <% if (video.category) { %>
+            <a href="/videos?category=<%= video.category._id %>" class="tag-pill">
+              <%= video.category.icon %> <%= video.category.name %>
+            </a>
+          <% } %>
+          <% (video.tags || []).forEach(tag => { %>
+            <a href="/videos?search=<%= tag %>" class="tag-pill"><%= tag %></a>
+          <% }) %>
+        </div>
+
+        <h1 class="text-2xl font-black text-white mb-3 leading-tight"><%= video.title %></h1>
+
+        <!-- Stats row -->
+        <div class="flex flex-wrap gap-3 mb-5">
+          <span class="stat-chip"><i class="fas fa-eye text-indigo-400"></i> <%= (video.stats?.views || 0).toLocaleString() %> views</span>
+          <span class="stat-chip"><i class="fas fa-mouse-pointer text-purple-400"></i> <%= (video.stats?.redirectClicks || 0).toLocaleString() %> downloads</span>
+          <span class="stat-chip"><i class="fas fa-calendar text-blue-400"></i> <%= video.releaseDate ? new Date(video.releaseDate).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : 'N/A' %></span>
+          <span class="stat-chip text-green-400"><i class="fas fa-globe"></i> <%= userCountry %></span>
+        </div>
+
+        <!-- Watch button -->
+        <button onclick="document.getElementById('terabox-popup').classList.remove('hidden');document.getElementById('terabox-popup').classList.add('flex');"
+                class="continue-btn mb-6" style="max-width:320px;">
+          <i class="fas fa-cloud-download-alt"></i> Watch / Download on TeraBox
+        </button>
+
+        <!-- Description -->
+        <% if (video.description) { %>
+        <div class="bg-white/4 rounded-2xl p-5 mb-6 border border-white/5">
+          <h3 class="text-white font-bold mb-3 text-sm">About this video</h3>
+          <p class="text-gray-400 text-sm leading-relaxed whitespace-pre-line"><%= video.description %></p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- ── Right column: related videos ── -->
+    <div>
+      <h3 class="text-white font-bold text-base mb-4"><i class="fas fa-list text-indigo-400 mr-2"></i>Related Videos</h3>
+      <% if (related.length === 0) { %>
+        <p class="text-gray-500 text-sm">No related videos yet.</p>
+      <% } else { %>
+      <div class="space-y-3">
+        <% related.forEach(r => { %>
+        <a href="/videos/<%= r.slug %>" class="related-card block">
+          <div class="flex gap-3 p-3">
+            <div style="flex-shrink:0;width:100px;border-radius:8px;overflow:hidden;aspect-ratio:16/9;">
+              <% if (r.thumbnail) { %>
+                <img src="<%= r.thumbnail %>" alt="<%= r.title %>" style="width:100%;height:100%;object-fit:cover;">
+              <% } else { %>
+                <div class="no-thumb-sm"><i class="fas fa-film text-indigo-400 opacity-40"></i></div>
+              <% } %>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <h4 class="text-white text-xs font-semibold line-clamp-2 mb-1"><%= r.title %></h4>
+              <% if (r.category) { %><div class="text-indigo-400 text-xs"><%= r.category.icon %> <%= r.category.name %></div><% } %>
+              <div class="text-gray-500 text-xs mt-1"><i class="fas fa-eye mr-1"></i><%= (r.stats?.views || 0).toLocaleString() %></div>
+            </div>
+          </div>
+        </a>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+
+  </div>
+</div>
+
+<!-- Video Schema.org structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "<%= video.title.replace(/"/g,'&quot;') %>",
+  "description": "<%= (video.description || '').replace(/"/g,'&quot;').substring(0,200) %>",
+  "thumbnailUrl": "<%= video.thumbnail || '' %>",
+  "uploadDate": "<%= video.releaseDate ? new Date(video.releaseDate).toISOString() : new Date().toISOString() %>",
+  "contentUrl": "<%= teraboxLink %>",
+  "embedUrl": "<%= teraboxLink %>",
+  "interactionStatistic": {
+    "@type": "InteractionCounter",
+    "interactionType": "https://schema.org/WatchAction",
+    "userInteractionCount": <%= video.stats?.views || 0 %>
+  }
+}
+</script>
+
+<!-- Load the preview player script -->
+<script src="/js/video-player.js" defer></script>
